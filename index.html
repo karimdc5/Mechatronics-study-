@@ -1,0 +1,1292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>Mechatronics Stack Mastery</title>
+<meta name="theme-color" content="#0B1119">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Mech Stacks">
+<style>
+/* Mechatronics Stack Mastery — blueprint-night design system */
+:root{
+  --bg:#0B1119; --panel:#121B27; --panel2:#0D1521; --line:#243447;
+  --ink:#E2EAF4; --dim:#8CA3BC;
+  --pneu:#5BC8F5; --hyd:#F5A94B; --elec:#6FE08B; --acdc:#C9A0F5;
+  --danger:#FF6B6B; --gold:#F2C14E;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);
+  font:16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  overscroll-behavior-y:contain}
+body{padding-bottom:calc(64px + env(safe-area-inset-bottom))}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+h1,h2,h3{margin:0 0 .35em;line-height:1.2}
+.eyebrow{font:600 11px/1 var(--mono);letter-spacing:.14em;color:var(--dim);text-transform:uppercase}
+
+/* header */
+header{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:10px;
+  padding:calc(10px + env(safe-area-inset-top)) 16px 10px;background:rgba(11,17,25,.92);
+  backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+header .brand{font:700 15px var(--mono);letter-spacing:.04em}
+header .spacer{flex:1}
+.pill{display:inline-flex;align-items:center;gap:5px;font:600 12px var(--mono);
+  background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:4px 10px}
+.pill.gold{color:var(--gold)}
+.pill.fire{color:var(--danger)}
+
+main{padding:16px;max-width:680px;margin:0 auto}
+
+/* bottom tab bar */
+nav{position:fixed;left:0;right:0;bottom:0;z-index:30;display:flex;
+  background:rgba(13,21,33,.96);backdrop-filter:blur(10px);border-top:1px solid var(--line);
+  padding-bottom:env(safe-area-inset-bottom)}
+nav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;
+  padding:9px 0 7px;color:var(--dim);font:600 10px var(--mono);letter-spacing:.06em}
+nav button svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8}
+nav button.on{color:var(--ink)}
+nav button.on::after{content:"";width:18px;height:2px;border-radius:2px;background:var(--ink);margin-top:2px}
+
+/* cards */
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:12px}
+.card.tap{transition:transform .08s}
+.card.tap:active{transform:scale(.985)}
+.cardrow{display:flex;align-items:center;gap:12px}
+.grow{flex:1;min-width:0}
+.sub{color:var(--dim);font-size:13px}
+.stackdot{width:10px;height:10px;border-radius:3px;flex:none}
+
+/* mastery ring */
+.ring{position:relative;width:56px;height:56px;flex:none}
+.ring svg{transform:rotate(-90deg)}
+.ring .pct{position:absolute;inset:0;display:grid;place-items:center;font:700 13px var(--mono)}
+
+/* progress bars */
+.bar{height:6px;border-radius:4px;background:var(--panel2);overflow:hidden;margin-top:6px}
+.bar i{display:block;height:100%;border-radius:4px;background:var(--gold);transition:width .4s}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  background:var(--panel2);border:1px solid var(--line);border-radius:12px;
+  padding:11px 16px;font-weight:600;min-height:44px}
+.btn.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.btn.block{width:100%}
+.btn:active{transform:scale(.98)}
+
+/* segmented + controls */
+.seg{display:flex;background:var(--panel2);border:1px solid var(--line);border-radius:12px;overflow:hidden;margin:8px 0}
+.seg button{flex:1;padding:10px 6px;font:600 12.5px var(--mono);color:var(--dim);min-height:42px}
+.seg button.on{background:var(--panel);color:var(--ink);box-shadow:inset 0 0 0 1px var(--line)}
+.ctrls{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.ctl{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:10px 14px;
+  font:600 13px var(--mono);min-height:44px;flex:1 1 40%}
+.ctl.on{border-color:var(--elec);color:var(--elec)}
+.ctl.go{border-color:var(--elec);color:var(--elec)}
+.ctl.danger{border-color:var(--danger);color:var(--danger)}
+.ctl.pressed{background:var(--line)}
+.slider{flex:1 1 100%;display:flex;align-items:center;gap:10px;font:600 12px var(--mono);color:var(--dim)}
+.slider b{min-width:58px;text-align:right;color:var(--ink)}
+input[type=range]{flex:1;accent-color:var(--gold);min-height:34px}
+
+/* schematic */
+.simwrap{margin-top:4px}
+.schematic{width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:12px;display:block}
+.schematic .comp{stroke:var(--dim);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.schematic .pipe,.schematic .wire{stroke:var(--line);stroke-width:2.5;fill:none;stroke-linecap:round;transition:stroke .15s}
+.schematic .rail{stroke:var(--dim);stroke-width:3}
+.schematic .pipe.live{stroke:currentColor;filter:drop-shadow(0 0 3px currentColor)}
+.schematic .wire.live,.schematic .wire.energized,.schematic path.energized{stroke:currentColor;filter:drop-shadow(0 0 3px currentColor)}
+.accent-pneu{color:var(--pneu)} .accent-hyd{color:var(--hyd)}
+.accent-elec{color:var(--elec)} .accent-acdc{color:var(--acdc)}
+.svgtag{font:600 7.5px var(--mono);fill:var(--dim);letter-spacing:.05em;stroke:none}
+.svgval{font:700 8px var(--mono);fill:var(--ink);stroke:none}
+.contact circle{fill:var(--dim);stroke:none}
+.contact .blade{stroke:var(--dim);stroke-width:2;transition:transform .1s;transform-origin:0 0}
+.contact .ncbar{stroke:var(--dim);stroke-width:2}
+.contact.closed .blade{transform:rotate(24deg)}
+.contact.nc .blade{transform:rotate(0)}
+.contact.nc:not(.closed) .blade{transform:rotate(24deg)}
+.contact.closed circle,.contact.closed .blade{stroke:currentColor;fill:currentColor}
+.contact.closed .blade{stroke:currentColor}
+.coil circle,.coil path{stroke:var(--dim);fill:none;stroke-width:2}
+.coil.energized circle,.coil.energized path{stroke:currentColor;filter:drop-shadow(0 0 4px currentColor)}
+.blade{stroke:var(--dim);stroke-width:2.5}
+.readout{display:flex;justify-content:space-between;gap:10px;font:600 12px var(--mono);
+  color:var(--gold);margin-top:8px;min-height:18px;flex-wrap:wrap}
+.readout span:last-child{color:var(--dim)}
+.meterpanel{margin-top:10px;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.mrow{display:flex;justify-content:space-between;padding:8px 12px;font:500 13px var(--mono);border-bottom:1px solid var(--panel2)}
+.mrow b{color:var(--gold)}
+.warnrow{padding:10px 12px;color:var(--danger);font:600 13px var(--mono)}
+.okrow{padding:8px 12px;color:var(--dim);font:500 12px var(--mono)}
+
+/* symbol grid */
+.search{width:100%;background:var(--panel);border:1px solid var(--line);border-radius:12px;
+  color:var(--ink);padding:12px 14px;font:inherit;margin-bottom:10px}
+.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;margin-bottom:6px}
+.chip{flex:none;font:600 12px var(--mono);padding:7px 12px;border-radius:999px;
+  border:1px solid var(--line);color:var(--dim);background:var(--panel)}
+.chip.on{color:var(--bg);background:var(--ink);border-color:var(--ink)}
+.symgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.symcard{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:10px;text-align:center}
+.symcard svg{width:100%;height:64px;color:var(--dim)}
+.symcard b{display:block;font-size:12.5px;line-height:1.3;min-height:2.6em}
+.symcard:active{transform:scale(.97)}
+
+/* modal sheet */
+.sheet{position:fixed;inset:0;z-index:50;background:rgba(5,9,14,.7);display:flex;align-items:flex-end;justify-content:center}
+.sheet>div{background:var(--panel);border:1px solid var(--line);border-radius:18px 18px 0 0;
+  width:100%;max-width:680px;max-height:86vh;overflow-y:auto;padding:18px 18px calc(18px + env(safe-area-inset-bottom));
+  animation:up .22s ease-out}
+@keyframes up{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+.sheet .symhero{height:110px;color:var(--ink);margin:6px 0}
+.sheet .symhero svg{width:100%;height:100%}
+.mist{border-left:3px solid var(--danger);background:var(--panel2);border-radius:0 10px 10px 0;
+  padding:8px 12px;margin:8px 0;font-size:13.5px;color:var(--dim)}
+.mist b{color:var(--danger);font:600 11px var(--mono);letter-spacing:.08em}
+
+/* labs */
+.step{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--panel2);align-items:flex-start}
+.step:last-child{border:none}
+.cb{flex:none;width:26px;height:26px;border-radius:8px;border:2px solid var(--line);display:grid;place-items:center;margin-top:1px;transition:all .15s}
+.step.done .cb{background:var(--elec);border-color:var(--elec);color:var(--bg)}
+.step.done .txt{color:var(--dim);text-decoration:line-through;text-decoration-color:var(--line)}
+.step .txt{font-size:14.5px}
+.safety{border:1px solid var(--danger);border-radius:12px;padding:10px 14px;margin:10px 0}
+.safety h4{margin:0 0 6px;color:var(--danger);font:700 11px var(--mono);letter-spacing:.1em}
+.safety li{font-size:13.5px;color:var(--dim);margin:4px 0}
+
+/* quiz */
+.qopt{display:block;width:100%;text-align:left;background:var(--panel2);border:1px solid var(--line);
+  border-radius:12px;padding:13px 14px;margin:8px 0;font-size:14.5px;min-height:48px}
+.qopt.correct{border-color:var(--elec);color:var(--elec)}
+.qopt.wrong{border-color:var(--danger);color:var(--danger)}
+.qexp{background:var(--panel2);border-left:3px solid var(--gold);border-radius:0 10px 10px 0;
+  padding:10px 12px;font-size:13.5px;color:var(--dim);margin-top:10px}
+.qprog{font:600 12px var(--mono);color:var(--dim);margin-bottom:8px}
+
+/* badges */
+.badges{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:10px}
+.badge{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px 8px;text-align:center}
+.badge .ico{font-size:26px;filter:grayscale(1);opacity:.35}
+.badge.got .ico{filter:none;opacity:1}
+.badge b{display:block;font-size:11px;margin-top:4px;color:var(--dim)}
+.badge.got b{color:var(--ink)}
+
+/* toast */
+#toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);
+  background:var(--panel);border:1px solid var(--gold);color:var(--gold);border-radius:999px;
+  padding:10px 18px;font:700 13px var(--mono);opacity:0;pointer-events:none;transition:all .25s;z-index:60;
+  white-space:nowrap;max-width:92vw;overflow:hidden;text-overflow:ellipsis}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+.refblock h3{font:700 12px var(--mono);letter-spacing:.08em;color:var(--gold);text-transform:uppercase}
+.refblock li{font-size:14px;color:var(--dim);margin:5px 0}
+.backbtn{font:600 13px var(--mono);color:var(--dim);padding:6px 0;margin-bottom:6px;display:inline-flex;gap:6px;align-items:center}
+
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+</style>
+</head>
+<body>
+<header id="hdr"></header>
+<main id="main"></main>
+<nav id="tabs"></nav>
+<div id="toast"></div>
+<script>
+/* Mechatronics Stack Mastery — content extracted from the student's actual
+   Amatrol STACK lab sheets (Basic Pneumatics, Basic Hydraulics 850-H1,
+   Electric Relay Control 90-EC1A, AC/DC T7017A-BDA). */
+
+const STACKS = {
+  pneu: { name: "Pneumatics", color: "var(--pneu)", tag: "STACK 01" },
+  hyd:  { name: "Hydraulics", color: "var(--hyd)",  tag: "STACK 02" },
+  elec: { name: "Relay Control", color: "var(--elec)", tag: "STACK 03" },
+  acdc: { name: "AC/DC & Transformers", color: "var(--acdc)", tag: "STACK 04" },
+};
+
+/* ---------- SYMBOL LIBRARY ---------- */
+/* Each svg uses viewBox 0 0 100 70, stroke=currentColor, fill none unless noted */
+const S = (inner) => `<svg viewBox="0 0 100 70" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">${inner}</svg>`;
+
+const SYMBOLS = [
+// ---------- PNEUMATIC ----------
+{ id:"p_supply", stack:"pneu", name:"Pneumatic pressure source",
+  svg:S(`<circle cx="50" cy="35" r="16"/><path d="M50 19 V8 M44 14 L50 8 L56 14"/>`),
+  what:"Compressed-air supply point. On the trainer this is the shop-air drop feeding the shutoff valve.",
+  mistakes:["Confusing it with the hydraulic pump symbol — hydraulic sources use a filled (solid) triangle, pneumatic uses an open one.","Forgetting the supply must pass through the shutoff valve and regulator before the circuit."] },
+{ id:"p_shutoff", stack:"pneu", name:"Shutoff valve",
+  svg:S(`<path d="M8 35 H30 M70 35 H92"/><path d="M30 25 L70 45 M30 45 L70 25"/>`),
+  what:"Manual on/off isolation valve. Your lab requires it CLOSED while connecting tubing and OPEN only after the circuit is verified.",
+  mistakes:["Opening the shutoff before checking that every tube is fully seated — fittings can blow off under pressure.","Leaving it open after the lab instead of returning the circuit to a safe, de-pressurized state."] },
+{ id:"p_reg", stack:"pneu", name:"Pressure regulator (with Gauge A)",
+  svg:S(`<rect x="35" y="18" width="30" height="34"/><path d="M8 35 H35 M65 35 H92"/><path d="M40 48 L60 22 M56 18 l8 8"/><path d="M50 52 v8 m-6 0 h12 m-10 5 h8 m-6 5 h4"/>`),
+  what:"Reduces and holds supply pressure at a set value. In the pneumatics lab you adjust it until Gauge A reads 30 psi / 207 kPa before any testing.",
+  mistakes:["Setting pressure with the circuit dead-ended vs. flowing — verify the reading at the required condition.","Cranking the regulator past the lab setpoint 'to make it faster' — speed is the flow-control valve's job."] },
+{ id:"p_gauge", stack:"pneu", name:"Pressure gauge",
+  svg:S(`<circle cx="50" cy="30" r="18"/><path d="M50 30 L60 18"/><path d="M50 48 v12"/>`),
+  what:"Reads circuit pressure at its tap point. Gauge A = regulated supply; Gauge B = rod-end back pressure created by the meter-out flow-control valve.",
+  mistakes:["Reading Gauge B and calling it supply pressure — its whole purpose here is to show back pressure on the exhaust side.","Tapping the gauge on the wrong side of the flow-control valve (it must be between cylinder and flow control to show back pressure)."] },
+{ id:"p_dcv53", stack:"pneu", name:"5-way / 3-position DCV",
+  svg:S(`<rect x="14" y="20" width="24" height="28"/><rect x="38" y="20" width="24" height="28"/><rect x="62" y="20" width="24" height="28"/><path d="M20 44 L32 24 m-4 -1 l4 1 l-1 4"/><path d="M32 44 L20 24 m-1 4 l1 -4 l4 1"/><path d="M44 24 v6 m0 8 v6 M56 24 v6 m0 8 v6 M44 33 h0 M50 30 h0"/><path d="M68 24 L80 44 m-4 1 l4 -1 l-1 -4"/><path d="M80 24 L68 44 m-1 -4 l1 4 l4 -1"/><path d="M8 34 H14 M86 34 H92"/>`),
+  what:"Directional control valve: 5 ports, 3 positions. Left/right positions route supply to one cylinder port and exhaust the other (extend / retract); center blocks or vents per spool type. You shift it to extend and retract the large-bore cylinder.",
+  mistakes:["Counting 'ways' as positions — a 5/3 valve has FIVE ports and THREE positions.","Leaving the valve shifted after the lab. The sheet says: remove air pressure and CENTER the valve."] },
+{ id:"p_fcv", stack:"pneu", name:"Flow-control valve with bypass check (meter-out)",
+  svg:S(`<rect x="30" y="14" width="40" height="28" rx="3"/><path d="M36 36 L64 20 m-5 -2 l5 2 l-2 5"/><path d="M50 8 L50 14 M46 6 h8"/><path d="M8 28 H30 M70 28 H92"/><path d="M30 52 h40 M40 52 a10 10 0 0 1 20 0" /><circle cx="50" cy="52" r="5"/>`),
+  what:"Adjustable needle restriction with a one-way check in parallel. Installed meter-out: it throttles EXHAUST air leaving the rod end during extension, while the check lets air flow freely the other way for fast retraction.",
+  mistakes:["Installing it backwards — then it meters the wrong direction and retraction becomes the slow stroke.","Expecting it to control both strokes. In this circuit it directly controls extension only; retraction free-flows through the check."] },
+{ id:"p_cyl_da", stack:"pneu", name:"Double-acting cylinder (large bore)",
+  svg:S(`<rect x="14" y="22" width="56" height="26"/><rect x="30" y="24" width="6" height="22" fill="currentColor"/><path d="M36 35 H92"/><path d="M20 48 v8 M48 48 v8"/>`),
+  what:"Air pressure drives the piston in BOTH directions via the cap-end and rod-end ports. The 'large bore' on the trainer gives visible, slower motion and clearer gauge response.",
+  mistakes:["Forgetting the rod-side annulus area is smaller — same pressure produces less force (and different speed) on retraction.","Swapping cap/rod hoses, which reverses the motion vs. the schematic."] },
+{ id:"p_exh", stack:"pneu", name:"Exhaust / muffler",
+  svg:S(`<path d="M50 14 v20"/><path d="M40 34 h20 l-10 16 z"/>`),
+  what:"Vent to atmosphere from the DCV exhaust ports — the open triangle means air leaves the system here (often through a muffler).",
+  mistakes:["Plugging an exhaust port 'to stop the hiss' — that traps back pressure and stalls the cylinder."] },
+
+// ---------- HYDRAULIC ----------
+{ id:"h_pump", stack:"hyd", name:"Hydraulic power unit (pump)",
+  svg:S(`<circle cx="50" cy="32" r="16"/><path d="M50 16 L50 24 M44 22 h12 l-6 -8 z" fill="currentColor"/><path d="M50 48 v10 m-8 0 h16"/>`),
+  what:"Motor-driven fixed-displacement pump drawing from the reservoir. The SOLID triangle = liquid flow (vs. open triangle for air). You start it only after the power-unit checkout.",
+  mistakes:["Starting the unit with the relief valve at a high setting — labs start with relief at MINIMUM, then raise pressure.","Running the pump with the suction shutoff closed — cavitation can damage it in seconds."] },
+{ id:"h_res", stack:"hyd", name:"Reservoir / return manifold",
+  svg:S(`<path d="M30 24 v22 h40 v-22"/><path d="M50 10 v18"/>`),
+  what:"Vented tank the system draws from and returns to. On the 850-H1 trainer, supply and return manifolds are your source and drain connection points.",
+  mistakes:["Returning flow above fluid level (aeration/foaming).","Forgetting return lines must go to the RETURN manifold, not tee'd into supply."] },
+{ id:"h_relief", stack:"hyd", name:"Pressure relief valve",
+  svg:S(`<rect x="36" y="18" width="28" height="28"/><path d="M50 22 v20 m-3 -3 l3 3 l3 -3"/><path d="M64 32 h10 m0 0 v0" stroke-dasharray="4 4"/><path d="M36 32 h-6 m0 0 c-3 0 -3 6 0 6 c3 0 3 6 0 6"/><path d="M50 46 v10 M50 10 v8"/>`),
+  what:"Safety valve that opens to tank at its set pressure — it caps maximum system pressure. Lab procedure: begin with relief at MINIMUM, start the unit, then adjust until Gauge S reads 300 psi / 2070 kPa.",
+  mistakes:["Using the relief as a 'pressure setter' for normal flow — if it's passing flow continuously the system is overheating.","Skipping the end-of-lab step: return the relief to minimum before shutdown."] },
+{ id:"h_dcv43", stack:"hyd", name:"4-way / 3-position DCV",
+  svg:S(`<rect x="14" y="20" width="24" height="28"/><rect x="38" y="20" width="24" height="28"/><rect x="62" y="20" width="24" height="28"/><path d="M20 44 L32 24 m-4 -1 l4 1 l-1 4"/><path d="M32 44 L20 24 m-1 4 l1 -4 l4 1"/><path d="M44 24 v18 M56 24 v18 M44 28 h0"/><path d="M68 24 L80 44 m-4 1 l4 -1 l-1 -4"/><path d="M80 24 L68 44 m-1 -4 l1 4 l4 -1"/>`),
+  what:"Routes pump flow to port A or B and the other side to tank; the center condition (on this trainer) lets you relieve trapped pressure after shutdown. Ports: P (pressure), T (tank), A, B.",
+  mistakes:["Leaving the DCV shifted at shutdown — the sheet says move the DCV to remove trapped pressure before securing the trainer.","Assuming all center spools behave alike (closed vs. tandem vs. float change what's blocked)."] },
+{ id:"h_fm", stack:"hyd", name:"Flow meter",
+  svg:S(`<circle cx="50" cy="32" r="16"/><path d="M8 32 H34 M66 32 H92"/><path d="M42 32 h16 m-5 -4 l5 4 l-5 4"/>`),
+  what:"Reads flow rate (gpm / lpm) in the line — your data table records it for each flow-control setting. Connected between supply manifold (IN) and the DCV (OUT).",
+  mistakes:["Installing against the flow arrow — many meters only read one direction.","Reading flow during retraction and logging it as the extension value."] },
+{ id:"h_fcv", stack:"hyd", name:"Flow-control valve with check (meter-out)",
+  svg:S(`<rect x="30" y="14" width="40" height="28" rx="3"/><path d="M36 36 L64 20 m-5 -2 l5 2 l-2 5"/><path d="M50 8 L50 14 M46 6 h8"/><path d="M8 28 H30 M70 28 H92"/><path d="M30 52 h40"/><circle cx="50" cy="52" r="5" fill="currentColor"/>`),
+  what:"Same principle as pneumatics: throttles oil LEAVING the cylinder during extension (between Tee B and Tee A in your schematic), giving smooth, load-independent speed control; check allows free reverse flow.",
+  mistakes:["Confusing Gauge A vs Gauge B sides — ΔP across this valve = |Gauge A − Gauge B| in your Test 1 calculation.","Opening it from fully closed straight to wide open instead of the ½-turn lab setting."] },
+{ id:"h_cyl_spring", stack:"hyd", name:"Cylinder with load spring",
+  svg:S(`<rect x="10" y="22" width="50" height="26"/><rect x="24" y="24" width="6" height="22" fill="currentColor"/><path d="M30 35 H64"/><path d="M64 35 l5 -8 l5 16 l5 -16 l5 16 l5 -8"/>`),
+  what:"The large-bore cylinder works against a load spring. The spring stores energy as the rod extends — which is why, with the DCV centered and pressure removed after shutdown, the cylinder should drift back (retract) on its own.",
+  mistakes:["Disconnecting hoses while the spring still holds the rod extended — trapped pressure + spring load is stored energy.","Forgetting the spring makes extension force-dependent: pressure climbs as the spring compresses."] },
+{ id:"h_gaugeS", stack:"hyd", name:"System gauge (S) / pressure gauges",
+  svg:S(`<circle cx="50" cy="30" r="18"/><path d="M50 30 L62 22"/><path d="M50 48 v12"/><text x="44" y="36" font-size="14" fill="currentColor" stroke="none">S</text>`),
+  what:"Gauge S reads pump/system pressure (set to 300 psi / 2070 kPa via the relief). Gauges A and B sit on either side of the flow-control valve at the tees to show the working pressure drop.",
+  mistakes:["Adjusting relief while watching the wrong gauge.","Logging psi in the kPa column — the data table wants both (×6.895 to convert psi→kPa)."] },
+
+// ---------- ELECTRIC RELAY ----------
+{ id:"e_no", stack:"elec", name:"Normally-open (NO) contact",
+  svg:S(`<path d="M10 35 H38 M62 35 H90"/><circle cx="38" cy="35" r="3"/><circle cx="62" cy="35" r="3"/><path d="M38 35 L62 22"/>`),
+  what:"Open at rest; closes when its device operates (button pressed, relay energized, limit switch struck). START 2PB and relay contacts 1CRA/1CRB in your ladder are NO.",
+  mistakes:["Reading the symbol as its current state — symbols always show the DE-ENERGIZED, unactuated state.","Using an NO button for STOP duty (a broken wire then behaves like 'run' instead of failing safe)."] },
+{ id:"e_nc", stack:"elec", name:"Normally-closed (NC) contact",
+  svg:S(`<path d="M10 35 H38 M62 35 H90"/><circle cx="38" cy="35" r="3"/><circle cx="62" cy="35" r="3"/><path d="M38 35 L64 26"/><path d="M58 18 L66 38"/>`),
+  what:"Closed at rest; opens when operated. STOP 1PB and the 2LS/4LS limit switches in the timed-sequence ladder are NC — operating any of them breaks the rung.",
+  mistakes:["Wiring STOP as NO 'because stop should be off' — STOP must be NC so the circuit fails safe if a wire breaks.","Forgetting an NC limit switch is shown closed even though the machine may sit on it."] },
+{ id:"e_pb", stack:"elec", name:"Pushbuttons — STOP 1PB (NC) / START 2PB (NO)",
+  svg:S(`<path d="M10 50 H35 M65 50 H90"/><circle cx="35" cy="50" r="3"/><circle cx="65" cy="50" r="3"/><path d="M35 50 L65 38"/><path d="M50 30 v-8 m-10 0 h20"/>`),
+  what:"Momentary operators. START 2PB (NO) energizes 1CR only while pressed — the seal-in contact keeps it running. STOP 1PB (NC) breaks the rung and drops everything out.",
+  mistakes:["Holding START and concluding the seal-in works — release it; the relay must hold itself.","Swapping 1PB/2PB wire numbers on the 90-EC1A terminal strip."] },
+{ id:"e_ls", stack:"elec", name:"Limit switch (2LS / 4LS)",
+  svg:S(`<path d="M10 50 H35 M65 50 H90"/><circle cx="35" cy="50" r="3"/><circle cx="65" cy="50" r="3"/><path d="M35 50 L62 36"/><path d="M48 43 L40 28"/><circle cx="38" cy="25" r="4"/>`),
+  what:"Mechanically operated contact struck by the moving cylinder. In the timed-sequence lab the NC limit switches open at end-of-sequence, dropping 1CR so BOTH cylinders retract together automatically.",
+  mistakes:["Mounting the switch where the dog barely touches it — intermittent operation ruins the sequence.","Confusing 'normally' (electrical rest state) with 'held' (the machine resting on the switch)."] },
+{ id:"e_cr", stack:"elec", name:"Control relay coil — 1CR",
+  svg:S(`<circle cx="50" cy="32" r="14"/><text x="40" y="37" font-size="12" fill="currentColor" stroke="none">1CR</text><path d="M10 32 H36 M64 32 H90"/>`),
+  what:"Electromagnet that operates its contacts (1CRA, 1CRB...) elsewhere in the ladder. One coil, many contacts — that's what gives one rung control over several others.",
+  mistakes:["Putting two coils in series on one rung (neither gets full voltage).","Forgetting every contact labeled 1CR* moves the instant the 1CR coil changes state."] },
+{ id:"e_tr", stack:"elec", name:"Time-delay relay — 1TR (on-delay)",
+  svg:S(`<circle cx="50" cy="32" r="14"/><text x="41" y="37" font-size="12" fill="currentColor" stroke="none">1TR</text><path d="M10 32 H36 M64 32 H90"/><path d="M44 54 h12 l-6 8 z"/>`),
+  what:"On-delay timer: coil energizes now, its timed contact 1TRA closes AFTER the preset (1 second in your lab). That's why Cylinder 2 extends 1 s after Cylinder 1.",
+  mistakes:["Setting the dial in the wrong range (1 s vs 1 min) — verify before energizing.","Expecting 1TRA to stay closed after 1TR drops out — on-delay contacts reset instantly at de-energization."] },
+{ id:"e_sol", stack:"elec", name:"Solenoid — 1-SOL / 2-SOL",
+  svg:S(`<path d="M10 35 H34 M66 35 H90"/><path d="M34 28 L44 42 L56 28 L66 42"/>`),
+  what:"Electrical coil that shifts a pneumatic valve. 1-SOL extends Cylinder 1, 2-SOL extends Cylinder 2; when both drop out the spring-return valves retract both cylinders together.",
+  mistakes:["Treating the solenoid like a motor — it's a valve operator; the AIR does the work.","Wiring a solenoid where a relay coil belongs and wondering why contacts never change."] },
+{ id:"e_rungs", stack:"elec", name:"Ladder diagram rails (L1 / L2)",
+  svg:S(`<path d="M20 8 V62 M80 8 V62"/><path d="M20 20 H80 M20 35 H80 M20 50 H80"/>`),
+  what:"L1 (hot) and L2 (neutral/common) power rails; each horizontal rung = one logic statement ending in exactly one load. Your lab ladder has 3 rungs: 1CR control, 1-SOL+1TR, 2-SOL.",
+  mistakes:["Putting contacts to the RIGHT of the load (loads sit at L2).","Branch wiring that accidentally bridges L1 to L2 with no load = direct short."] },
+{ id:"e_logic", stack:"elec", name:"Logic in ladder form — AND / OR / NOT",
+  svg:S(`<path d="M6 22 H26 M40 22 H58 M72 22 H94"/><circle cx="26" cy="22" r="2.5"/><circle cx="40" cy="22" r="2.5"/><path d="M26 22 L40 14"/><circle cx="58" cy="22" r="2.5"/><circle cx="72" cy="22" r="2.5"/><path d="M58 22 L72 14"/><path d="M6 48 H26 M40 48 H94"/><circle cx="26" cy="48" r="2.5"/><circle cx="40" cy="48" r="2.5"/><path d="M26 48 L40 40"/><path d="M14 48 v14 h38 v-14"/><circle cx="14" cy="62" r="0"/>`),
+  what:"Series contacts = AND (all must close). Parallel contacts = OR (any path completes the rung). An NC contact = NOT. Seal-in = OR(start, own contact) AND stop — that's memory.",
+  mistakes:["Building OR by paralleling entire rungs instead of just the contacts.","Forgetting NAND = NC contacts in PARALLEL (output off only when ALL inputs on)."] },
+
+// ---------- AC/DC ----------
+{ id:"a_src", stack:"acdc", name:"AC source — 24 VAC",
+  svg:S(`<circle cx="50" cy="32" r="16"/><path d="M40 32 q5 -10 10 0 q5 10 10 0"/><path d="M50 48 v12 M50 8 v8"/>`),
+  what:"The T7017A-BDA lab runs from a 24 VAC source on L1/L2 — low-voltage on purpose, but treat every live check with meter discipline.",
+  mistakes:["Making resistance checks with the source live — power OFF for Ω measurements, always.","Assuming 24 VAC 'can't bite' — shorted leads still arc and blow F1."] },
+{ id:"a_knife", stack:"acdc", name:"Knife switch — S1",
+  svg:S(`<path d="M10 40 H35 M65 40 H90"/><circle cx="35" cy="40" r="3"/><circle cx="65" cy="40" r="3"/><path d="M35 40 L68 24"/>`),
+  what:"Main disconnect for the lab circuit. Open S1 (and discharge the capacitor) before any resistance measurement — that's the sheet's safety note.",
+  mistakes:["Trusting S2 (the pushbutton) as isolation — only S1 removes the source.","Opening it under load repeatedly — the visible arc erodes the blade."] },
+{ id:"a_fuse", stack:"acdc", name:"Fuse — F1",
+  svg:S(`<path d="M10 35 H30 M70 35 H90"/><rect x="30" y="27" width="40" height="16" rx="8"/><path d="M30 35 H70"/>`),
+  what:"Overcurrent protection in series with the primary. Check #3 in your sheet: with power OFF, a good fuse reads continuity / ≈0 Ω.",
+  mistakes:["Reading the fuse in-circuit with parallel paths and calling it good.","Replacing a blown fuse without asking what overloaded it."] },
+{ id:"a_xfmr", stack:"acdc", name:"Transformer (H1-H2 / X1-X2)",
+  svg:S(`<path d="M38 12 v46 M44 12 v46" /><path d="M34 16 q-8 5 0 10 q-8 5 0 10 q-8 5 0 10 q-8 5 0 10"/><path d="M48 16 q8 5 0 10 q8 5 0 10 q8 5 0 10 q8 5 0 10"/><path d="M10 18 H28 M10 54 H28 M54 18 H90 M54 54 H90" stroke-width="2.5"/>`),
+  what:"Two magnetically-coupled coils on a shared core. Primary H1–H2, secondary X1–X2. Turns ratio sets voltage: Vs/Vp = Ns/Np. Yours is ≈1:1 — an ISOLATION transformer: ~24 VAC out, but galvanically separated from the source.",
+  mistakes:["'Same voltage in and out means it does nothing' — isolation is the function.","Mixing up H and X terminals; convention is H = primary (high side), X = secondary.","Expecting it to work on DC — no changing flux, no induction, just a heater."] },
+{ id:"a_pb", stack:"acdc", name:"NO pushbutton — S2",
+  svg:S(`<path d="M10 50 H35 M65 50 H90"/><circle cx="35" cy="50" r="3"/><circle cx="65" cy="50" r="3"/><path d="M35 50 L65 38"/><path d="M50 30 v-8 m-10 0 h20"/>`),
+  what:"Momentary NO button in the secondary loop — the lamp only operates while S2 is held, which is when you take voltage and A–A current readings.",
+  mistakes:["Taking 'while S2 is pressed' readings after releasing it.","Holding S2 with one hand while moving meter leads with the other — set up first, then press."] },
+{ id:"a_sel", stack:"acdc", name:"2-position selector — S3 (BYPASS / CAP)",
+  svg:S(`<path d="M10 45 H35"/><circle cx="35" cy="45" r="3"/><circle cx="68" cy="30" r="3"/><circle cx="68" cy="58" r="3"/><path d="M35 45 L66 32"/><path d="M72 30 H90 M72 58 H90"/><text x="74" y="24" font-size="9" fill="currentColor" stroke="none">BYP</text><text x="74" y="69" font-size="9" fill="currentColor" stroke="none">CAP</text>`),
+  what:"Routes the lamp either directly across the secondary (BYPASS) or through the series capacitor (CAP). The whole experiment hinges on comparing these two positions.",
+  mistakes:["Flipping S3 mid-reading and logging a mixed row.","Forgetting which position the data row belongs to — label as you go."] },
+{ id:"a_cap", stack:"acdc", name:"Capacitor — C1",
+  svg:S(`<path d="M10 35 H42 M58 35 H90"/><path d="M42 20 v30 M58 20 v30"/>`),
+  what:"Stores energy in an electric field; opposes CHANGE in voltage. On AC it passes current limited by reactance Xc = 1/(2πfC). In series with the lamp it drops part of the 24 V, so the lamp dims. Series C: 1/Ct = 1/C1 + 1/C2…; parallel C: Ct = C1 + C2…",
+  mistakes:["Skipping discharge before resistance checks — a charged cap zaps the meter (and you). The sheet calls this out explicitly.","Thinking a capacitor blocks AC like it blocks DC — it limits AC, it blocks steady DC."] },
+{ id:"a_ind", stack:"acdc", name:"Inductor / coil",
+  svg:S(`<path d="M10 35 H24"/><path d="M24 35 q7 -16 14 0 q7 -16 14 0 q7 -16 14 0"/><path d="M66 35 H90"/>`),
+  what:"Stores energy in a magnetic field; opposes CHANGE in current (XL = 2πfL). Transformer windings are inductors — that's why primary resistance (a few Ω, check #4) tells you little about its AC impedance. Series L: Lt = L1 + L2…; parallel: 1/Lt = 1/L1 + 1/L2….",
+  mistakes:["Judging a winding 'shorted' from low DC resistance alone — coils are low-Ω by nature; compare to spec.","Breaking an inductive circuit fast with no suppression and being surprised by the arc (inductive kick)."] },
+{ id:"a_lamp", stack:"acdc", name:"Lamp",
+  svg:S(`<circle cx="50" cy="32" r="15"/><path d="M40 22 L60 42 M60 22 L40 42"/><path d="M10 32 H35 M65 32 H90"/>`),
+  what:"The load. Brightness tracks power: P = V × I (checks #9 and #12). In CAP position both V and I drop, so the lamp visibly dims vs BYPASS.",
+  mistakes:["Computing wattage from BYPASS volts × CAP amps — keep each P = V×I pair from the SAME selector position.","Cold-filament resistance (check #6) is much lower than hot operating resistance — they won't match V/I."] },
+{ id:"a_amm", stack:"acdc", name:"Ammeter at A–A",
+  svg:S(`<circle cx="50" cy="32" r="15"/><text x="44" y="38" font-size="16" fill="currentColor" stroke="none">A</text><path d="M10 32 H35 M65 32 H90"/>`),
+  what:"Current meter inserted IN SERIES at the marked A–A break. You read it in both S3 positions to compare BYPASS vs CAP current.",
+  mistakes:["Clipping an ammeter ACROSS a component (parallel) — that's a short through the meter; F1 goes first if you're lucky.","Leaving the meter in current mode and then probing voltage with the same lead position."] },
+];
+
+/* ---------- GUIDED LABS (verbatim task flow from the sheets) ---------- */
+const LABS = [
+{ id:"lab_pneu", stack:"pneu", title:"Basic Pneumatics STACK Lab",
+  trainer:"Amatrol Basic Pneumatics trainer",
+  objective:"Build and operate the meter-out flow-control circuit. Set supply pressure with the regulator, operate the 5-way/3-position DCV to extend and retract the cylinder, and use the gauges and timing observations to explain how meter-out flow control affects cylinder motion.",
+  safety:["Shutoff valve CLOSED while connecting tubing.","Verify every tube fully seated before pressurizing — fittings under pressure can release violently.","End of lab: remove air pressure and CENTER the valve."],
+  steps:[
+    "Connect the circuit exactly as shown in the schematic: shutoff valve → regulator (Gauge A) → 5-way/3-position DCV → flow-control valve (Gauge B) → large-bore cylinder.",
+    "With the circuit de-energized and the shutoff valve closed, verify all tubing is fully seated and the flow-control valve is initially closed.",
+    "Open the shutoff valve and adjust the regulator until Gauge A reads 30 psi / 207 kPa.",
+    "Open the flow-control valve 1/2 turn. Shift the DCV to extend the cylinder; observe the pressure at Gauge B and the cylinder extension speed.",
+    "When the cylinder is fully extended, retract it and compare the retraction speed to the extension speed.",
+    "Open the flow-control valve to the second position assigned by the instructor and repeat the extension/retraction test.",
+    "After testing, return the circuit to a safe condition by removing air pressure and centering the valve."],
+  sim:"sim_pneu",
+  signoff:["Which gauge indicates the back pressure caused by the meter-out flow-control valve?","At the ½-turn setting, what happened to Gauge B when the cylinder first started to extend?","Why was retraction faster than extension?"] },
+
+{ id:"lab_hyd", stack:"hyd", title:"Basic Hydraulics STACK Lab",
+  trainer:"Amatrol 850-H1 Basic Hydraulics Trainer",
+  objective:"Build and operate the meter-out flow-control circuit using the hydraulic power unit, relief setting, 4-way/3-position DCV, flow meter, pressure gauges, flow-control valve, and large-bore cylinder to demonstrate controlled extension, rapid retraction, and pressure-drop behavior.",
+  safety:["Perform the normal power-unit checkout BEFORE startup.","Begin with the relief valve at minimum and shutoff valve closed.","Hydraulic fluid under pressure can injection-injure — never check for leaks with your hand.","Shutdown: relief to minimum, shutoff closed, DCV cycled to remove trapped pressure."],
+  steps:[
+    "Connect the circuit exactly as the schematic: supply manifold → flow meter (IN/OUT) → DCV → Tee B (Gauge B) → flow-control valve → Tee A (Gauge A) → large-bore cylinder with load spring; returns to the return manifold. Connect the tees at the flow-control valve.",
+    "Perform the normal hydraulic power-unit checkout. Begin with the relief valve at minimum and the shutoff valve closed.",
+    "Start the power unit and adjust the system until Gauge S reads 300 psi / 2070 kPa, then open the shutoff valve.",
+    "Set the flow-control valve fully closed, then open it 1/2 turn. Extend and retract the cylinder and record Gauge A, Gauge B, Gauge S, flow rate, and extension time in the data table.",
+    "Open the flow-control valve to a second position chosen by the instructor and repeat the required checks (Tests 3 & 4).",
+    "After testing: return the relief valve to minimum, close the shutoff valve, move the DCV to remove trapped pressure, and secure the trainer."],
+  sim:"sim_hyd",
+  signoff:["ΔP across the flow-control valve in Test 1 = |Gauge A − Gauge B|. Compute it from your readings.","Which direction was controlled by the meter-out valve, and why?","With the DCV centered and pressure removed after shutdown, what should the cylinder (with its load spring) do?"] },
+
+{ id:"lab_relay", stack:"elec", title:"Electric Relay Control STACK Lab",
+  trainer:"Amatrol 90-EC1A",
+  objective:"Build and operate a dual-cylinder relay control circuit using stop/start pushbuttons, two limit switches, a control relay, and a 1-second time-delay relay. Wire the circuit, connect the air supply, verify the timed sequence, and complete instructor sign-off.",
+  safety:["Wire with the circuit de-energized.","Keep hands clear of cylinder travel — the sequence starts the instant logic is made.","STOP 1PB must drop the whole circuit; verify it before relying on it."],
+  steps:[
+    "Wire the circuit exactly as shown in the ladder diagram using standard 90-EC1A terminal designations (Rung 1: STOP 1PB → START 2PB ∥ 1CRA seal-in → 2LS → 4LS → 1CR. Rung 2: 1CRB → 1-SOL ∥ 1TR. Rung 3: 1TRA → 2-SOL).",
+    "Connect the air supply and verify that both cylinders and their associated solenoids are connected correctly.",
+    "Set time-delay relay 1TR to 1 second before energizing the circuit.",
+    "Press START 2PB momentarily and observe the operating sequence.",
+    "Verify Cylinder 1 extends first, Cylinder 2 extends after the timed delay, and both cylinders retract together after the sequence completes.",
+    "Press STOP 1PB and verify the circuit de-energizes and the system returns to a safe state."],
+  sim:"sim_relay",
+  signoff:["Why does Cylinder 2 wait 1 second? (Which device, which contact?)","What makes the circuit keep running after you release START 2PB?","What do the NC limit switches do at the end of the sequence?"] },
+
+{ id:"lab_acdc", stack:"acdc", title:"AC/DC STACK Lab",
+  trainer:"Amatrol T7017A-BDA · 24 VAC",
+  objective:"Assemble and test the integrated 24 VAC circuit. Verify transformer primary and secondary voltage, make de-energized resistance checks, insert an ammeter at A–A for current checks, and calculate lamp wattage in both selector positions.",
+  safety:["S3 BYPASS = lamp directly across the secondary; S3 CAP = capacitor in series with the lamp.","Turn the power OFF and DISCHARGE THE CAPACITOR before any resistance measurement.","Ammeter goes in SERIES at A–A — never across a component."],
+  steps:[
+    "Assemble: L1 → S1 knife switch → F1 fuse → transformer primary H1–H2; isolated secondary X1–X2 (≈24 VAC) → S2 NO pushbutton → A–A ammeter point → S3 selector (BYPASS/CAP, C1 capacitor in the CAP path) → lamp → return.",
+    "Power OFF + capacitor discharged: measure F1 continuity (~0 Ω), transformer primary resistance, secondary resistance, and lamp resistance (checks 3–6).",
+    "Power ON: measure primary voltage H1–H2 and secondary voltage X1–X2 (checks 1–2).",
+    "S3 in BYPASS: hold S2 and measure lamp voltage and circuit current at A–A; calculate lamp wattage P = V × I (checks 7–9).",
+    "S3 in CAP: hold S2 and measure lamp voltage and current at A–A; calculate wattage (checks 10–12).",
+    "Compare: does brightness change between BYPASS and CAP? Which position drew more current? Explain why the capacitor changes lamp behavior on AC (checks 13–15)."],
+  sim:"sim_acdc",
+  signoff:["Which selector position produced higher current, and why?","Why must the capacitor be discharged before resistance checks?","Explain in one sentence why a series capacitor dims an AC lamp."] },
+];
+
+/* ---------- QUIZ BANKS (lab sign-off questions as MCQs + theory) ---------- */
+const QUIZZES = [
+{ id:"q_pneu", stack:"pneu", title:"Pneumatics — Required Checks", questions:[
+ { q:"Which gauge in the circuit indicates the back pressure caused by the meter-out flow-control valve?",
+   a:["Gauge A","Gauge B","The regulator dial","The DCV pilot gauge"], c:1,
+   x:"Gauge B sits between the cylinder's rod end and the flow-control valve — exactly where exhaust air is being throttled, so it reads the back pressure." },
+ { q:"At the ½-turn valve setting, what happened to Gauge B when the cylinder first started to extend?",
+   a:["It dropped to zero","It rose, showing trapped exhaust pressure","It matched Gauge A instantly","It read negative (vacuum)"], c:1,
+   x:"As the piston advances, rod-end air can only escape through the small restriction — pressure builds on the exhaust side, so Gauge B rises." },
+ { q:"During which cylinder motion did the flow-control valve directly control speed in this circuit?",
+   a:["Extension only","Retraction only","Both equally","Neither — the regulator controls speed"], c:0,
+   x:"Meter-out on the rod-end line throttles exhaust during EXTENSION. On retraction the bypass check opens and flow is unrestricted." },
+ { q:"Why was cylinder retraction faster than extension in this meter-out arrangement?",
+   a:["Rod-side pressure is always higher","Retraction air bypasses the restriction through the check valve","The regulator opens wider on retraction","The cylinder spring assists retraction"], c:1,
+   x:"The one-way check in the flow-control valve free-flows in the retract direction, so nothing throttles the stroke." },
+ { q:"When the flow-control valve opening was increased, what happened to cylinder extension time?",
+   a:["It increased","It decreased","No change","The cylinder stalled"], c:1,
+   x:"A bigger opening lets exhaust air leave faster → the piston moves faster → extension time goes DOWN." },
+ { q:"What regulator setting was required at Gauge A before testing began?",
+   a:["15 psi / 103 kPa","30 psi / 207 kPa","60 psi / 414 kPa","90 psi / 621 kPa"], c:1,
+   x:"The sheet specifies adjusting the regulator until Gauge A reads 30 psi / 207 kPa." },
+ { q:"Why can meter-out control produce a pressure RISE on the cylinder exhaust side?",
+   a:["The regulator leaks into the rod end","The moving piston compresses trapped air faster than the restriction releases it","Heat from friction expands the air","The check valve pumps air backwards"], c:1,
+   x:"The piston acts like a compressor on the trapped rod-end volume; the needle valve releases it slowly, so pressure rises until forces balance — this back pressure is what gives meter-out its smooth, controlled motion." },
+ { q:"A 5-way/3-position DCV has…",
+   a:["5 positions and 3 ports","5 ports and 3 positions","5 solenoids","3 exhausts and 5 springs"], c:1,
+   x:"'Ways' = ports (P, A, B, EA, EB). Positions = the 3 spool states (extend / center / retract)." },
+ { q:"The safe condition at the end of the pneumatics lab is:",
+   a:["Cylinder extended, air on","Air pressure removed and the DCV centered","Flow control fully open, air on","Regulator at maximum"], c:1,
+   x:"Verbatim from the task list: remove air pressure and center the valve." },
+]},
+{ id:"q_hyd", stack:"hyd", title:"Hydraulics — Required Checks", questions:[
+ { q:"Which gauge indicates the back pressure caused by the flow-control valve in the hydraulic circuit?",
+   a:["Gauge S","Gauge A","Gauge B","The flow meter"], c:1,
+   x:"In the 850-H1 schematic the flow-control valve sits between Tee B and Tee A; Gauge A is on the cylinder side of the restriction during exhaust flow — it shows the held-back pressure. (Compare both tees and watch which one rises during extension.)" },
+ { q:"ΔP across the flow-control valve for Test 1 is calculated as:",
+   a:["Gauge S − Gauge A","|Gauge A − Gauge B|","Gauge B ÷ Gauge A","Flow rate × extension time"], c:1,
+   x:"Pressure drop across a component = the difference between the gauges on its two sides: ΔP = |Gauge A − Gauge B|." },
+ { q:"Which direction was controlled by the meter-out valve, and why?",
+   a:["Retraction — the pump pushes harder that way","Extension — the valve throttles oil leaving the cylinder on that stroke","Both — oil always passes the needle","Neither — the relief valve sets speed"], c:1,
+   x:"Same meter-out logic as pneumatics: return (exhaust) oil is restricted during extension; the check frees the reverse stroke for rapid retraction." },
+ { q:"As the flow-control opening increased, extension time and flow rate respectively…",
+   a:["Both increased","Time decreased, flow increased","Time increased, flow decreased","Both decreased"], c:1,
+   x:"More opening → more flow (gpm up) → faster stroke (seconds down). Your Tests 1 vs 3 rows demonstrate it." },
+ { q:"With the DCV returned to center and pressure removed after shutdown, what should the cylinder do?",
+   a:["Stay locked extended forever","Drift retracted as the load spring returns it","Extend further","Oscillate"], c:1,
+   x:"With trapped pressure relieved, nothing opposes the compressed load spring — it pushes the rod back. If it stays extended, pressure is still trapped: unsafe." },
+ { q:"The required system pressure on Gauge S before opening the shutoff valve was:",
+   a:["100 psi / 690 kPa","300 psi / 2070 kPa","500 psi / 3450 kPa","30 psi / 207 kPa"], c:1,
+   x:"Start the power unit and adjust (via the relief) until Gauge S reads 300 psi / 2070 kPa." },
+ { q:"Why does the lab start with the relief valve at MINIMUM?",
+   a:["To save oil","So startup pressure is as low as possible until the system is verified","Because the pump can't start loaded","To keep the flow meter at zero"], c:1,
+   x:"Bringing pressure up deliberately from minimum means a wiring/plumbing mistake is found at low energy, not at 300 psi." },
+ { q:"A hydraulic relief valve's job in this circuit is to:",
+   a:["Set cylinder speed","Limit maximum system pressure by dumping to tank at its setting","Filter the oil","Reverse the cylinder"], c:1,
+   x:"It's the pressure ceiling / safety valve. Speed control belongs to the flow-control valve; direction to the DCV." },
+ { q:"Why is checking hydraulic leaks with your hand dangerous?",
+   a:["Oil stains skin","A pinhole jet can inject fluid through skin — a medical emergency","It cools the oil","It magnetizes the fittings"], c:1,
+   x:"High-pressure injection injuries look minor and are surgical emergencies. Use cardboard/paper to trace leaks, never skin." },
+]},
+{ id:"q_relay", stack:"elec", title:"Relay Control — Timed Sequence", questions:[
+ { q:"In the 90-EC1A ladder, what keeps 1CR energized after you release START 2PB?",
+   a:["The STOP button","Seal-in contact 1CRA in parallel with START 2PB","Limit switch 2LS","The time-delay relay"], c:1,
+   x:"1CR closes its own contact 1CRA around the start button — the classic seal-in (memory) circuit. Series stop + parallel seal = AND/OR logic." },
+ { q:"Why does Cylinder 2 extend one second after Cylinder 1?",
+   a:["Air takes 1 s to travel the hose","On-delay contact 1TRA closes 1 s after 1TR energizes, then powers 2-SOL","2LS is slow","2-SOL has a weaker spring"], c:1,
+   x:"Rung 2 energizes 1-SOL and timer 1TR together; rung 3's 2-SOL waits on the timed contact 1TRA — set to 1 second in the lab." },
+ { q:"STOP 1PB is wired as which contact type, and why?",
+   a:["NO — so it's off until needed","NC — so pressing it (or a broken wire) breaks the rung and fails safe","NC — to carry more current","NO — to save a terminal"], c:1,
+   x:"Stops are always NC in series: any open (finger or fault) kills the circuit. An NO stop with a broken wire could never stop the machine." },
+ { q:"What do the NC limit switches (2LS/4LS) accomplish at the end of the sequence?",
+   a:["They speed up the cylinders","They open, dropping 1CR so both solenoids de-energize and both cylinders retract together","They start the timer","They latch the relay on"], c:1,
+   x:"End-of-stroke actuation opens the NC contacts in rung 1 → 1CR (and its seal-in) drops → 1-SOL, 1TR, 2-SOL all de-energize → spring-return valves retract both cylinders together." },
+ { q:"Series contacts in a rung implement which logic function?",
+   a:["OR","AND","NOT","NAND"], c:1,
+   x:"Every series contact must conduct for the rung to complete: AND. Parallel branches are OR; an NC contact is NOT." },
+ { q:"One relay coil (1CR) can…",
+   a:["Operate only one contact","Operate multiple contacts (1CRA, 1CRB, …) across different rungs simultaneously","Replace the timer","Power a solenoid directly through its core"], c:1,
+   x:"That's the leverage of relay logic: one control decision (the coil) fans out to many contacts." },
+ { q:"After 1TR de-energizes, its on-delay contact 1TRA…",
+   a:["Stays closed for another second","Opens immediately","Opens after the preset","Welds shut"], c:1,
+   x:"On-delay = delay on ENERGIZE only. Drop-out resets the timed contact instantly — which is why 2-SOL releases the moment STOP is pressed." },
+ { q:"Pressing STOP 1PB during the cycle should result in:",
+   a:["Only Cylinder 2 retracting","Complete de-energization — relay, timer, both solenoids drop and the system returns to a safe state","The timer pausing and resuming","Nothing until the sequence finishes"], c:1,
+   x:"STOP breaks rung 1 → 1CR drops → 1CRB opens → rungs 2 & 3 dead → both cylinders spring-return. Verify this every time you build the circuit." },
+ { q:"A 'jog' circuit differs from this seal-in circuit because:",
+   a:["It uses NC start buttons","The load runs ONLY while the button is held (no memory contact)","It needs two relays","It can't use solenoids"], c:1,
+   x:"Jog = momentary control with no seal-in. Add the parallel relay contact and you've built memory." },
+]},
+{ id:"q_acdc", stack:"acdc", title:"AC/DC — Transformer, Cap & Lamp", questions:[
+ { q:"With power OFF, a good fuse F1 measures approximately:",
+   a:["Infinite Ω","0 Ω (continuity)","24 Ω","1 MΩ"], c:1,
+   x:"Check #3: a healthy fuse is just a conductor — continuity / near-zero ohms. Open = blown." },
+ { q:"The T7017A transformer secondary reads ≈24 VAC with 24 VAC in. Its purpose is:",
+   a:["It's broken — it should step up","Isolation: a 1:1 ratio gives the same voltage but galvanically separates the load from the source","Frequency doubling","Converting AC to DC"], c:1,
+   x:"Vs/Vp = Ns/Np ≈ 1. Isolation transformers protect circuits and people by removing the direct connection to the supply." },
+ { q:"The turns-ratio relationship for any transformer is:",
+   a:["Vp/Vs = Ns/Np","Vp/Vs = Np/Ns","Vp×Vs = Np×Ns","Vs = Vp + Ns"], c:1,
+   x:"Voltage scales WITH turns: more secondary turns → more secondary volts. (Current scales inversely — power is conserved.)" },
+ { q:"Why must you discharge the capacitor before resistance checks?",
+   a:["It speeds up the meter","A charged cap drives current through the meter, giving false readings and possible damage/shock","It resets the lamp","The fuse requires it"], c:1,
+   x:"The sheet's safety note. An ohmmeter assumes a dead circuit; stored charge violates that — and bites." },
+ { q:"In S3 BYPASS, the lamp voltage while S2 is pressed is approximately:",
+   a:["0 V","The full secondary voltage (≈24 VAC)","Half the secondary","48 VAC"], c:1,
+   x:"BYPASS places the lamp directly across X1–X2, so it sees essentially the whole secondary voltage." },
+ { q:"Switching S3 to CAP, lamp voltage and current both drop because:",
+   a:["The cap shorts the lamp","The capacitor's reactance Xc = 1/(2πfC) adds series opposition, dividing the voltage","The transformer ratio changes","The fuse heats up"], c:1,
+   x:"Part of the 24 V now drops across Xc, leaving less for the lamp → less current → dimmer lamp. This is checks 10–15 in one sentence." },
+ { q:"Lamp wattage is calculated from your readings as:",
+   a:["P = V ÷ I","P = V × I","P = I² ÷ V","P = V + I"], c:1,
+   x:"Checks #9 and #12: multiply the lamp voltage by the series current measured at A–A — for the SAME selector position." },
+ { q:"Which selector position produces the higher current?",
+   a:["CAP","BYPASS","Both equal","Neither passes current"], c:1,
+   x:"BYPASS has only the lamp limiting current; CAP adds capacitive reactance in series, so its current is lower." },
+ { q:"Capacitors combine like this:",
+   a:["Series: add; Parallel: reciprocal","Parallel: add (Ct=C1+C2); Series: reciprocal (1/Ct=1/C1+1/C2)","Always add","Always average"], c:1,
+   x:"Opposite of resistors. Inductors combine like resistors: series add, parallel reciprocal." },
+ { q:"An inductor fundamentally opposes…",
+   a:["Change in voltage","Change in current","Heat","Magnetism"], c:1,
+   x:"L resists di/dt (stores energy in its magnetic field). C resists dv/dt (electric field). Memorize the pair — it explains transformers, filters, and inductive kick." },
+ { q:"Why would the lamp behave differently if this circuit ran on DC instead of 24 VAC?",
+   a:["DC makes lamps brighter always","In CAP position the capacitor would charge once and block steady DC — the lamp would go out","The transformer would output more","No difference"], c:1,
+   x:"Two effects: the transformer needs changing flux (no AC in = no output), and a series cap passes only changing current. Check #15's 'why' in full." },
+]},
+];
+
+/* ---------- QUICK REFERENCE ---------- */
+const REFERENCE = [
+{ h:"Lab setpoints (memorize)", items:[
+  "Pneumatics: Gauge A = 30 psi / 207 kPa before testing",
+  "Hydraulics: Gauge S = 300 psi / 2070 kPa, relief starts at MINIMUM",
+  "Relay lab: 1TR set to 1 second before energizing",
+  "AC/DC: 24 VAC source, ≈1:1 isolation transformer (H1-H2 / X1-X2)"]},
+{ h:"Formulas", items:[
+  "ΔP across flow control = |Gauge A − Gauge B|",
+  "psi → kPa: × 6.895",
+  "Lamp power: P = V × I",
+  "Transformer: Vs/Vp = Ns/Np (current inverse: Ip/Is = Ns/Np)",
+  "Capacitive reactance: Xc = 1/(2πfC) · Inductive: XL = 2πfL",
+  "Capacitors — parallel: Ct = C1+C2 · series: 1/Ct = 1/C1 + 1/C2",
+  "Inductors — series: Lt = L1+L2 · parallel: 1/Lt = 1/L1 + 1/L2"]},
+{ h:"Meter-out flow control — the idea", items:[
+  "Restrict the EXHAUST side of the cylinder, not the supply",
+  "Back pressure builds on the leaving side (Gauge B pneu / cylinder-side tee hyd)",
+  "Controls the metered stroke only; check valve frees the reverse stroke",
+  "Result: smooth, load-resistant speed control + rapid return"]},
+{ h:"Ladder logic ↔ Boolean", items:[
+  "Series contacts = AND · Parallel = OR · NC contact = NOT",
+  "Seal-in = (START OR own-contact) AND STOP — that's 1-bit memory",
+  "NAND = NC contacts in parallel · NOR = NC contacts in series",
+  "Loads (coils, solenoids, lamps) on the L2 side, one per rung"]},
+{ h:"Safety — non-negotiable", items:[
+  "Pneumatic: shutoff CLOSED while connecting; verify tubing seated; end centered + depressurized",
+  "Hydraulic: relief at min for startup; never leak-check with hands; relieve trapped pressure at shutdown",
+  "Electrical: power OFF + cap DISCHARGED before Ω checks; ammeter in SERIES only; STOP buttons are NC",
+  "All stacks: stored energy (springs, caps, trapped pressure) acts after power is off"]},
+];
+
+</script>
+<script>
+/* Mechatronics Stack Mastery — interactive circuit simulators.
+   Each sim mounts into a container and returns a cleanup fn.
+   api: { award(id, xp, label) } — one-time XP milestones. */
+
+const SIMS = {};
+
+/* ============ shared helpers ============ */
+function el(html){ const t=document.createElement('template'); t.innerHTML=html.trim(); return t.content.firstElementChild; }
+function gaugeFace(id,label){
+  return `<g class="gauge" id="${id}">
+    <circle r="20" fill="var(--panel2)" stroke="var(--line)"/>
+    ${Array.from({length:9},(_,i)=>{const a=(-210+i*30)*Math.PI/180;
+      return `<line x1="${Math.cos(a)*16}" y1="${Math.sin(a)*16}" x2="${Math.cos(a)*19}" y2="${Math.sin(a)*19}" stroke="var(--dim)" stroke-width="1.5"/>`}).join('')}
+    <line class="needle" x1="0" y1="0" x2="0" y2="-15" stroke="var(--danger)" stroke-width="2" transform="rotate(-120)"/>
+    <circle r="2.5" fill="var(--ink)"/>
+    <text y="32" text-anchor="middle" class="svgtag">${label}</text>
+    <text y="44" text-anchor="middle" class="svgval" id="${id}_v">0 psi</text>
+  </g>`;
+}
+function setGauge(svg,id,val,max){
+  const g=svg.querySelector(`#${id} .needle`); if(!g) return;
+  const ang=-120+240*Math.max(0,Math.min(1,val/max));
+  g.setAttribute('transform',`rotate(${ang})`);
+  const t=svg.querySelector(`#${id}_v`); if(t) t.textContent=Math.round(val)+' psi';
+}
+function holdable(btn,onDown,onUp){
+  const d=e=>{e.preventDefault();btn.classList.add('pressed');onDown();};
+  const u=()=>{btn.classList.remove('pressed');onUp&&onUp();};
+  btn.addEventListener('pointerdown',d);
+  btn.addEventListener('pointerup',u); btn.addEventListener('pointercancel',u); btn.addEventListener('pointerleave',u);
+  btn.addEventListener('contextmenu',e=>e.preventDefault());
+}
+
+/* ============ 1. PNEUMATICS — meter-out flow control ============ */
+SIMS.sim_pneu = {
+  title:"Pneumatic Meter-Out Circuit", stack:"pneu",
+  desc:"Your Figure 6-1: regulator → 5/3 DCV → flow-control valve (Gauge B) → large-bore cylinder. Set 30 psi, open the needle ½ turn, and watch the back pressure appear.",
+  mount(root,api){
+    root.innerHTML=`
+    <div class="simwrap">
+      <svg viewBox="0 0 360 220" class="schematic accent-pneu">
+        <g transform="translate(40,40)">${gaugeFace('gA','GAUGE A')}</g>
+        <g transform="translate(212,40)">${gaugeFace('gB','GAUGE B')}</g>
+        <!-- lines -->
+        <path id="lnSupply" class="pipe" d="M10 150 H70"/>
+        <path id="lnA" class="pipe" d="M70 150 H120"/>
+        <path id="lnWork" class="pipe" d="M168 150 H212 V120"/>
+        <path id="lnRod" class="pipe" d="M232 120 V96 H300 V110"/>
+        <!-- supply triangle -->
+        <path d="M2 144 l12 6 l-12 6 z" fill="currentColor" opacity=".0"/>
+        <path d="M4 144 l12 6 l-12 6" class="pipe"/>
+        <!-- DCV -->
+        <g id="dcv" transform="translate(120,128)">
+          <rect class="comp" x="0" y="0" width="48" height="44"/>
+          <line class="comp" x1="16" y1="0" x2="16" y2="44"/><line class="comp" x1="32" y1="0" x2="32" y2="44"/>
+          <g id="spool" transform="translate(0,0)">
+            <path class="comp" d="M4 36 L12 8 M9 8 l3 0 l0 3"/>
+            <path class="comp" d="M12 36 L4 8 M4 11 l0 -3 l3 0"/>
+            <line class="comp" x1="20" y1="8" x2="20" y2="36"/><line class="comp" x1="28" y1="8" x2="28" y2="36"/>
+            <path class="comp" d="M36 8 L44 36 M41 36 l3 0 l0 -3"/>
+            <path class="comp" d="M44 8 L36 36 M36 33 l0 3 l3 0"/>
+          </g>
+          <text x="24" y="58" text-anchor="middle" class="svgtag">5/3 DCV</text>
+        </g>
+        <!-- flow control -->
+        <g id="fcv" transform="translate(244,76)">
+          <rect class="comp" x="0" y="0" width="44" height="28" rx="4"/>
+          <path class="comp" d="M6 22 L36 8 m-6 -2 l6 2 l-2 6"/>
+          <path class="comp" d="M22 -8 v8 M16 -10 h12"/>
+          <text x="22" y="42" text-anchor="middle" class="svgtag">FLOW CTRL</text>
+        </g>
+        <!-- cylinder -->
+        <g transform="translate(196,164)">
+          <rect class="comp" x="0" y="0" width="120" height="34"/>
+          <rect id="piston" x="6" y="3" width="10" height="28" fill="currentColor"/>
+          <rect id="rod" x="16" y="13" width="40" height="8" fill="var(--dim)"/>
+          <text x="60" y="50" text-anchor="middle" class="svgtag">LARGE BORE CYLINDER</text>
+        </g>
+        <text x="10" y="136" class="svgtag">SUPPLY</text>
+      </svg>
+      <div class="readout"><span id="extTime">extension time: —</span><span id="simNote"></span></div>
+      <div class="ctrls">
+        <button id="shut" class="ctl">Shutoff: CLOSED</button>
+        <label class="slider">Regulator <input id="reg" type="range" min="0" max="60" value="0"><b id="regv">0 psi</b></label>
+        <label class="slider">Flow-control <input id="fc" type="range" min="0" max="3" step="0.5" value="0"><b id="fcv_v">closed</b></label>
+        <div class="seg" id="dcvseg">
+          <button data-p="-1">Retract</button><button data-p="0" class="on">Center</button><button data-p="1">Extend</button>
+        </div>
+      </div>
+    </div>`;
+    const svg=root.querySelector('svg');
+    const st={shut:false,reg:0,fc:0,dcv:0,pos:0,gB:0,extStart:null,extDone:false,didRetract:false};
+    root.querySelector('#shut').onclick=e=>{st.shut=!st.shut;e.target.textContent='Shutoff: '+(st.shut?'OPEN':'CLOSED');e.target.classList.toggle('on',st.shut);};
+    root.querySelector('#reg').oninput=e=>{st.reg=+e.target.value;root.querySelector('#regv').textContent=st.reg+' psi';};
+    root.querySelector('#fc').oninput=e=>{st.fc=+e.target.value;root.querySelector('#fcv_v').textContent=st.fc===0?'closed':st.fc+' turn'+(st.fc>1?'s':'');};
+    root.querySelectorAll('#dcvseg button').forEach(b=>b.onclick=()=>{
+      root.querySelectorAll('#dcvseg button').forEach(x=>x.classList.remove('on'));b.classList.add('on');
+      st.dcv=+b.dataset.p;
+      if(st.dcv===1){st.extStart=performance.now();st.extDone=false;}
+      svg.querySelector('#spool').setAttribute('transform',`translate(${st.dcv*16},0)`);
+    });
+    let raf,last=performance.now();
+    const note=root.querySelector('#simNote');
+    function tick(now){
+      const dt=Math.min(.05,(now-last)/1000);last=now;
+      const supply=st.shut?st.reg:0;
+      let v=0;
+      if(supply>4){
+        if(st.dcv===1) v = st.fc===0?0 : (0.08+0.16*st.fc)*(supply/30);       // metered extension
+        if(st.dcv===-1) v = -0.85*(supply/30);                                 // free retraction via check
+      } else if(st.pos>0 && !st.shut){ v=0; }
+      st.pos=Math.max(0,Math.min(1,st.pos+v*dt));
+      // gauge B: back pressure while extending and moving
+      const target = (st.dcv===1&&v>0&&st.pos<1)? supply*(0.55+0.35*(1-st.fc/3))
+                   : (st.dcv===-1&&supply>4)? supply : (st.pos>=1&&st.dcv===1? supply:0);
+      st.gB+= (target-st.gB)*Math.min(1,dt*4);
+      setGauge(svg,'gA',supply,60); setGauge(svg,'gB',st.gB,60);
+      svg.querySelector('#piston').setAttribute('x',6+st.pos*64);
+      svg.querySelector('#rod').setAttribute('x',16+st.pos*64);
+      ['lnSupply'].forEach(i=>svg.getElementById(i).classList.toggle('live',supply>4));
+      svg.getElementById('lnA').classList.toggle('live',supply>4);
+      svg.getElementById('lnWork').classList.toggle('live',supply>4&&st.dcv===1);
+      svg.getElementById('lnRod').classList.toggle('live',(st.dcv===1&&st.gB>5)||(st.dcv===-1&&supply>4));
+      // messages & milestones
+      if(st.dcv===1&&supply>4&&st.fc===0&&st.pos<1) note.textContent='Cylinder stalled — flow-control is CLOSED (exhaust can\'t escape).';
+      else if(st.dcv===1&&st.pos>0&&st.pos<1) note.textContent='Extending: Gauge B shows back pressure (meter-out).';
+      else if(st.dcv===-1&&st.pos>0) {note.textContent='Retracting fast — check valve bypasses the restriction.'; st.didRetract=true;}
+      else note.textContent='';
+      if(st.dcv===1&&st.pos>=1&&!st.extDone&&st.extStart){
+        st.extDone=true;
+        const t=((now-st.extStart)/1000).toFixed(1);
+        root.querySelector('#extTime').textContent=`extension time: ${t} s @ ${st.fc} turn`;
+        if(Math.abs(st.reg-30)<=2) api.award('pneu_30psi',15,'Ran extension at the lab setpoint (30 psi)');
+        if(st.didRetract) api.award('pneu_both',15,'Compared extension vs retraction speed');
+      }
+      raf=requestAnimationFrame(tick);
+    }
+    raf=requestAnimationFrame(tick);
+    return ()=>cancelAnimationFrame(raf);
+  }
+};
+
+/* ============ 2. HYDRAULICS — 850-H1 meter-out ============ */
+SIMS.sim_hyd = {
+  title:"Hydraulic Meter-Out Circuit (850-H1)", stack:"hyd",
+  desc:"Power unit → flow meter → 4/3 DCV → Tee B → flow control → Tee A → load-spring cylinder. Bring Gauge S to 300 psi with the relief, then run your data table tests.",
+  mount(root,api){
+    root.innerHTML=`
+    <div class="simwrap">
+      <svg viewBox="0 0 360 230" class="schematic accent-hyd">
+        <g transform="translate(34,40)">${gaugeFace('gS','GAUGE S')}</g>
+        <g transform="translate(160,40)">${gaugeFace('ghB','GAUGE B')}</g>
+        <g transform="translate(286,40)">${gaugeFace('ghA','GAUGE A')}</g>
+        <path id="hSup" class="pipe" d="M14 160 H58"/>
+        <path id="hFm" class="pipe" d="M86 160 H110"/>
+        <path id="hB" class="pipe" d="M158 160 H190"/>
+        <path id="hA" class="pipe" d="M234 160 H268"/>
+        <g id="fm" transform="translate(58,148)"><circle class="comp" cx="14" cy="12" r="13"/><path class="comp" d="M7 12 h14 m-4 -4 l4 4 l-4 4"/><text x="14" y="38" text-anchor="middle" class="svgtag">FLOW</text><text x="14" y="48" text-anchor="middle" class="svgval" id="fmv">0.0 gpm</text></g>
+        <g id="hdcv" transform="translate(110,138)">
+          <rect class="comp" x="0" y="0" width="48" height="44"/>
+          <line class="comp" x1="16" y1="0" x2="16" y2="44"/><line class="comp" x1="32" y1="0" x2="32" y2="44"/>
+          <g id="hspool"><path class="comp" d="M4 36 L12 8 M9 8 h3 v3"/><path class="comp" d="M12 36 L4 8 M4 11 v-3 h3"/><line class="comp" x1="20" y1="8" x2="20" y2="36"/><line class="comp" x1="28" y1="8" x2="28" y2="36"/><path class="comp" d="M36 8 L44 36 M41 36 h3 v-3"/><path class="comp" d="M44 8 L36 36 M36 33 v3 h3"/></g>
+          <text x="24" y="58" text-anchor="middle" class="svgtag">4/3 DCV</text>
+        </g>
+        <g id="hfcv" transform="translate(190,146)">
+          <rect class="comp" x="0" y="0" width="44" height="28" rx="4"/>
+          <path class="comp" d="M6 22 L36 8 m-6 -2 l6 2 l-2 6"/><path class="comp" d="M22 -8 v8 M16 -10 h12"/>
+          <text x="22" y="42" text-anchor="middle" class="svgtag">FLOW CTRL</text>
+        </g>
+        <g transform="translate(252,178)">
+          <rect class="comp" x="0" y="0" width="84" height="30"/>
+          <rect id="hpiston" x="5" y="3" width="8" height="24" fill="currentColor"/>
+          <rect id="hrod" x="13" y="11" width="26" height="8" fill="var(--dim)"/>
+          <path id="spring" class="comp" d="M88 15 l5 -8 l5 16 l5 -16 l5 16 l5 -8" transform="translate(0,0)"/>
+          <text x="42" y="44" text-anchor="middle" class="svgtag">CYL + LOAD SPRING</text>
+        </g>
+        <text x="10" y="146" class="svgtag">SUPPLY MANIFOLD</text>
+        <text x="270" y="160" class="svgtag" id="dPv">ΔP = 0 psi</text>
+      </svg>
+      <div class="readout"><span id="hext">extension time: —</span><span id="hnote"></span></div>
+      <div class="ctrls">
+        <button id="pu" class="ctl">Power unit: OFF</button>
+        <label class="slider">Relief setting <input id="relief" type="range" min="0" max="500" value="0" step="10"><b id="reliefv">min</b></label>
+        <button id="hshut" class="ctl">Shutoff: CLOSED</button>
+        <label class="slider">Flow-control <input id="hfc" type="range" min="0" max="3" step="0.5" value="0"><b id="hfcvv">closed</b></label>
+        <div class="seg" id="hseg"><button data-p="-1">Retract</button><button data-p="0" class="on">Center</button><button data-p="1">Extend</button></div>
+      </div>
+    </div>`;
+    const svg=root.querySelector('svg');
+    const st={pu:false,relief:0,shut:false,fc:0,dcv:0,pos:0,gA:0,gB:0,extStart:null,extDone:false,checkedSpring:false};
+    root.querySelector('#pu').onclick=e=>{st.pu=!st.pu;e.target.textContent='Power unit: '+(st.pu?'ON':'OFF');e.target.classList.toggle('on',st.pu);};
+    root.querySelector('#relief').oninput=e=>{st.relief=+e.target.value;root.querySelector('#reliefv').textContent=st.relief?st.relief+' psi':'min';};
+    root.querySelector('#hshut').onclick=e=>{st.shut=!st.shut;e.target.textContent='Shutoff: '+(st.shut?'OPEN':'CLOSED');e.target.classList.toggle('on',st.shut);};
+    root.querySelector('#hfc').oninput=e=>{st.fc=+e.target.value;root.querySelector('#hfcvv').textContent=st.fc===0?'closed':st.fc+' turn'+(st.fc>1?'s':'');};
+    root.querySelectorAll('#hseg button').forEach(b=>b.onclick=()=>{
+      root.querySelectorAll('#hseg button').forEach(x=>x.classList.remove('on'));b.classList.add('on');
+      st.dcv=+b.dataset.p; if(st.dcv===1){st.extStart=performance.now();st.extDone=false;}
+      svg.querySelector('#hspool').setAttribute('transform',`translate(${st.dcv*16},0)`);
+    });
+    let raf,last=performance.now(); const note=root.querySelector('#hnote');
+    function tick(now){
+      const dt=Math.min(.05,(now-last)/1000);last=now;
+      const sysP=st.pu?st.relief:0;
+      const avail=st.shut?sysP:0;
+      let v=0,flow=0;
+      if(avail>30){
+        if(st.dcv===1&&st.fc>0&&st.pos<1){v=(0.05+0.11*st.fc)*(avail/300);flow=(0.4+0.75*st.fc)*(avail/300);}
+        if(st.dcv===-1&&st.pos>0){v=-0.7*(avail/300);flow=2.2*(avail/300);}
+      }
+      // load spring pushes back when pressure removed & DCV centered (trapped pressure relieved)
+      if(st.dcv===0&&avail<30&&st.pos>0){v=-0.18;note.textContent='Load spring returning the rod — trapped pressure relieved through the centered DCV.';
+        if(st.pos<0.05&&!st.checkedSpring){st.checkedSpring=true;api.award('hyd_spring',15,'Saw the load spring retract the cylinder after shutdown');}}
+      st.pos=Math.max(0,Math.min(1,st.pos+v*dt));
+      const tgtB=(st.dcv===1&&avail>30)?avail*0.95:(st.dcv===-1?avail*0.3:0);
+      const tgtA=(st.dcv===1&&v>0&&st.pos<1)?avail*(0.45+0.3*(1-st.fc/3))+st.pos*40:(st.pos>=1&&st.dcv===1?avail*0.95:0);
+      st.gB+=(tgtB-st.gB)*Math.min(1,dt*4); st.gA+=(tgtA-st.gA)*Math.min(1,dt*4);
+      setGauge(svg,'gS',sysP,500);setGauge(svg,'ghB',st.gB,500);setGauge(svg,'ghA',st.gA,500);
+      svg.querySelector('#fmv').textContent=flow.toFixed(1)+' gpm';
+      svg.querySelector('#dPv').textContent='ΔP = '+Math.abs(Math.round(st.gA-st.gB))+' psi';
+      svg.querySelector('#hpiston').setAttribute('x',5+st.pos*40);
+      svg.querySelector('#hrod').setAttribute('x',13+st.pos*40);
+      svg.querySelector('#spring').setAttribute('transform',`translate(${st.pos*40},0) scale(${1-st.pos*0.45},1)`);
+      svg.getElementById('hSup').classList.toggle('live',avail>30);
+      svg.getElementById('hFm').classList.toggle('live',avail>30&&flow>0.05);
+      svg.getElementById('hB').classList.toggle('live',avail>30&&st.dcv!==0);
+      svg.getElementById('hA').classList.toggle('live',st.gA>20);
+      if(st.dcv===1&&st.fc===0&&avail>30&&st.pos<1)note.textContent='No movement — flow-control closed blocks the return oil (meter-out).';
+      else if(st.dcv===1&&v>0)note.textContent='Controlled extension. Log Gauges A/B/S, flow, and time for the data table.';
+      else if(st.dcv===-1&&st.pos>0)note.textContent='Rapid retraction through the bypass check.';
+      else if(!(st.dcv===0&&avail<30&&st.pos>0))note.textContent='';
+      if(st.dcv===1&&st.pos>=1&&!st.extDone&&st.extStart){st.extDone=true;
+        root.querySelector('#hext').textContent=`extension time: ${((now-st.extStart)/1000).toFixed(1)} s @ ${st.fc} turn`;
+        if(Math.abs(sysP-300)<=10)api.award('hyd_300',15,'Ran Test 1 at Gauge S = 300 psi');}
+      raf=requestAnimationFrame(tick);
+    }
+    raf=requestAnimationFrame(tick);
+    return ()=>cancelAnimationFrame(raf);
+  }
+};
+
+/* ============ 3. RELAY — 90-EC1A ladder (jog / seal-in / timed sequence) ============ */
+SIMS.sim_relay = {
+  title:"90-EC1A Ladder — Dual-Cylinder Timed Sequence", stack:"elec",
+  desc:"Your exact ladder. Hold STOP/START like real pushbuttons. Modes build up: Jog → Seal-in → the full timed sequence with 1TR and limit switches.",
+  mount(root,api){
+    root.innerHTML=`
+    <div class="simwrap">
+      <div class="seg" id="mode">
+        <button data-m="jog">Jog</button><button data-m="seal">Seal-in</button><button data-m="full" class="on">Timed sequence</button>
+      </div>
+      <svg viewBox="0 0 360 250" class="schematic accent-elec">
+        <line x1="20" y1="14" x2="20" y2="170" class="rail"/><line x1="250" y1="14" x2="250" y2="170" class="rail"/>
+        <text x="14" y="11" class="svgtag">L1</text><text x="246" y="11" class="svgtag">L2</text>
+        <!-- RUNG 1 -->
+        <path id="r1" class="wire" d="M20 36 H250"/>
+        <g id="cSTOP" class="contact nc" transform="translate(38,36)"><line x1="0" y1="0" x2="-6" y2="0" class="wire"/><circle cx="0" cy="0" r="2.5"/><circle cx="18" cy="0" r="2.5"/><line class="blade" x1="0" y1="0" x2="20" y2="-8"/><line class="ncbar" x1="14" y1="-12" x2="18" y2="6"/><text y="16" x="9" text-anchor="middle" class="svgtag">STOP 1PB</text></g>
+        <g id="cSTART" class="contact no" transform="translate(86,36)"><circle cx="0" cy="0" r="2.5"/><circle cx="18" cy="0" r="2.5"/><line class="blade" x1="0" y1="0" x2="16" y2="-9"/><text y="16" x="9" text-anchor="middle" class="svgtag">START 2PB</text></g>
+        <g id="bSeal"><path id="sealwire" class="wire" d="M80 36 v26 h36 v-26"/><g id="cSEAL" class="contact no" transform="translate(89,62)"><circle cx="0" cy="0" r="2.5"/><circle cx="18" cy="0" r="2.5"/><line class="blade" x1="0" y1="0" x2="16" y2="-9"/><text y="14" x="9" text-anchor="middle" class="svgtag">1CRA</text></g></g>
+        <g id="c2LS" class="contact nc" transform="translate(138,36)"><circle cx="0" cy="0" r="2.5"/><circle cx="18" cy="0" r="2.5"/><line class="blade" x1="0" y1="0" x2="20" y2="-8"/><line class="ncbar" x1="14" y1="-12" x2="18" y2="6"/><text y="16" x="9" text-anchor="middle" class="svgtag">2LS</text></g>
+        <g id="c4LS" class="contact nc" transform="translate(180,36)"><circle cx="0" cy="0" r="2.5"/><circle cx="18" cy="0" r="2.5"/><line class="blade" x1="0" y1="0" x2="20" y2="-8"/><line class="ncbar" x1="14" y1="-12" x2="18" y2="6"/><text y="16" x="9" text-anchor="middle" class="svgtag">4LS</text></g>
+        <g id="coil1CR" class="coil" transform="translate(228,36)"><circle r="10"/><text text-anchor="middle" y="3.5" class="svgtag">1CR</text></g>
+        <!-- RUNG 2 -->
+        <path id="r2" class="wire" d="M20 110 H250"/>
+        <g id="c1CRB" class="contact no" transform="translate(50,110)"><circle cx="0" cy="0" r="2.5"/><circle cx="18" cy="0" r="2.5"/><line class="blade" x1="0" y1="0" x2="16" y2="-9"/><text y="16" x="9" text-anchor="middle" class="svgtag">1CRB</text></g>
+        <g id="coil1SOL" class="coil" transform="translate(160,110)"><path class="comp" d="M-12 0 h4 l5 -7 l6 14 l6 -14 l5 7 h4" /><text text-anchor="middle" y="20" class="svgtag">1-SOL · Cyl 1 extend</text></g>
+        <g id="b1TR"><path id="trwire" class="wire" d="M110 110 v28 h118"/><g id="coil1TR" class="coil" transform="translate(228,138)"><circle r="10"/><text text-anchor="middle" y="3.5" class="svgtag">1TR</text><path class="comp" d="M-5 14 h10 l-5 7 z"/></g></g>
+        <!-- RUNG 3 -->
+        <path id="r3" class="wire" d="M20 170 H250"/>
+        <g id="c1TRA" class="contact no timed" transform="translate(50,170)"><circle cx="0" cy="0" r="2.5"/><circle cx="18" cy="0" r="2.5"/><line class="blade" x1="0" y1="0" x2="16" y2="-9"/><path class="comp" d="M4 8 h10 l-5 6 z"/><text y="26" x="9" text-anchor="middle" class="svgtag">1TRA</text></g>
+        <g id="coil2SOL" class="coil" transform="translate(160,170)"><path class="comp" d="M-12 0 h4 l5 -7 l6 14 l6 -14 l5 7 h4"/><text text-anchor="middle" y="20" class="svgtag">2-SOL · Cyl 2 extend</text></g>
+        <!-- cylinders -->
+        <g transform="translate(40,196)">
+          <text x="0" y="8" class="svgtag">CYL 1</text>
+          <rect class="comp" x="34" y="0" width="90" height="22"/><rect id="cy1p" x="38" y="3" width="7" height="16" fill="currentColor"/><rect id="cy1r" x="45" y="8" width="22" height="6" fill="var(--dim)"/>
+          <text x="0" y="42" class="svgtag" transform="translate(0,0)">CYL 2</text>
+          <rect class="comp" x="34" y="32" width="90" height="22"/><rect id="cy2p" x="38" y="35" width="7" height="16" fill="currentColor"/><rect id="cy2r" x="45" y="40" width="22" height="6" fill="var(--dim)"/>
+          <rect id="ls2flag" x="128" y="2" width="6" height="18" rx="2" fill="var(--line)"/>
+          <rect id="ls4flag" x="128" y="34" width="6" height="18" rx="2" fill="var(--line)"/>
+          <text x="140" y="14" class="svgtag">2LS</text><text x="140" y="46" class="svgtag">4LS</text>
+        </g>
+        <g id="timerArcG" transform="translate(310,138)"><circle r="13" fill="none" stroke="var(--line)" stroke-width="3"/><circle id="timerArc" r="13" fill="none" stroke="var(--elec)" stroke-width="3" stroke-dasharray="81.7" stroke-dashoffset="81.7" transform="rotate(-90)"/><text text-anchor="middle" y="4" class="svgtag" id="timerTxt">1TR</text></g>
+      </svg>
+      <div class="readout"><span id="rstate">Idle — press START</span></div>
+      <div class="ctrls">
+        <button id="bSTOP" class="ctl danger">⊘ STOP 1PB (hold)</button>
+        <button id="bSTART" class="ctl go">▶ START 2PB (hold)</button>
+      </div>
+    </div>`;
+    const svg=root.querySelector('svg');
+    const st={mode:'full',stop:false,start:false,cr:false,tr:false,trT:0,tra:false,c1:0,c2:0,didSeq:false,didStop:false};
+    const setMode=m=>{st.mode=m;st.cr=st.tr=st.tra=false;st.trT=0;
+      svg.getElementById('bSeal').style.opacity=m==='jog'?0.18:1;
+      ['c2LS','c4LS'].forEach(i=>svg.getElementById(i).style.opacity=m==='full'?1:0.18);
+      svg.getElementById('b1TR').style.opacity=m==='full'?1:0.18;
+      svg.getElementById('r3').parentNode&&0;
+      ['r3','c1TRA','coil2SOL'].forEach(i=>svg.getElementById(i).style.opacity=m==='full'?1:0.18);
+      svg.getElementById('timerArcG').style.opacity=m==='full'?1:0.18;};
+    root.querySelectorAll('#mode button').forEach(b=>b.onclick=()=>{root.querySelectorAll('#mode button').forEach(x=>x.classList.remove('on'));b.classList.add('on');setMode(b.dataset.m);});
+    setMode('full');
+    holdable(root.querySelector('#bSTOP'),()=>st.stop=true,()=>st.stop=false);
+    holdable(root.querySelector('#bSTART'),()=>st.start=true,()=>st.start=false);
+    let raf,last=performance.now();const stateTxt=root.querySelector('#rstate');
+    function tick(now){
+      const dt=Math.min(.05,(now-last)/1000);last=now;
+      const ls2=st.c1>=0.98, ls4=st.c2>=0.98;             // NC switches struck at full extension
+      const lsOK = st.mode!=='full' || !(ls2&&ls4);        // both struck ⇒ rung breaks, both retract together
+      const stopOK=!st.stop;
+      const path = st.mode==='jog' ? st.start : (st.start||st.cr);
+      st.cr = stopOK && path && lsOK;
+      // timer
+      if(st.mode==='full'&&st.cr){st.tr=true;st.trT=Math.min(1,st.trT+dt);}else{st.tr=false;st.trT=0;}
+      st.tra=st.mode==='full'&&st.tr&&st.trT>=1;
+      const sol1=st.cr, sol2=st.tra;
+      st.c1=Math.max(0,Math.min(1,st.c1+(sol1?0.55:-0.7)*dt));
+      st.c2=Math.max(0,Math.min(1,st.c2+(sol2?0.55:-0.7)*dt));
+      // paint
+      const C=(id,on)=>svg.getElementById(id).classList.toggle('closed',on);
+      C('cSTOP',!st.stop);C('cSTART',st.start);C('cSEAL',st.cr&&st.mode!=='jog');
+      C('c2LS',!ls2);C('c4LS',!ls4);C('c1CRB',st.cr);C('c1TRA',st.tra);
+      const E=(id,on)=>svg.getElementById(id).classList.toggle('energized',on);
+      E('r1',st.cr);E('coil1CR',st.cr);E('r2',st.cr);E('coil1SOL',sol1);E('coil1TR',st.tr);E('r3',st.tra);E('coil2SOL',sol2);E('sealwire',st.cr&&st.mode!=='jog');E('trwire',st.tr);
+      svg.getElementById('timerArc').setAttribute('stroke-dashoffset',81.7*(1-st.trT));
+      svg.getElementById('timerTxt').textContent=st.tr?(st.trT>=1?'✓':((1-st.trT).toFixed(1)+'s')):'1TR';
+      svg.getElementById('cy1p').setAttribute('x',38+st.c1*78);svg.getElementById('cy1r').setAttribute('x',45+st.c1*78);
+      svg.getElementById('cy2p').setAttribute('x',38+st.c2*78);svg.getElementById('cy2r').setAttribute('x',45+st.c2*78);
+      svg.getElementById('ls2flag').setAttribute('fill',ls2?'var(--elec)':'var(--line)');
+      svg.getElementById('ls4flag').setAttribute('fill',ls4?'var(--elec)':'var(--line)');
+      stateTxt.textContent = st.stop?'STOP held — circuit de-energized (NC stop broke rung 1).'
+        : !st.cr&&(st.c1>0||st.c2>0)?'De-energized — both cylinders retracting together.'
+        : st.cr&&!st.tra?'1CR sealed in · Cyl 1 extending · 1TR timing…'
+        : st.tra?'1TRA closed → 2-SOL · Cyl 2 extending.'
+        : st.mode==='jog'?'Jog mode: runs only while START is held (no memory).'
+        : 'Idle — press START';
+      if(st.mode==='full'&&ls2&&ls4&&!st.didSeq){st.didSeq=true;api.award('relay_seq',20,'Completed the full timed sequence');}
+      if(st.stop&&(st.c1>0.2||st.c2>0.2)&&!st.didStop){st.didStop=true;api.award('relay_stop',10,'Verified STOP de-energizes mid-cycle');}
+      raf=requestAnimationFrame(tick);
+    }
+    raf=requestAnimationFrame(tick);
+    return ()=>cancelAnimationFrame(raf);
+  }
+};
+
+/* ============ 4. AC/DC — T7017A-BDA bench ============ */
+SIMS.sim_acdc = {
+  title:"T7017A-BDA — 24 VAC Bench", stack:"acdc",
+  desc:"Knife switch, fuse, isolation transformer, S2 pushbutton, S3 BYPASS/CAP, lamp. Live meter panel mirrors your 15-row checks sheet — including the resistance-check safety rule.",
+  mount(root,api){
+    root.innerHTML=`
+    <div class="simwrap">
+      <svg viewBox="0 0 360 180" class="schematic accent-acdc">
+        <g id="wPri"><path class="wire" id="w1" d="M28 50 H70"/><path class="wire" id="w2" d="M104 50 H136"/><path class="wire" id="w3" d="M28 130 H136 M28 50 V130"/></g>
+        <circle cx="28" cy="90" r="14" class="comp"/><path class="comp" d="M20 90 q4 -8 8 0 q4 8 8 0"/><text x="6" y="70" class="svgtag">24 VAC</text>
+        <g id="s1g" transform="translate(70,50)"><circle cx="0" cy="0" r="2.5" fill="currentColor"/><circle cx="22" cy="0" r="2.5" fill="currentColor"/><line id="s1blade" class="blade" x1="0" y1="0" x2="20" y2="-12"/><text x="11" y="-16" text-anchor="middle" class="svgtag">S1</text></g>
+        <g transform="translate(104,42)"><rect class="comp" x="0" y="0" width="26" height="14" rx="7"/><line class="comp" x1="0" y1="7" x2="26" y2="7"/><text x="13" y="-4" text-anchor="middle" class="svgtag">F1</text></g>
+        <g transform="translate(136,40)"><path class="comp" d="M8 0 q-8 6 0 12 q-8 6 0 12 q-8 6 0 12 q-8 6 0 12 q-8 6 0 12"/><path class="comp" d="M22 0 q8 6 0 12 q8 6 0 12 q8 6 0 12 q8 6 0 12 q8 6 0 12"/><line class="comp" x1="13" y1="-4" x2="13" y2="66" /><line class="comp" x1="17" y1="-4" x2="17" y2="66"/><text x="15" y="80" text-anchor="middle" class="svgtag">T1  H1-H2 / X1-X2</text></g>
+        <path class="wire" id="w4" d="M158 52 H196"/>
+        <g id="s2g" transform="translate(196,52)"><circle cx="0" cy="0" r="2.5" fill="currentColor"/><circle cx="20" cy="0" r="2.5" fill="currentColor"/><line id="s2blade" class="blade" x1="0" y1="0" x2="18" y2="-11"/><text x="10" y="-15" text-anchor="middle" class="svgtag">S2</text></g>
+        <path class="wire" id="w5" d="M216 52 H238"/>
+        <g transform="translate(238,52)"><circle r="9" class="comp"/><text text-anchor="middle" y="3.5" class="svgtag">A</text><text y="-14" text-anchor="middle" class="svgtag">A–A</text></g>
+        <path class="wire" id="w6" d="M247 52 H266"/>
+        <g id="s3g" transform="translate(266,52)"><circle cx="0" cy="0" r="2.5" fill="currentColor"/><circle cx="26" cy="-12" r="2.5" fill="currentColor"/><circle cx="26" cy="14" r="2.5" fill="currentColor"/><line id="s3blade" class="blade" x1="0" y1="0" x2="24" y2="-11"/><text x="36" y="-12" class="svgtag">BYP</text><text x="36" y="22" class="svgtag">CAP</text></g>
+        <path class="wire" id="wByp" d="M292 -12 m0 0 M292 40 H318 V70" transform="translate(0,0)"/>
+        <path class="wire" id="wCap" d="M292 66 H300 M308 66 H318 V70"/>
+        <g transform="translate(300,58)"><line class="comp" x1="0" y1="0" x2="0" y2="16"/><line class="comp" x1="8" y1="0" x2="8" y2="16"/><text x="4" y="30" text-anchor="middle" class="svgtag">C1</text></g>
+        <g id="lampg" transform="translate(318,92)"><circle r="13" class="comp"/><path class="comp" d="M-8 -8 L8 8 M8 -8 L-8 8"/><circle id="lampGlow" r="19" fill="var(--acdc)" opacity="0"/><text y="32" text-anchor="middle" class="svgtag">LAMP</text></g>
+        <path class="wire" id="w7" d="M318 105 V140 H158 V64"/>
+      </svg>
+      <div class="meterpanel" id="mp"></div>
+      <div class="ctrls">
+        <div class="seg" id="mmode"><button data-m="live" class="on">Live checks</button><button data-m="ohm">Resistance checks</button></div>
+        <button id="s1" class="ctl">S1 knife: OPEN</button>
+        <button id="s2" class="ctl go">S2 pushbutton (hold)</button>
+        <button id="s3" class="ctl">S3: BYPASS</button>
+        <button id="disch" class="ctl" hidden>⚡ Discharge capacitor</button>
+      </div>
+    </div>`;
+    const svg=root.querySelector('svg');
+    const st={s1:false,s2:false,s3:'byp',mode:'live',capCharged:false,discharged:true,sawBoth:{byp:false,cap:false}};
+    const mp=root.querySelector('#mp');
+    root.querySelector('#s1').onclick=e=>{st.s1=!st.s1;e.target.textContent='S1 knife: '+(st.s1?'CLOSED':'OPEN');e.target.classList.toggle('on',st.s1);if(st.s1){st.discharged=false;}};
+    holdable(root.querySelector('#s2'),()=>st.s2=true,()=>st.s2=false);
+    root.querySelector('#s3').onclick=e=>{st.s3=st.s3==='byp'?'cap':'byp';e.target.textContent='S3: '+(st.s3==='byp'?'BYPASS':'CAP');};
+    root.querySelector('#disch').onclick=e=>{st.discharged=true;e.target.hidden=true;api.award('acdc_disch',10,'Discharged the capacitor before Ω checks');};
+    root.querySelectorAll('#mmode button').forEach(b=>b.onclick=()=>{root.querySelectorAll('#mmode button').forEach(x=>x.classList.remove('on'));b.classList.add('on');st.mode=b.dataset.m;
+      root.querySelector('#disch').hidden=!(st.mode==='ohm'&&!st.discharged&&!st.s1);});
+    let raf;
+    function tick(){
+      const live=st.s1, on=live&&st.s2;
+      let lampV=0,amps=0;
+      if(on){ if(st.s3==='byp'){lampV=22.8;amps=0.95;st.capCharged=false;} else {lampV=13.4;amps=0.56;st.capCharged=true;st.discharged=false;} st.sawBoth[st.s3]=true;
+        if(st.sawBoth.byp&&st.sawBoth.cap)api.award('acdc_compare',15,'Compared BYPASS vs CAP under power'); }
+      const watts=lampV*amps;
+      svg.getElementById('s1blade').setAttribute('x2',st.s1?22:20);svg.getElementById('s1blade').setAttribute('y2',st.s1?0:-12);
+      svg.getElementById('s2blade').setAttribute('x2',st.s2?20:18);svg.getElementById('s2blade').setAttribute('y2',st.s2?0:-11);
+      svg.getElementById('s3blade').setAttribute('y2',st.s3==='byp'?-11:13);
+      ['w1','w2','w3'].forEach(i=>svg.getElementById(i).classList.toggle('live',live));
+      ['w4'].forEach(i=>svg.getElementById(i).classList.toggle('live',live));
+      ['w5','w6','wByp','wCap','w7'].forEach(i=>svg.getElementById(i).classList.toggle('live',on));
+      svg.getElementById('wCap').style.opacity=st.s3==='cap'?1:.25;
+      svg.getElementById('wByp').style.opacity=st.s3==='byp'?1:.25;
+      svg.getElementById('lampGlow').setAttribute('opacity',(watts/21.7*0.55).toFixed(2));
+      if(st.mode==='live'){
+        mp.innerHTML=row('1 · Primary H1–H2',live?'24.1 VAC':'0 VAC')+row('2 · Secondary X1–X2',live?'23.8 VAC':'0 VAC')
+          +row('7/10 · Lamp V (S2 held)',on?lampV.toFixed(1)+' VAC':'—')+row('8/11 · Current at A–A',on?amps.toFixed(2)+' A':'—')
+          +row('9/12 · P = V × I',on?watts.toFixed(1)+' W':'—')+row('13 · Brightness '+(st.s3==='byp'?'BYPASS':'CAP'),on?(st.s3==='byp'?'full':'dim'):'off');
+      } else {
+        if(st.s1){mp.innerHTML=`<div class="warnrow">⚠ Power is ON — open S1 before resistance checks.</div>`;}
+        else if(!st.discharged){mp.innerHTML=`<div class="warnrow">⚠ C1 is charged — readings erratic. Discharge before measuring (sheet safety note).</div>`;root.querySelector('#disch').hidden=false;}
+        else{mp.innerHTML=row('3 · F1 fuse','0.3 Ω ✓ continuity')+row('4 · Primary winding','6.8 Ω')+row('5 · Secondary winding','7.1 Ω')+row('6 · Lamp (cold)','11.6 Ω')+`<div class="okrow">Cold lamp Ω ≪ hot V/I — filament resistance rises with temperature.</div>`;
+          api.award('acdc_ohm',15,'Completed de-energized resistance checks safely');}
+      }
+      raf=requestAnimationFrame(tick);
+    }
+    const row=(k,v)=>`<div class="mrow"><span>${k}</span><b>${v}</b></div>`;
+    raf=requestAnimationFrame(tick);
+    return ()=>cancelAnimationFrame(raf);
+  }
+};
+
+</script>
+<script>
+/* Mechatronics Stack Mastery — app shell, routing, gamification */
+
+/* ---------- state ---------- */
+const DEFAULT = { xp:0, badges:[], streak:0, lastDay:null,
+  quizBest:{},          // quizId -> best %
+  quizDone:{},          // quizId -> {qIndex:true} first-time-correct tracking
+  labSteps:{},          // labId -> {i:true}
+  labDone:{},           // labId -> true
+  simAwards:{},         // milestoneId -> true
+  simSeen:{} };         // simId -> true
+let ST = load();
+function load(){ try{ return Object.assign({},DEFAULT,JSON.parse(localStorage.getItem('msm_state')||'{}')); }catch(e){ return {...DEFAULT}; } }
+function save(){ localStorage.setItem('msm_state',JSON.stringify(ST)); }
+
+function today(){ return new Date().toISOString().slice(0,10); }
+function bumpStreak(){
+  const t=today();
+  if(ST.lastDay===t) return;
+  const y=new Date(Date.now()-864e5).toISOString().slice(0,10);
+  ST.streak = (ST.lastDay===y) ? ST.streak+1 : 1;
+  ST.lastDay=t; save();
+}
+function level(){ return Math.floor(ST.xp/150)+1; }
+function levelPct(){ return (ST.xp%150)/150*100; }
+
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'),2200);
+}
+function addXP(n,label){
+  ST.xp+=n; bumpStreak(); save(); renderHeader();
+  toast(`+${n} XP${label?' · '+label:''}`);
+  checkBadges();
+}
+
+/* ---------- badges ---------- */
+const BADGES=[
+ {id:'spark',ico:'⚡',name:'First Spark',test:()=>ST.xp>0},
+ {id:'air',ico:'💨',name:'Air Bender',test:()=>(ST.quizBest.q_pneu||0)>=80},
+ {id:'oil',ico:'🛢️',name:'Oil Pressure',test:()=>(ST.quizBest.q_hyd||0)>=80},
+ {id:'relay',ico:'🎛️',name:'Relay Wrangler',test:()=>(ST.quizBest.q_relay||0)>=80},
+ {id:'wave',ico:'🌊',name:'Wave Rider',test:()=>(ST.quizBest.q_acdc||0)>=80},
+ {id:'labrat',ico:'🥼',name:'Lab Rat',test:()=>LABS.every(l=>ST.labDone[l.id])},
+ {id:'simulant',ico:'🕹️',name:'Simulant',test:()=>Object.keys(SIMS).every(k=>ST.simSeen[k])},
+ {id:'streak3',ico:'🔥',name:'3-Day Streak',test:()=>ST.streak>=3},
+ {id:'centurion',ico:'🏆',name:'Level 5',test:()=>level()>=5},
+];
+function checkBadges(){
+  BADGES.forEach(b=>{ if(!ST.badges.includes(b.id)&&b.test()){ ST.badges.push(b.id); save();
+    setTimeout(()=>toast(`${b.ico} Badge unlocked: ${b.name}`),900); renderHeader(); }});
+}
+
+/* ---------- mastery ---------- */
+function mastery(stack){
+  const qs=QUIZZES.filter(q=>q.stack===stack);
+  const quiz=qs.length? qs.reduce((a,q)=>a+(ST.quizBest[q.id]||0),0)/qs.length/100 :0;
+  const labs=LABS.filter(l=>l.stack===stack);
+  const lab=labs.length? labs.filter(l=>ST.labDone[l.id]).length/labs.length :0;
+  const sims=Object.entries(SIMS).filter(([,v])=>v.stack===stack);
+  const sim=sims.length? sims.filter(([k])=>ST.simSeen[k]).length/sims.length :0;
+  return Math.round((quiz*0.6+lab*0.25+sim*0.15)*100);
+}
+
+/* ---------- header / nav ---------- */
+function renderHeader(){
+  document.getElementById('hdr').innerHTML=`
+    <span class="brand">MECH·STACKS</span><span class="spacer"></span>
+    <span class="pill gold">◆ ${ST.xp} XP · L${level()}</span>
+    ${ST.streak>1?`<span class="pill fire">🔥 ${ST.streak}</span>`:''}`;
+}
+const TABS=[
+ ['home','Home','M3 11l9-8 9 8M5 9v11h14V9'],
+ ['sym','Symbols','M4 7h6v6H4zM14 7h6M14 11h6M4 17h16'],
+ ['sim','Sim','M7 8l-4 4 4 4M17 8l4 4-4 4M13 5l-2 14'],
+ ['labs','Labs','M9 3h6M10 3v6l-5 9a2 2 0 002 3h10a2 2 0 002-3l-5-9V3'],
+ ['quiz','Quiz','M9 9a3 3 0 115 2c-.7.7-2 1-2 2.5M12 17.5v.5'],
+];
+let route='home', cleanup=null;
+function nav(r){
+  if(cleanup){cleanup();cleanup=null;}
+  route=r; window.scrollTo(0,0);
+  document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.r===r.split('/')[0]));
+  const m=document.getElementById('main');
+  const base=r.split('/')[0], arg=r.split('/')[1];
+  if(base==='home') renderHome(m);
+  else if(base==='sym') renderSymbols(m);
+  else if(base==='sim') arg?renderSim(m,arg):renderSimList(m);
+  else if(base==='labs') arg?renderLab(m,arg):renderLabList(m);
+  else if(base==='quiz') arg?renderQuiz(m,arg):renderQuizList(m);
+}
+
+/* ---------- HOME ---------- */
+function ringSVG(pct,color){
+  const r=24,c=2*Math.PI*r;
+  return `<div class="ring"><svg width="56" height="56" viewBox="0 0 56 56">
+    <circle cx="28" cy="28" r="${r}" fill="none" stroke="var(--panel2)" stroke-width="5"/>
+    <circle cx="28" cy="28" r="${r}" fill="none" stroke="${color}" stroke-width="5"
+      stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${c*(1-pct/100)}"/>
+    </svg><span class="pct">${pct}%</span></div>`;
+}
+function renderHome(m){
+  const rows=Object.entries(STACKS).map(([k,s])=>{
+    const pct=mastery(k);
+    return `<div class="card tap" onclick="nav('quiz')">
+      <div class="cardrow">${ringSVG(pct,s.color)}
+        <div class="grow"><div class="eyebrow">${s.tag}</div><b>${s.name}</b>
+          <div class="sub">${pct===0?'Not started':pct<50?'In progress':pct<80?'Solid — push to 80%+':'Mastered'}</div></div>
+      </div></div>`;}).join('');
+  const bs=BADGES.map(b=>`<div class="badge ${ST.badges.includes(b.id)?'got':''}"><div class="ico">${b.ico}</div><b>${b.name}</b></div>`).join('');
+  m.innerHTML=`
+    <h2 style="margin-top:4px">Stack Mastery</h2>
+    <div class="card"><div class="cardrow"><div class="grow">
+      <div class="eyebrow">Level ${level()}</div>
+      <div class="bar"><i style="width:${levelPct()}%"></i></div>
+      <div class="sub" style="margin-top:6px">${150-ST.xp%150} XP to Level ${level()+1} · ${ST.streak||0}-day streak</div>
+    </div></div></div>
+    ${rows}
+    <div class="card tap" onclick="openRef()"><div class="cardrow">
+      <div class="grow"><b>📐 Quick Reference</b><div class="sub">Setpoints, formulas, ladder↔Boolean, safety</div></div><span>›</span>
+    </div></div>
+    <h3 style="margin-top:18px">Badges</h3>
+    <div class="badges">${bs}</div>`;
+}
+function openRef(){
+  const sh=el(`<div class="sheet"><div>
+    <div class="eyebrow">QUICK REFERENCE</div>
+    ${REFERENCE.map(r=>`<div class="refblock"><h3>${r.h}</h3><ul>${r.items.map(i=>`<li>${i}</li>`).join('')}</ul></div>`).join('')}
+    <button class="btn block" id="cl">Close</button></div></div>`);
+  document.body.appendChild(sh);
+  sh.addEventListener('click',e=>{if(e.target===sh||e.target.id==='cl')sh.remove();});
+}
+
+/* ---------- SYMBOLS ---------- */
+let symFilter='all', symQ='';
+function renderSymbols(m){
+  const chips=[['all','All'],...Object.entries(STACKS).map(([k,s])=>[k,s.name])]
+    .map(([k,n])=>`<button class="chip ${symFilter===k?'on':''}" data-f="${k}">${n}</button>`).join('');
+  const list=SYMBOLS.filter(s=>(symFilter==='all'||s.stack===symFilter)&&
+    (symQ===''||s.name.toLowerCase().includes(symQ)||s.what.toLowerCase().includes(symQ)));
+  m.innerHTML=`
+    <h2 style="margin-top:4px">Symbol Library</h2>
+    <input class="search" id="sq" placeholder="Search ${SYMBOLS.length} symbols…" value="${symQ}">
+    <div class="chips">${chips}</div>
+    <div class="symgrid">${list.map(s=>`
+      <button class="symcard" data-id="${s.id}" style="color:${STACKS[s.stack].color}">
+        ${s.svg}<b style="color:var(--ink)">${s.name}</b>
+      </button>`).join('')}</div>
+    ${list.length===0?'<p class="sub">No matches.</p>':''}`;
+  m.querySelector('#sq').oninput=e=>{symQ=e.target.value.toLowerCase();renderSymbols(m);
+    const i=m.querySelector('#sq');i.focus();i.setSelectionRange(i.value.length,i.value.length);};
+  m.querySelectorAll('.chip').forEach(c=>c.onclick=()=>{symFilter=c.dataset.f;renderSymbols(m);});
+  m.querySelectorAll('.symcard').forEach(c=>c.onclick=()=>openSymbol(c.dataset.id));
+}
+function openSymbol(id){
+  const s=SYMBOLS.find(x=>x.id===id);
+  const sh=el(`<div class="sheet"><div>
+    <div class="eyebrow" style="color:${STACKS[s.stack].color}">${STACKS[s.stack].tag} · ${STACKS[s.stack].name}</div>
+    <h2>${s.name}</h2>
+    <div class="symhero" style="color:${STACKS[s.stack].color}">${s.svg}</div>
+    <p style="font-size:15px">${s.what}</p>
+    ${s.mistakes.map(mi=>`<div class="mist"><b>COMMON MISTAKE</b><br>${mi}</div>`).join('')}
+    <button class="btn block" id="cl">Got it</button></div></div>`);
+  document.body.appendChild(sh);
+  sh.addEventListener('click',e=>{if(e.target===sh||e.target.id==='cl')sh.remove();});
+}
+
+/* ---------- SIM ---------- */
+function renderSimList(m){
+  m.innerHTML=`<h2 style="margin-top:4px">Circuit Simulators</h2>
+    <p class="sub">Interactive versions of your four trainer circuits. Milestones pay XP.</p>`+
+    Object.entries(SIMS).map(([k,s])=>`
+    <div class="card tap" onclick="nav('sim/${k}')"><div class="cardrow">
+      <span class="stackdot" style="background:${STACKS[s.stack].color}"></span>
+      <div class="grow"><b>${s.title}</b><div class="sub">${STACKS[s.stack].name}${ST.simSeen[k]?' · ✓ visited':''}</div></div><span>›</span>
+    </div></div>`).join('');
+}
+function renderSim(m,key){
+  const sim=SIMS[key]; if(!sim){nav('sim');return;}
+  if(!ST.simSeen[key]){ST.simSeen[key]=true;save();checkBadges();}
+  m.innerHTML=`<button class="backbtn" onclick="nav('sim')">‹ Simulators</button>
+    <div class="eyebrow" style="color:${STACKS[sim.stack].color}">${STACKS[sim.stack].tag}</div>
+    <h2>${sim.title}</h2><p class="sub">${sim.desc}</p><div id="simroot"></div>`;
+  const api={ award(id,xp,label){ if(ST.simAwards[id])return; ST.simAwards[id]=true; save(); addXP(xp,label); } };
+  cleanup=sim.mount(m.querySelector('#simroot'),api);
+}
+
+/* ---------- LABS ---------- */
+function renderLabList(m){
+  m.innerHTML=`<h2 style="margin-top:4px">Guided Labs</h2>
+    <p class="sub">Your actual STACK lab sheets as check-off walkthroughs. +5 XP per step, +50 on completion.</p>`+
+    LABS.map(l=>{
+      const total=l.steps.length, done=Object.keys(ST.labSteps[l.id]||{}).length;
+      return `<div class="card tap" onclick="nav('labs/${l.id}')"><div class="cardrow">
+        <span class="stackdot" style="background:${STACKS[l.stack].color}"></span>
+        <div class="grow"><b>${l.title}</b><div class="sub">${l.trainer}</div>
+          <div class="bar"><i style="width:${done/total*100}%;background:${STACKS[l.stack].color}"></i></div></div>
+        <span>${ST.labDone[l.id]?'✓':done+'/'+total}</span>
+      </div></div>`;}).join('');
+}
+function renderLab(m,id){
+  const l=LABS.find(x=>x.id===id); if(!l){nav('labs');return;}
+  ST.labSteps[id]=ST.labSteps[id]||{};
+  const steps=l.steps.map((s,i)=>`
+    <div class="step ${ST.labSteps[id][i]?'done':''}" data-i="${i}">
+      <div class="cb">${ST.labSteps[id][i]?'✓':''}</div><div class="txt">${s}</div>
+    </div>`).join('');
+  m.innerHTML=`<button class="backbtn" onclick="nav('labs')">‹ Labs</button>
+    <div class="eyebrow" style="color:${STACKS[l.stack].color}">${STACKS[l.stack].tag} · ${l.trainer}</div>
+    <h2>${l.title}</h2><p class="sub">${l.objective}</p>
+    <div class="safety"><h4>⚠ SAFETY</h4><ul>${l.safety.map(s=>`<li>${s}</li>`).join('')}</ul></div>
+    <div class="card">${steps}</div>
+    <div class="card"><b>Sign-off prep</b><div class="sub" style="margin-top:6px">
+      ${l.signoff.map(q=>`<div style="margin:6px 0">• ${q}</div>`).join('')}</div></div>
+    <button class="btn block" onclick="nav('sim/${l.sim}')">Open the matching simulator ›</button>`;
+  m.querySelectorAll('.step').forEach(st=>st.onclick=()=>{
+    const i=st.dataset.i;
+    if(ST.labSteps[id][i]) { delete ST.labSteps[id][i]; save(); renderLab(m,id); return; }
+    ST.labSteps[id][i]=true; save(); addXP(5,'Lab step');
+    if(Object.keys(ST.labSteps[id]).length===l.steps.length && !ST.labDone[id]){
+      ST.labDone[id]=true; save(); setTimeout(()=>addXP(50,l.title+' complete'),600); checkBadges();
+    }
+    renderLab(m,id);
+  });
+}
+
+/* ---------- QUIZ ---------- */
+function renderQuizList(m){
+  m.innerHTML=`<h2 style="margin-top:4px">Quizzes</h2>
+    <p class="sub">Built from your Required Checks & Questions sheets. +10 XP per first-time correct answer.</p>`+
+    QUIZZES.map(q=>`
+    <div class="card tap" onclick="nav('quiz/${q.id}')"><div class="cardrow">
+      <span class="stackdot" style="background:${STACKS[q.stack].color}"></span>
+      <div class="grow"><b>${q.title}</b><div class="sub">${q.questions.length} questions</div></div>
+      <span>${ST.quizBest[q.id]!=null?ST.quizBest[q.id]+'%':'—'}</span>
+    </div></div>`).join('');
+}
+function renderQuiz(m,id){
+  const qz=QUIZZES.find(x=>x.id===id); if(!qz){nav('quiz');return;}
+  ST.quizDone[id]=ST.quizDone[id]||{};
+  let i=0, score=0;
+  function q(){
+    if(i>=qz.questions.length){ return done(); }
+    const Q=qz.questions[i];
+    m.innerHTML=`<button class="backbtn" onclick="nav('quiz')">‹ Quizzes</button>
+      <div class="qprog">${qz.title} · ${i+1}/${qz.questions.length}</div>
+      <h3>${Q.q}</h3>
+      ${Q.a.map((a,j)=>`<button class="qopt" data-j="${j}">${a}</button>`).join('')}
+      <div id="exp"></div>`;
+    let answered=false;
+    m.querySelectorAll('.qopt').forEach(b=>b.onclick=()=>{
+      if(answered)return; answered=true;
+      const j=+b.dataset.j, ok=j===Q.c;
+      if(ok){score++; b.classList.add('correct');
+        if(!ST.quizDone[id][i]){ST.quizDone[id][i]=true;save();addXP(10,'Correct');}}
+      else{b.classList.add('wrong'); m.querySelectorAll('.qopt')[Q.c].classList.add('correct');}
+      m.querySelector('#exp').innerHTML=`<div class="qexp">${Q.x}</div>
+        <button class="btn primary block" style="margin-top:12px" id="nx">${i+1<qz.questions.length?'Next ›':'Finish'}</button>`;
+      m.querySelector('#nx').onclick=()=>{i++;q();window.scrollTo(0,0);};
+    });
+  }
+  function done(){
+    const pct=Math.round(score/qz.questions.length*100);
+    const best=ST.quizBest[id]||0;
+    if(pct>best){ST.quizBest[id]=pct;save();checkBadges();}
+    m.innerHTML=`<button class="backbtn" onclick="nav('quiz')">‹ Quizzes</button>
+      <div class="card" style="text-align:center;padding:28px 16px">
+        <div style="font-size:42px">${pct>=80?'🏅':pct>=50?'💪':'📚'}</div>
+        <h2>${pct}%</h2>
+        <p class="sub">${score}/${qz.questions.length} correct · best ${Math.max(pct,best)}%</p>
+        ${pct>=80?'<p class="sub">Sign-off ready.</p>':'<p class="sub">80%+ unlocks the stack badge — review the explanations and rerun.</p>'}
+        <button class="btn primary block" onclick="nav('quiz/${id}')" style="margin-top:8px">Retry</button>
+        <button class="btn block" onclick="nav('quiz')" style="margin-top:8px">All quizzes</button>
+      </div>`;
+  }
+  q();
+}
+
+/* ---------- boot ---------- */
+window.nav=nav; window.openRef=openRef;
+document.getElementById('tabs').innerHTML=TABS.map(([r,n,p])=>`
+  <button data-r="${r}" onclick="nav('${r}')"><svg viewBox="0 0 24 24"><path d="${p}"/></svg>${n}</button>`).join('');
+renderHeader(); bumpStreak(); nav('home');
+if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+
+</script>
+</body>
+</html>
