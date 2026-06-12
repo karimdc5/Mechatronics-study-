@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
 <title>Mechatronics Stack Mastery</title>
 <meta name="theme-color" content="#0B1119">
+<link rel="manifest" href="manifest.json">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Mech Stacks">
@@ -187,6 +188,87 @@ input[type=range]{flex:1;accent-color:var(--gold);min-height:34px}
 .backbtn{font:600 13px var(--mono);color:var(--dim);padding:6px 0;margin-bottom:6px;display:inline-flex;gap:6px;align-items:center}
 
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ===== AI CHAT MODAL ===== */
+.chatmodal{position:fixed;inset:0;z-index:55;background:var(--bg);display:flex;flex-direction:column;animation:fadeIn .15s ease-out}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.chatmodal-hdr{display:flex;align-items:center;gap:12px;padding:calc(12px + env(safe-area-inset-top)) 16px 12px;border-bottom:1px solid var(--line);background:var(--bg);flex:none}
+.chatmodal-hdr h2{margin:0;flex:1;font-size:16px}
+.chatbox{flex:1;overflow-y:auto;padding:12px 16px;display:flex;flex-direction:column;gap:10px}
+.msg{max-width:88%;padding:11px 14px;border-radius:16px;font-size:14.5px;line-height:1.55;word-wrap:break-word;white-space:pre-wrap}
+.msg-user{background:var(--ink);color:var(--bg);align-self:flex-end;border-radius:16px 16px 4px 16px;font-weight:500}
+.msg-assistant{background:var(--panel2);border:1px solid var(--line);color:var(--ink);align-self:flex-start;border-radius:16px 16px 16px 4px}
+.msg-loading::after{content:'●●●';letter-spacing:4px;animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:.3}50%{opacity:1}}
+.chat-bar{display:flex;gap:8px;padding:10px 16px calc(10px + env(safe-area-inset-bottom));border-top:1px solid var(--line);background:var(--bg);flex:none}
+.chat-bar input{flex:1;margin:0;font-size:15px}
+.sendbtn{width:44px;height:44px;padding:0;border-radius:12px;background:var(--ink);color:var(--bg);font-size:20px;border:none;cursor:pointer;flex:none}
+.sendbtn:disabled{opacity:.35}
+.aibtn{background:linear-gradient(135deg,var(--acdc),var(--elec));color:var(--bg);border:none;border-radius:999px;padding:6px 12px;font:700 12px var(--mono);cursor:pointer;letter-spacing:.04em}
+.keycard{max-width:400px;margin:40px auto;padding:24px;background:var(--panel);border:1px solid var(--line);border-radius:18px;text-align:center}
+.keycard p{color:var(--dim);font-size:14px;margin:8px 0 16px}
+.keycard input{width:100%;margin-bottom:12px;font-family:var(--mono)}
+
+/* ===== IMPROVED DCV ===== */
+.dcv-wrap{margin-top:10px;background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:12px}
+.dcv-label{font:700 9px var(--mono);letter-spacing:.06em;text-transform:uppercase;fill:var(--dim);stroke:none}
+.dcv-port{font:800 10px var(--mono);stroke:none}
+.dcv-pos-label{font:700 9px var(--mono);stroke:none}
+.lever-arm{stroke:var(--ink);stroke-width:5;stroke-linecap:round;transition:all .2s}
+.lever-ball{fill:var(--gold);transition:all .2s}
+.spool-cursor{stroke:var(--gold);stroke-width:2.5;fill:none;transition:x .2s}
+.flow-arrow{stroke-width:2;fill:none;transition:opacity .2s}
+
+/* ===== GENERAL POLISH ===== */
+.schematic .svgtag{font-size:8.5px}
+.schematic .svgval{font-size:9.5px}
+header .aibtn{margin-left:4px}
+.simwrap .seg button{font-size:11.5px}
+
+/* ===== learning paths ===== */
+.pathcard{border-left:3px solid var(--gold)}
+.pathitem{display:flex;gap:10px;align-items:center;padding:7px 0;font-size:13.5px;color:var(--dim)}
+.pathitem.done{color:var(--ink)}
+.pathitem .pdot{width:18px;height:18px;border-radius:50%;border:2px solid var(--line);flex:none;display:grid;place-items:center;font-size:11px}
+.pathitem.done .pdot{background:var(--elec);border-color:var(--elec);color:var(--bg)}
+
+/* ===== scenarios ===== */
+.scen-setup{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:14px;color:var(--dim);margin:10px 0}
+.scen-setup b{color:var(--gold);font:700 10px var(--mono);letter-spacing:.1em;display:block;margin-bottom:6px}
+
+/* ===== AI engine & docs ===== */
+.engseg{margin:0 16px 8px}
+.docrow{display:flex;align-items:center;gap:10px;padding:9px 12px;border-bottom:1px solid var(--panel2);font:500 13px var(--mono)}
+.docrow b{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ink)}
+.docrow .del{color:var(--danger);font-size:16px;padding:4px 8px}
+.docpanel{margin:0 16px 8px;border:1px dashed var(--line);border-radius:12px;overflow:hidden}
+.docpanel-hd{display:flex;align-items:center;gap:8px;padding:10px 12px;font:600 12px var(--mono);color:var(--dim)}
+.docpanel-hd .grow{flex:1}
+.modelbar{margin:0 16px 8px;padding:10px 12px;background:var(--panel2);border:1px solid var(--line);border-radius:12px;font:600 12px var(--mono);color:var(--dim)}
+.modelbar .bar{margin-top:8px}
+.quickbtns{display:flex;gap:6px;overflow-x:auto;padding:0 16px 8px}
+.quickbtns button{flex:none;font:600 11.5px var(--mono);padding:8px 12px;border-radius:999px;border:1px solid var(--line);color:var(--acdc);background:var(--panel)}
+.srcline{display:block;margin-top:8px;font:600 10.5px var(--mono);color:var(--dim);opacity:.8}
+.msg-assistant h5{margin:6px 0 2px;font:700 11px var(--mono);letter-spacing:.06em;color:var(--gold)}
+
+/* ===== PortKit: ports & hoses ===== */
+.portdot{cursor:pointer;transition:all .12s}
+.portdot.pend{stroke:var(--gold);stroke-width:3;r:7;filter:drop-shadow(0 0 5px var(--gold));animation:portpulse 1s infinite}
+@keyframes portpulse{50%{opacity:.5}}
+.portdot.used{fill:var(--line)}
+.porthit{cursor:pointer}
+.portlbl{font:700 8px var(--mono);stroke:none;letter-spacing:.04em}
+.hose{fill:none;stroke:var(--dim);stroke-width:3.5;stroke-linecap:round;opacity:.85;transition:stroke .15s}
+.hose.live{stroke:currentColor;filter:drop-shadow(0 0 4px currentColor)}
+.hosehit{fill:none;stroke:transparent;stroke-width:14;cursor:pointer}
+.buildstatus{font:500 12.5px var(--mono);color:var(--dim);background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:8px 12px;margin:8px 0;line-height:1.6;min-height:18px}
+.buildstatus:empty{display:none}
+/* relay wire-it slots */
+.slotbtn{display:block;width:100%;text-align:left;background:var(--panel2);border:1.5px dashed var(--line);border-radius:10px;padding:10px 12px;margin:5px 0;font:600 13px var(--mono);color:var(--ink);min-height:42px}
+.slotbtn.ok{border-style:solid;border-color:var(--elec);color:var(--elec)}
+.slotbtn.bad{border-style:solid;border-color:var(--danger);color:var(--danger)}
+.partchip{margin:3px}
+.partchip.on{color:var(--bg);background:var(--gold);border-color:var(--gold)}
 
 </style>
 </head>
@@ -579,142 +661,462 @@ const REFERENCE = [
   "All stacks: stored energy (springs, caps, trapped pressure) acts after power is off"]},
 ];
 
+/* ===== EXTENDED CONTENT: tiered quizzes, troubleshooting scenarios, learning paths ===== */
+
+/* Tag existing quizzes as Lab Prep tier */
+QUIZZES.forEach(q=>{q.level='lab'; q.title=q.title.replace('Required Checks','Lab Prep').replace(' — Transformer, Cap & Lamp',' — Lab Prep');});
+
+/* ---------- BEGINNER QUIZZES ---------- */
+QUIZZES.unshift(
+{ id:"qb_pneu", stack:"pneu", level:"beginner", title:"Pneumatics — Fundamentals", questions:[
+ { q:"Pneumatic systems transmit power using:", a:["Oil under pressure","Compressed air","Electric current","Steam"], c:1,
+   x:"Pneumatics = compressed air. Hydraulics = liquid (oil). Same circuit logic, different medium — air is compressible, oil is not." },
+ { q:"The open (unfilled) triangle in a fluid power symbol means:", a:["Liquid flow","Air/gas flow","Heat","Danger"], c:1,
+   x:"Open triangle = pneumatic (air). Solid/filled triangle = hydraulic (liquid). It's the fastest way to tell the two schematic families apart." },
+ { q:"A pressure regulator's job is to:", a:["Speed up the cylinder","Hold downstream pressure at a set value","Filter the air","Reverse flow"], c:1,
+   x:"The regulator reduces supply pressure and holds it steady. Speed control is the flow-control valve's job — keep the two separate in your head." },
+ { q:"A double-acting cylinder differs from single-acting because it:", a:["Is twice as long","Is powered in both directions via two ports","Has two rods always","Needs no valve"], c:1,
+   x:"Double-acting = air drives the piston both ways (cap-end and rod-end ports). Single-acting uses air one way and a spring for return." },
+ { q:"Why must the shutoff valve be CLOSED while connecting tubing?", a:["To save air","Fittings under pressure can blow off violently","The valve wears out otherwise","To keep gauges at zero"], c:1,
+   x:"Pressurized fittings can release with serious force. Connect everything dead, verify seating, then pressurize deliberately." },
+ { q:"Gauges in a circuit read:", a:["Flow rate","Pressure at their tap point","Temperature","Valve position"], c:1,
+   x:"A gauge reads pressure exactly where it's tee'd in — which is why WHERE a gauge sits (supply side vs exhaust side) changes what it tells you." },
+]},
+{ id:"qb_hyd", stack:"hyd", level:"beginner", title:"Hydraulics — Fundamentals", questions:[
+ { q:"Hydraulic systems use oil instead of air mainly because oil is:", a:["Cheaper","Nearly incompressible — giving precise, stiff control at high force","Lighter","Cleaner"], c:1,
+   x:"Liquids barely compress, so motion is stiff and precise even at very high pressures — that's why hydraulics dominates high-force applications." },
+ { q:"The pump in a hydraulic power unit:", a:["Creates pressure directly","Creates FLOW — pressure appears when that flow meets resistance","Stores energy","Cools the oil"], c:1,
+   x:"Classic exam trap: pumps make flow, not pressure. Pressure rises when something resists the flow (load, restriction, relief setting)." },
+ { q:"The relief valve protects the system by:", a:["Filtering oil","Opening to tank when pressure hits its setting","Slowing the cylinder","Reversing the pump"], c:1,
+   x:"It's the pressure ceiling. At the set value it dumps flow back to the reservoir so nothing bursts." },
+ { q:"The reservoir (tank) in a hydraulic system:", a:["Pressurizes the oil","Stores, cools, and de-aerates the returning oil","Drives the cylinder","Measures flow"], c:1,
+   x:"Supply and return manifolds on the trainer connect to it. Return flow rests, cools, and sheds air bubbles before going around again." },
+ { q:"A flow meter tells you:", a:["Pressure in psi","Flow rate in gpm/lpm","Oil temperature","Cylinder force"], c:1,
+   x:"Flow rate determines actuator SPEED. Pressure determines FORCE. Two different gauges for two different questions." },
+ { q:"Never check for hydraulic leaks with your hand because:", a:["Oil stains","A pinhole jet can inject oil through skin — a surgical emergency","It's cold","It magnetizes tools"], c:1,
+   x:"High-pressure injection injuries look like a pinprick and destroy tissue internally. Trace leaks with cardboard, never skin." },
+]},
+{ id:"qb_elec", stack:"elec", level:"beginner", title:"Ladder Logic — Fundamentals", questions:[
+ { q:"In a ladder diagram, L1 and L2 are:", a:["Two loads","The power rails (hot and common)","Limit switches","Lamp numbers"], c:1,
+   x:"Every rung connects L1 to L2 through contacts (logic) and exactly one load (coil, solenoid, lamp) on the L2 side." },
+ { q:"Ladder symbols always show devices in their:", a:["Energized state","De-energized, unactuated (shelf) state","Failed state","Average state"], c:1,
+   x:"NO is drawn open, NC is drawn closed — as the device sits on the shelf. What it does in operation is what you trace through the logic." },
+ { q:"Two contacts in SERIES implement:", a:["OR","AND","NOT","Memory"], c:1,
+   x:"All series contacts must conduct for the rung to complete: AND. Parallel branches = OR. NC contact = NOT." },
+ { q:"A relay lets you:", a:["Store air","Control many contacts from one coil signal","Increase voltage","Measure current"], c:1,
+   x:"Energize one coil → all its contacts (1CRA, 1CRB…) change everywhere in the ladder. One decision, many effects — the heart of relay logic." },
+ { q:"STOP buttons are wired normally-closed so that:", a:["They glow","A broken wire stops the machine instead of making it unstoppable","They use less current","They look different"], c:1,
+   x:"Fail-safe design: with an NC stop in series, ANY open — finger or fault — kills the circuit. An NO stop with a broken wire could never stop anything." },
+ { q:"A seal-in (holding) contact:", a:["Keeps dust out","Lets the relay keep itself energized after START is released","Slows the relay","Doubles the voltage"], c:1,
+   x:"The relay's own NO contact parallels the START button. Press start → coil energizes → its contact closes around the button → memory." },
+]},
+{ id:"qb_acdc", stack:"acdc", level:"beginner", title:"AC/DC — Fundamentals", questions:[
+ { q:"AC differs from DC because AC:", a:["Is always stronger","Reverses direction periodically (e.g. 60 times/second)","Only works in batteries","Has no voltage"], c:1,
+   x:"Alternating current swings + and − at the line frequency. That constant CHANGE is what lets transformers and capacitive effects work." },
+ { q:"Ohm's law is:", a:["P = V × I","V = I × R","I = V × P","R = P ÷ V"], c:1,
+   x:"V = I·R relates voltage, current, resistance. P = V·I is the POWER law — you use both constantly in the AC/DC lab." },
+ { q:"A transformer works by:", a:["Friction","Magnetic coupling between two coils — changing current in one induces voltage in the other","Chemical reaction","Heat"], c:1,
+   x:"AC in the primary makes a changing magnetic field in the core; that changing field induces voltage in the secondary. No change → no induction → no DC operation." },
+ { q:"A fuse protects a circuit by:", a:["Cooling it","Melting open when current exceeds its rating","Boosting voltage","Storing charge"], c:1,
+   x:"It's a sacrificial weak link in series. Good fuse ≈ 0 Ω; blown fuse = open circuit. Always ask WHY it blew before replacing." },
+ { q:"An ammeter must be connected:", a:["Across the component (parallel)","In series, so circuit current flows through it","To ground only","Backwards"], c:1,
+   x:"Ammeters are near-zero resistance. In parallel they short the component — that's the classic meter-killing (and fuse-blowing) mistake." },
+ { q:"Before measuring resistance in any circuit you must:", a:["Increase the voltage","Turn power OFF (and discharge capacitors)","Press all buttons","Warm up the meter"], c:1,
+   x:"Ohmmeters source their own tiny current and assume a dead circuit. Live voltage or a charged cap gives wrong readings and can damage the meter." },
+]});
+
+/* ---------- ADVANCED QUIZ ---------- */
+QUIZZES.push(
+{ id:"qa_mix", stack:"elec", level:"adv", title:"Advanced — Cross-Domain Challenge", questions:[
+ { q:"In a meter-out circuit lifting a load, the cylinder can't 'run away' when the load suddenly helps the motion because:", a:["The pump speeds up","Trapped exhaust-side fluid resists overspeed — the restriction only releases it at the set rate","The relief closes","Gravity stops"], c:1,
+   x:"This is meter-out's killer feature vs meter-in: the back-pressure side acts as a brake against overrunning loads. Meter-in can't control a load that pulls." },
+ { q:"You need Cylinder 2 to extend only after Cylinder 1 is CONFIRMED extended (not just after time). You should use:", a:["A longer timer","A limit switch struck by Cyl 1 in series with 2-SOL's rung","Bigger solenoid","Two relays in series"], c:1,
+   x:"Position-confirmed sequencing beats time-based: a limit switch proves the event happened. Timers assume; switches verify." },
+ { q:"A transformer rated 1:2 (step-up) with 24 VAC in delivers 48 VAC out. Its secondary current capability vs primary is roughly:", a:["Double","Half — power in ≈ power out, so V up means I down","Equal","Zero"], c:1,
+   x:"P = V·I is conserved (minus losses): Vs·Is ≈ Vp·Ip. Step voltage up 2× and available current drops to ½." },
+ { q:"Lamp draws 0.95 A at 22.8 V in BYPASS. Estimate hot resistance:", a:["~2.4 Ω","~24 Ω","~240 Ω","~0.04 Ω"], c:1,
+   x:"R = V/I = 22.8/0.95 ≈ 24 Ω hot — versus ~12 Ω cold from the bench check. Filament resistance roughly doubles at temperature." },
+ { q:"In the timed-sequence ladder, swapping 1TRA from on-delay to OFF-delay behavior would make Cylinder 2:", a:["Extend immediately with Cyl 1 and stay out 1 s after 1CR drops","Never move","Extend twice","Retract first"], c:0,
+   x:"Off-delay contacts close immediately on energize and stay closed for the preset after de-energize. Know your timer types — they invert the sequence behavior." },
+ { q:"Gauge B in the pneumatic lab reads HIGHER than Gauge A briefly during extension. This is possible because:", a:["The gauge is broken","The moving piston compresses trapped rod-end air — intensification on the exhaust side","Supply doubled","The check valve pumps"], c:1,
+   x:"The cap-side force squeezes the trapped rod-side volume; with the area ratio, exhaust pressure can exceed supply momentarily. Meter-out circuits do this routinely." },
+ { q:"Your relay circuit works on the bench but the seal-in drops out when the air solenoid fires. Most likely cause:", a:["Bad luck","Voltage dip from the solenoid inrush pulling 1CR below holding voltage — shared supply too weak","The diagram is wrong","Timer too fast"], c:1,
+   x:"Real-world gotcha: inductive loads cause supply dips. Fixes: stiffer supply, separate control power, or interposing relay." },
+ { q:"Hydraulic system holds 300 psi at idle with the DCV centered, but oil overheats in 10 minutes. Likely cause:", a:["Too much oil","Relief valve passing full pump flow continuously at its setting — all energy becomes heat","Cylinder too small","Gauge error"], c:1,
+   x:"If the center position blocks flow and there's no unload path, the pump dead-heads over the relief: flow × pressure = pure heat. Tandem-center spools or unloading circuits fix it." },
+]});
+
+/* ---------- TROUBLESHOOTING SCENARIOS ---------- */
+const SCENARIOS=[
+{ id:"ts_pneu1", stack:"pneu", title:"Cylinder won't extend",
+  setup:"Pneumatic meter-out lab. Shutoff open, Gauge A = 30 psi. You shift the DCV to extend — nothing moves. Gauge B reads 0.",
+  q:"Most likely cause?",
+  a:["Regulator set too high","Flow-control valve fully closed — no exhaust path","Cylinder is broken","Gauge A is lying"], c:1,
+  x:"Meter-out logic: the cylinder can only move as fast as exhaust air escapes. Fully closed needle = zero exhaust = stall. Open it ½ turn and watch Gauge B rise as it moves." },
+{ id:"ts_pneu2", stack:"pneu", title:"Backwards behavior",
+  setup:"After rebuilding the circuit, EXTENSION is fast and uncontrolled, but RETRACTION is slow and shows back pressure.",
+  q:"What happened?",
+  a:["The regulator failed","The flow-control valve is installed backwards — the check now bypasses extension and meters retraction","The DCV is broken","Air supply is low"], c:1,
+  x:"The check valve's free-flow direction got reversed. Flip the flow-control valve so the restriction throttles rod-end EXHAUST during extension." },
+{ id:"ts_hyd1", stack:"hyd", title:"Pressure won't build",
+  setup:"850-H1 power unit running, shutoff open, DCV shifted to extend. Gauge S only reads 40 psi no matter what. Cylinder creeps slowly.",
+  q:"First thing to check?",
+  a:["The cylinder seals","Relief valve still at MINIMUM from startup — it's dumping flow to tank at 40 psi","The flow meter","Oil level"], c:1,
+  x:"Lab procedure starts with relief at minimum — if you forgot to adjust it up to 300 psi, the relief is the path of least resistance and the system can't build pressure. Adjust while watching Gauge S." },
+{ id:"ts_hyd2", stack:"hyd", title:"Cylinder stays extended after shutdown",
+  setup:"Power unit OFF, shutoff closed, DCV centered. The load-spring cylinder stays fully extended instead of drifting back.",
+  q:"What does this tell you, and why does it matter?",
+  a:["Normal — ignore it","Pressure is trapped between DCV and cylinder — stored energy; cycle the DCV to relieve before touching fittings","The spring broke","The oil is too thick"], c:1,
+  x:"A closed-center DCV traps oil. The spring can't compress it (oil is incompressible) so the rod stays out — and any fitting you crack is under pressure. The sheet's shutdown step exists exactly for this." },
+{ id:"ts_elec1", stack:"elec", title:"Won't stay running",
+  setup:"90-EC1A circuit: press START and Cylinder 1 extends — but the instant you release the button, everything drops out.",
+  q:"What's missing or miswired?",
+  a:["Timer set wrong","The 1CRA seal-in contact — missing, miswired, or you used an NC contact by mistake","STOP button broken","Solenoid too small"], c:1,
+  x:"No memory = no seal-in. Verify 1CRA (NO) is wired in parallel with START 2PB and that it actually closes when 1CR energizes (listen for the relay click)." },
+{ id:"ts_elec2", stack:"elec", title:"Cylinder 2 never fires",
+  setup:"Sequence runs: 1CR seals in, Cylinder 1 extends... and that's it. Cylinder 2 never extends. The 1TR relay clicks when the circuit starts.",
+  q:"Best next diagnostic step?",
+  a:["Replace Cylinder 2","Check the 1TR time setting and verify 1TRA contact closes after the delay (meter across it)","Press START harder","Swap L1 and L2"], c:1,
+  x:"The coil energizing (click) doesn't prove the timed contact works or that the dial isn't set to 1 MINUTE instead of 1 second. Meter across 1TRA: it should go closed ~1 s after 1TR energizes." },
+{ id:"ts_acdc1", stack:"acdc", title:"Dead lamp, live circuit",
+  setup:"T7017A bench: S1 closed, S2 held, S3 in BYPASS. Lamp dark. Secondary X1–X2 measures 0 VAC, but primary H1–H2 measures 24 VAC.",
+  q:"Where is the fault?",
+  a:["The lamp","The transformer — primary has voltage but secondary doesn't: open winding (verify with power-off resistance check)","S3 selector","The capacitor"], c:1,
+  x:"Voltage in, nothing out = the transformer itself (open secondary winding or internal break). Power off and ohm the secondary — an open reads infinite instead of ~7 Ω." },
+{ id:"ts_acdc2", stack:"acdc", title:"Meter goes crazy on Ω",
+  setup:"Power is OFF (S1 open). You switch the meter to resistance to check the lamp and the reading jumps around, even shows negative.",
+  q:"Most likely explanation?",
+  a:["Meter is broken","C1 still holds charge from CAP-position operation — discharge it before any resistance check","The lamp is AC-only","Room temperature"], c:1,
+  x:"A charged capacitor pushes its own current through the ohmmeter, corrupting readings — exactly why your sheet says: power OFF AND discharge the capacitor before resistance measurements." },
+];
+
+/* ---------- LEARNING PATHS ---------- */
+const PATHS=[
+{ id:"path_beg", name:"Beginner Track", ico:"🌱", desc:"New to fluid power & controls. Build the vocabulary first.",
+  items:[
+    {t:"Browse the Symbol Library (all 4 stacks)", route:"sym", check:s=>Object.keys(s.simSeen).length>=0 && false},
+    {t:"Pneumatics Fundamentals quiz ≥80%", route:"quiz/qb_pneu", check:s=>(s.quizBest.qb_pneu||0)>=80},
+    {t:"Hydraulics Fundamentals quiz ≥80%", route:"quiz/qb_hyd", check:s=>(s.quizBest.qb_hyd||0)>=80},
+    {t:"Ladder Logic Fundamentals quiz ≥80%", route:"quiz/qb_elec", check:s=>(s.quizBest.qb_elec||0)>=80},
+    {t:"AC/DC Fundamentals quiz ≥80%", route:"quiz/qb_acdc", check:s=>(s.quizBest.qb_acdc||0)>=80},
+  ]},
+{ id:"path_lab", name:"Stack Lab Prep", ico:"🥼", desc:"Sign-off ready: run every sim, walk every lab, pass every lab quiz.",
+  items:[
+    {t:"Run all 4 circuit simulators", route:"sim", check:s=>['sim_pneu','sim_hyd','sim_relay','sim_acdc'].every(k=>s.simSeen[k])},
+    {t:"Complete all 4 guided labs", route:"labs", check:s=>LABS.every(l=>s.labDone[l.id])},
+    {t:"Pneumatics Lab Prep ≥80%", route:"quiz/q_pneu", check:s=>(s.quizBest.q_pneu||0)>=80},
+    {t:"Hydraulics Lab Prep ≥80%", route:"quiz/q_hyd", check:s=>(s.quizBest.q_hyd||0)>=80},
+    {t:"Relay Lab Prep ≥80%", route:"quiz/q_relay", check:s=>(s.quizBest.q_relay||0)>=80},
+    {t:"AC/DC Lab Prep ≥80%", route:"quiz/q_acdc", check:s=>(s.quizBest.q_acdc||0)>=80},
+  ]},
+{ id:"path_adv", name:"Advanced Track", ico:"⚙️", desc:"Think like a troubleshooter: scenarios + cross-domain challenge.",
+  items:[
+    {t:"Solve all 8 troubleshooting scenarios", route:"quiz", check:s=>SCENARIOS.every(sc=>(s.scenDone||{})[sc.id])},
+    {t:"Advanced Cross-Domain quiz ≥80%", route:"quiz/qa_mix", check:s=>(s.quizBest.qa_mix||0)>=80},
+    {t:"Reach Level 5", route:"home", check:s=>Math.floor(s.xp/150)+1>=5},
+  ]},
+];
+
 </script>
 <script>
-/* Mechatronics Stack Mastery — interactive circuit simulators.
-   Each sim mounts into a container and returns a cleanup fn.
-   api: { award(id, xp, label) } — one-time XP milestones. */
+/* sim.js v3 — connection-based circuit building.
+   PortKit: tap port → tap port = hose. Tap hose = remove. Union-find nets,
+   BFS pressure/flow propagation through component internal edges.
+   Guided mode = pre-connected & locked. Build mode = empty board, mistakes
+   produce physically-correct failures. */
 
 const SIMS = {};
 
 /* ============ shared helpers ============ */
 function el(html){ const t=document.createElement('template'); t.innerHTML=html.trim(); return t.content.firstElementChild; }
-function gaugeFace(id,label){
-  return `<g class="gauge" id="${id}">
-    <circle r="20" fill="var(--panel2)" stroke="var(--line)"/>
-    ${Array.from({length:9},(_,i)=>{const a=(-210+i*30)*Math.PI/180;
-      return `<line x1="${Math.cos(a)*16}" y1="${Math.sin(a)*16}" x2="${Math.cos(a)*19}" y2="${Math.sin(a)*19}" stroke="var(--dim)" stroke-width="1.5"/>`}).join('')}
-    <line class="needle" x1="0" y1="0" x2="0" y2="-15" stroke="var(--danger)" stroke-width="2" transform="rotate(-120)"/>
-    <circle r="2.5" fill="var(--ink)"/>
-    <text y="32" text-anchor="middle" class="svgtag">${label}</text>
-    <text y="44" text-anchor="middle" class="svgval" id="${id}_v">0 psi</text>
-  </g>`;
+function gaugeFace(id,label,color){
+  const c=color||'currentColor';
+  const ticks=[0,1,2,3,4].map(i=>{const a=(-130+i*65)*Math.PI/180;
+    return `<line x1="${Math.cos(a)*15}" y1="${Math.sin(a)*15}" x2="${Math.cos(a)*19}" y2="${Math.sin(a)*19}" stroke="${c}" stroke-width="1.5" opacity=".55"/>`;}).join('');
+  return `<g class="gauge" id="${id}"><circle r="21" fill="var(--panel2)" stroke="var(--line)" stroke-width="1.5"/>${ticks}
+    <line class="needle" x1="0" y1="2" x2="0" y2="-14" stroke="var(--danger)" stroke-width="2.5" stroke-linecap="round" transform="rotate(-120)"/>
+    <circle r="3" fill="var(--ink)"/>
+    <text y="30" text-anchor="middle" class="svgtag" style="fill:${c};font-size:8.5px">${label}</text>
+    <text y="40" text-anchor="middle" class="svgval" id="${id}_v" style="font-size:9px">0</text></g>`;
 }
-function setGauge(svg,id,val,max){
-  const g=svg.querySelector(`#${id} .needle`); if(!g) return;
-  const ang=-120+240*Math.max(0,Math.min(1,val/max));
-  g.setAttribute('transform',`rotate(${ang})`);
-  const t=svg.querySelector(`#${id}_v`); if(t) t.textContent=Math.round(val)+' psi';
+function setGauge(svg,id,val,max,unit){
+  const n=svg.querySelector(`#${id} .needle`); if(!n)return;
+  n.setAttribute('transform',`rotate(${-120+240*Math.max(0,Math.min(1,val/max))})`);
+  const t=svg.querySelector(`#${id}_v`); if(t)t.textContent=Math.round(val)+(unit||' psi');
 }
-function holdable(btn,onDown,onUp){
-  const d=e=>{e.preventDefault();btn.classList.add('pressed');onDown();};
-  const u=()=>{btn.classList.remove('pressed');onUp&&onUp();};
+function holdable(btn,dn,up){
+  const d=e=>{e.preventDefault();btn.classList.add('pressed');dn();};
+  const u=()=>{btn.classList.remove('pressed');up&&up();};
   btn.addEventListener('pointerdown',d);
-  btn.addEventListener('pointerup',u); btn.addEventListener('pointercancel',u); btn.addEventListener('pointerleave',u);
+  ['pointerup','pointercancel','pointerleave'].forEach(ev=>btn.addEventListener(ev,u));
   btn.addEventListener('contextmenu',e=>e.preventDefault());
 }
 
-/* ============ 1. PNEUMATICS — meter-out flow control ============ */
+/* ============ PortKit — connection engine ============ */
+function PortKit(svg, ports, opts={}){
+  const K={conns:[], pending:null, locked:false, onChange:opts.onChange||(()=>{})};
+  const byId={}; ports.forEach(p=>byId[p.id]=p);
+  // layers
+  const hoseL=document.createElementNS('http://www.w3.org/2000/svg','g');
+  const portL=document.createElementNS('http://www.w3.org/2000/svg','g');
+  svg.appendChild(hoseL); svg.appendChild(portL);
+  // draw ports
+  ports.forEach(p=>{
+    const g=document.createElementNS('http://www.w3.org/2000/svg','g');
+    g.innerHTML=`<circle class="porthit" data-port="${p.id}" cx="${p.x}" cy="${p.y}" r="13" fill="transparent"/>
+      <circle class="portdot" data-port="${p.id}" cx="${p.x}" cy="${p.y}" r="5.5" fill="var(--panel2)" stroke="${p.color||'var(--dim)'}" stroke-width="2"/>
+      ${p.label?`<text x="${p.x+(p.lx||0)}" y="${p.y+(p.ly||-10)}" text-anchor="middle" class="portlbl" style="fill:${p.color||'var(--dim)'}">${p.label}</text>`:''}`;
+    portL.appendChild(g);
+  });
+  function hosePath(a,b){
+    const A=byId[a],B=byId[b];
+    const mx=(A.x+B.x)/2, my=Math.max(A.y,B.y)+22+Math.abs(A.x-B.x)*0.08;
+    return `M${A.x} ${A.y} Q ${mx} ${my} ${B.x} ${B.y}`;
+  }
+  function redraw(){
+    hoseL.innerHTML=K.conns.map((c,i)=>
+      `<path class="hose" data-h="${i}" d="${hosePath(c[0],c[1])}"/>
+       <path class="hosehit" data-h="${i}" d="${hosePath(c[0],c[1])}"/>`).join('');
+    portL.querySelectorAll('.portdot').forEach(d=>{
+      const id=d.dataset.port;
+      d.classList.toggle('pend',K.pending===id);
+      d.classList.toggle('used',deg(id)>0);
+    });
+  }
+  function deg(p){ return K.conns.filter(c=>c[0]===p||c[1]===p).length; }
+  function nets(){
+    const parent={}; ports.forEach(p=>parent[p.id]=p.id);
+    const find=x=>{while(parent[x]!==x)x=parent[x]=parent[parent[x]];return x;};
+    K.conns.forEach(([a,b])=>{parent[find(a)]=find(b);});
+    return {find, same:(a,b)=>find(a)===find(b)};
+  }
+  /* reach: BFS over conns + internal edges (list of [a,b]) from start ids */
+  function reach(starts, internal){
+    const adj={}; ports.forEach(p=>adj[p.id]=[]);
+    K.conns.concat(internal).forEach(([a,b])=>{ if(adj[a]&&adj[b]){adj[a].push(b);adj[b].push(a);} });
+    const seen=new Set(starts.filter(s=>adj[s])); const q=[...seen];
+    while(q.length){ const n=q.pop(); adj[n].forEach(m=>{ if(!seen.has(m)){seen.add(m);q.push(m);} }); }
+    return seen;
+  }
+  svg.addEventListener('click',e=>{
+    if(K.locked) return;
+    const port=e.target.dataset&&e.target.dataset.port;
+    const h=e.target.dataset&&e.target.dataset.h;
+    if(h!=null){ K.conns.splice(+h,1); K.pending=null; redraw(); K.onChange(); return; }
+    if(port){
+      if(K.pending===null){ K.pending=port; }
+      else if(K.pending===port){ K.pending=null; }
+      else{
+        const a=K.pending,b=port;
+        const exists=K.conns.findIndex(c=>(c[0]===a&&c[1]===b)||(c[0]===b&&c[1]===a));
+        if(exists>=0) K.conns.splice(exists,1);
+        else{
+          const maxA=byId[a].max||1, maxB=byId[b].max||1;
+          if(deg(a)>=maxA||deg(b)>=maxB){ K.flash&&K.flash('Port full — remove a hose first'); }
+          else K.conns.push([a,b]);
+        }
+        K.pending=null;
+      }
+      redraw(); K.onChange();
+    }
+  });
+  K.paint=(liveIds)=>{ // set of port ids that are pressurized
+    hoseL.querySelectorAll('.hose').forEach(h=>{
+      const c=K.conns[+h.dataset.h]; if(!c)return;
+      h.classList.toggle('live',liveIds.has(c[0])||liveIds.has(c[1]));
+    });
+  };
+  K.set=(conns)=>{K.conns=conns.map(c=>[...c]);K.pending=null;redraw();K.onChange();};
+  K.clear=()=>K.set([]);
+  K.lock=(v)=>{K.locked=v;portL.style.opacity=v?0.55:1;};
+  K.same=(a,b)=>nets().same(a,b);
+  K.reach=reach; K.deg=deg;
+  redraw();
+  return K;
+}
+
+/* ============ 1. PNEUMATICS — buildable ============ */
 SIMS.sim_pneu = {
   title:"Pneumatic Meter-Out Circuit", stack:"pneu",
-  desc:"Your Figure 6-1: regulator → 5/3 DCV → flow-control valve (Gauge B) → large-bore cylinder. Set 30 psi, open the needle ½ turn, and watch the back pressure appear.",
+  desc:"Build it like the real bench: tap two ports to run a hose, tap a hose to remove it. Wrong plumbing fails the way it fails on the trainer.",
   mount(root,api){
     root.innerHTML=`
     <div class="simwrap">
-      <svg viewBox="0 0 360 220" class="schematic accent-pneu">
-        <g transform="translate(40,40)">${gaugeFace('gA','GAUGE A')}</g>
-        <g transform="translate(212,40)">${gaugeFace('gB','GAUGE B')}</g>
-        <!-- lines -->
-        <path id="lnSupply" class="pipe" d="M10 150 H70"/>
-        <path id="lnA" class="pipe" d="M70 150 H120"/>
-        <path id="lnWork" class="pipe" d="M168 150 H212 V120"/>
-        <path id="lnRod" class="pipe" d="M232 120 V96 H300 V110"/>
-        <!-- supply triangle -->
-        <path d="M2 144 l12 6 l-12 6 z" fill="currentColor" opacity=".0"/>
-        <path d="M4 144 l12 6 l-12 6" class="pipe"/>
+      <div class="seg" id="pMode"><button data-m="guided" class="on">Guided (pre-connected)</button><button data-m="build">🔧 Build it yourself</button></div>
+      <div class="buildstatus" id="pStatus"></div>
+      <svg id="psvg" viewBox="0 0 360 300" class="schematic accent-pneu">
+        <g transform="translate(50,40)">${gaugeFace('gA','GAUGE A','var(--pneu)')}</g>
+        <g transform="translate(310,40)">${gaugeFace('gB','GAUGE B','var(--pneu)')}</g>
+        <!-- supply -->
+        <g transform="translate(14,118)"><path d="M0 -8 l14 8 l-14 8z" fill="var(--dim)"/><text x="7" y="22" text-anchor="middle" class="svgtag">SUPPLY</text></g>
+        <!-- shutoff -->
+        <g transform="translate(64,106)"><rect class="comp" x="0" y="0" width="34" height="24" rx="4"/><path class="comp" d="M7 5 L27 19 M27 5 L7 19"/><text x="17" y="36" text-anchor="middle" class="svgtag">SHUTOFF</text></g>
+        <!-- regulator (Gauge A fixed-plumbed) -->
+        <g transform="translate(128,106)"><rect class="comp" x="0" y="0" width="38" height="24" rx="4"/><path class="comp" d="M5 19 L33 7 m-6 -2 l6 2 l-2 6"/><path class="comp" d="M19 0 v-7 m-5 0 h10"/><text x="19" y="36" text-anchor="middle" class="svgtag">REGULATOR</text></g>
+        <path class="pipe" d="M147 99 C 120 80 75 65 56 60" opacity=".5" stroke-dasharray="3 4"/>
         <!-- DCV -->
-        <g id="dcv" transform="translate(120,128)">
-          <rect class="comp" x="0" y="0" width="48" height="44"/>
-          <line class="comp" x1="16" y1="0" x2="16" y2="44"/><line class="comp" x1="32" y1="0" x2="32" y2="44"/>
-          <g id="spool" transform="translate(0,0)">
-            <path class="comp" d="M4 36 L12 8 M9 8 l3 0 l0 3"/>
-            <path class="comp" d="M12 36 L4 8 M4 11 l0 -3 l3 0"/>
-            <line class="comp" x1="20" y1="8" x2="20" y2="36"/><line class="comp" x1="28" y1="8" x2="28" y2="36"/>
-            <path class="comp" d="M36 8 L44 36 M41 36 l3 0 l0 -3"/>
-            <path class="comp" d="M44 8 L36 36 M36 33 l0 3 l3 0"/>
-          </g>
-          <text x="24" y="58" text-anchor="middle" class="svgtag">5/3 DCV</text>
+        <g transform="translate(120,176)">
+          <rect class="comp" x="0" y="0" width="32" height="40" fill="var(--panel)" opacity=".8"/><rect class="comp" x="32" y="0" width="32" height="40" fill="var(--panel)" opacity=".8"/><rect class="comp" x="64" y="0" width="32" height="40" fill="var(--panel)" opacity=".8"/>
+          <path class="comp" d="M4 34 L28 6 M28 34 L4 6" id="pCellExt"/>
+          <line class="comp" x1="42" y1="6" x2="42" y2="34"/><line class="comp" x1="54" y1="6" x2="54" y2="34"/>
+          <path class="comp" d="M68 34 L92 6 M92 34 L68 6" id="pCellRet"/>
+          <rect id="pCursor" class="spool-cursor" x="32" y="-4" width="32" height="48" rx="3"/>
+          <text x="48" y="56" text-anchor="middle" class="svgtag">5/3 DCV</text>
         </g>
         <!-- flow control -->
-        <g id="fcv" transform="translate(244,76)">
-          <rect class="comp" x="0" y="0" width="44" height="28" rx="4"/>
-          <path class="comp" d="M6 22 L36 8 m-6 -2 l6 2 l-2 6"/>
-          <path class="comp" d="M22 -8 v8 M16 -10 h12"/>
-          <text x="22" y="42" text-anchor="middle" class="svgtag">FLOW CTRL</text>
+        <g transform="translate(252,176)">
+          <rect class="comp" x="0" y="0" width="46" height="28" rx="4"/>
+          <path class="comp" d="M7 22 L39 8 m-6 -2 l6 2 l-2 6"/>
+          <path class="comp" d="M23 0 v-7 m-6 0 h12"/>
+          <path class="comp" d="M14 14 l6 -5 l6 5" opacity=".7"/>
+          <text x="23" y="40" text-anchor="middle" class="svgtag">FLOW CTRL</text>
+          <text x="6" y="-10" class="svgtag" style="fill:var(--gold)">metered ⟶</text>
         </g>
         <!-- cylinder -->
-        <g transform="translate(196,164)">
-          <rect class="comp" x="0" y="0" width="120" height="34"/>
-          <rect id="piston" x="6" y="3" width="10" height="28" fill="currentColor"/>
-          <rect id="rod" x="16" y="13" width="40" height="8" fill="var(--dim)"/>
-          <text x="60" y="50" text-anchor="middle" class="svgtag">LARGE BORE CYLINDER</text>
+        <g transform="translate(232,242)">
+          <rect class="comp" x="0" y="0" width="100" height="30"/>
+          <rect id="pPiston" x="4" y="3" width="10" height="24" fill="var(--pneu)" opacity=".75"/>
+          <rect id="pRod" x="14" y="10" width="30" height="10" fill="var(--dim)"/>
+          <text x="50" y="44" text-anchor="middle" class="svgtag">LARGE BORE CYLINDER</text>
         </g>
-        <text x="10" y="136" class="svgtag">SUPPLY</text>
+        <!-- exhausts -->
+        <g transform="translate(132,250)"><path class="comp" d="M0 0 h10 l-5 9z"/><text x="5" y="22" text-anchor="middle" class="svgtag">EA</text></g>
+        <g transform="translate(172,250)"><path class="comp" d="M0 0 h10 l-5 9z"/><text x="5" y="22" text-anchor="middle" class="svgtag">EB</text></g>
       </svg>
-      <div class="readout"><span id="extTime">extension time: —</span><span id="simNote"></span></div>
+      <div class="readout"><span id="pExtTime">extension time: —</span><span id="pNote"></span></div>
       <div class="ctrls">
-        <button id="shut" class="ctl">Shutoff: CLOSED</button>
-        <label class="slider">Regulator <input id="reg" type="range" min="0" max="60" value="0"><b id="regv">0 psi</b></label>
-        <label class="slider">Flow-control <input id="fc" type="range" min="0" max="3" step="0.5" value="0"><b id="fcv_v">closed</b></label>
-        <div class="seg" id="dcvseg">
-          <button data-p="-1">Retract</button><button data-p="0" class="on">Center</button><button data-p="1">Extend</button>
+        <button id="pShut" class="ctl">Shutoff: CLOSED</button>
+        <label class="slider">Regulator <input id="pReg" type="range" min="0" max="60" value="0"><b id="pRegV">0 psi</b></label>
+        <label class="slider">Flow-control <input id="pFc" type="range" min="0" max="3" step="0.5" value="0"><b id="pFcV">closed</b></label>
+        <div class="seg" id="pSeg">
+          <button data-p="1" style="color:var(--elec)">▶ Extend</button>
+          <button data-p="0" class="on">■ Center</button>
+          <button data-p="-1" style="color:var(--hyd)">◀ Retract</button>
         </div>
+        <button id="pClear" class="ctl" hidden>🗑 Clear hoses</button>
       </div>
     </div>`;
-    const svg=root.querySelector('svg');
-    const st={shut:false,reg:0,fc:0,dcv:0,pos:0,gB:0,extStart:null,extDone:false,didRetract:false};
-    root.querySelector('#shut').onclick=e=>{st.shut=!st.shut;e.target.textContent='Shutoff: '+(st.shut?'OPEN':'CLOSED');e.target.classList.toggle('on',st.shut);};
-    root.querySelector('#reg').oninput=e=>{st.reg=+e.target.value;root.querySelector('#regv').textContent=st.reg+' psi';};
-    root.querySelector('#fc').oninput=e=>{st.fc=+e.target.value;root.querySelector('#fcv_v').textContent=st.fc===0?'closed':st.fc+' turn'+(st.fc>1?'s':'');};
-    root.querySelectorAll('#dcvseg button').forEach(b=>b.onclick=()=>{
-      root.querySelectorAll('#dcvseg button').forEach(x=>x.classList.remove('on'));b.classList.add('on');
-      st.dcv=+b.dataset.p;
-      if(st.dcv===1){st.extStart=performance.now();st.extDone=false;}
-      svg.querySelector('#spool').setAttribute('transform',`translate(${st.dcv*16},0)`);
+    const svg=root.querySelector('#psvg');
+    const PORTS=[
+      {id:'SUP',  x:32, y:118, label:'OUT', color:'var(--gold)', ly:-12},
+      {id:'SH.i', x:60, y:118, label:'IN'}, {id:'SH.o', x:102, y:118, label:'OUT'},
+      {id:'RG.i', x:124,y:118, label:'IN'}, {id:'RG.o', x:170, y:118, label:'OUT', color:'var(--gold)'},
+      {id:'D.P',  x:168,y:172, label:'P', color:'var(--gold)'},
+      {id:'D.A',  x:130,y:172, label:'A', color:'var(--pneu)'},
+      {id:'D.B',  x:206,y:172, label:'B', color:'var(--pneu)', lx:8},
+      {id:'D.EA', x:137,y:246, label:''},
+      {id:'D.EB', x:177,y:246, label:''},
+      {id:'F.v',  x:248,y:190, label:'V', lx:-4},
+      {id:'F.c',  x:302,y:190, label:'C', color:'var(--pneu)', lx:6, max:2},
+      {id:'C.cap',x:236,y:236, label:'CAP', lx:-14, ly:4},
+      {id:'C.rod',x:328,y:236, label:'ROD', color:'var(--pneu)', lx:12, ly:4, max:2},
+      {id:'GB.p', x:310,y:88,  label:'', max:1},
+    ];
+    const CORRECT=[['SUP','SH.i'],['SH.o','RG.i'],['RG.o','D.P'],['D.A','C.cap'],['D.B','F.v'],['F.c','C.rod'],['GB.p','C.rod']];
+    const ST={mode:'guided',shut:false,reg:0,fc:0,dcv:0,pos:0,gB:0,extStart:null,extDone:false,retracted:false,builtOK:false};
+    const note=root.querySelector('#pNote'), status=root.querySelector('#pStatus');
+    let EV={capFed:false,exhaust:'none',gaugeRod:false,supplyOK:false,fcvCorrect:true,issues:[]};
+    const kit=PortKit(svg,PORTS,{onChange:()=>evaluate()});
+    kit.flash=m=>note.textContent=m;
+    kit.set(CORRECT); kit.lock(true);
+    root.querySelectorAll('#pMode button').forEach(b=>b.onclick=()=>{
+      root.querySelectorAll('#pMode button').forEach(x=>x.classList.remove('on'));b.classList.add('on');
+      ST.mode=b.dataset.m;
+      root.querySelector('#pClear').hidden=ST.mode!=='build';
+      if(ST.mode==='build'){kit.lock(false);kit.clear();status.textContent='Connect: supply → shutoff → regulator → DCV P · DCV A → cap end · DCV B → flow control → rod end · Gauge B tees on the rod line.';}
+      else{kit.set(CORRECT);kit.lock(true);status.textContent='';}
+      evaluate();
     });
+    root.querySelector('#pClear').onclick=()=>kit.clear();
+    root.querySelector('#pShut').onclick=e=>{ST.shut=!ST.shut;e.target.textContent='Shutoff: '+(ST.shut?'OPEN':'CLOSED');e.target.classList.toggle('on',ST.shut);};
+    root.querySelector('#pReg').oninput=e=>{ST.reg=+e.target.value;root.querySelector('#pRegV').textContent=ST.reg+' psi';};
+    root.querySelector('#pFc').oninput=e=>{ST.fc=+e.target.value;root.querySelector('#pFcV').textContent=ST.fc===0?'closed':ST.fc+' turn';};
+    root.querySelectorAll('#pSeg button').forEach(b=>b.onclick=()=>{
+      root.querySelectorAll('#pSeg button').forEach(x=>x.classList.remove('on'));b.classList.add('on');
+      ST.dcv=+b.dataset.p; if(ST.dcv===1){ST.extStart=performance.now();ST.extDone=false;}
+      svg.querySelector('#pCursor').setAttribute('x',ST.dcv===1?0:ST.dcv===0?32:64);
+    });
+
+    /* circuit evaluation */
+    function internalEdges(){
+      const e=[];
+      if(ST.shut) e.push(['SH.i','SH.o']);
+      e.push(['RG.i','RG.o']);
+      if(ST.dcv===1){ e.push(['D.P','D.A'],['D.B','D.EB']); }
+      if(ST.dcv===-1){ e.push(['D.P','D.B'],['D.A','D.EA']); }
+      e.push(['F.v','F.c']);
+      return e;
+    }
+    function evaluate(){
+      const issues=[];
+      // which FCV port faces the cylinder rod? (BFS from C.rod without FCV internal edge)
+      const rodSide=kit.reach(['C.rod'],[]);
+      const cylOnC=rodSide.has('F.c'), cylOnV=rodSide.has('F.v');
+      EV.fcvCorrect=cylOnC&&!cylOnV;
+      if(cylOnV&&!cylOnC) issues.push('Flow-control is reversed — its check valve now bypasses EXTENSION.');
+      // supply chain
+      const supplyNet=kit.reach(['SUP'],ST.shut?[['SH.i','SH.o'],['RG.i','RG.o']]:[['RG.i','RG.o']]);
+      EV.supplyOK=supplyNet.has('D.P');
+      if(!kit.same('SUP','SH.i')) issues.push('Supply isn\u2019t connected to the shutoff valve.');
+      else if(!supplyNet.has('RG.o')&&ST.shut) issues.push('Air stops at the regulator — check shutoff→regulator hose.');
+      else if(!EV.supplyOK&&ST.shut) issues.push('Regulated air never reaches DCV port P.');
+      if(!kit.same('D.A','C.cap')&&!(kit.same('D.B','C.cap'))) issues.push('Cap end of the cylinder isn\u2019t fed by the DCV.');
+      const rodToB = rodSide.has('F.c')||rodSide.has('F.v') ? kit.reach(['C.rod'],[['F.v','F.c']]).has('D.B') : kit.same('C.rod','D.B');
+      if(!rodToB) issues.push('Rod end has no path back to DCV port B — exhaust air is trapped or open.');
+      EV.gaugeRod=kit.same('GB.p','C.rod');
+      if(!EV.gaugeRod&&kit.deg('GB.p')===0) issues.push('Gauge B isn\u2019t tee\u2019d into the rod line — you\u2019ll have no back-pressure reading.');
+      EV.issues=issues;
+      if(status&&ST.mode==='build'){
+        if(!issues.length&&kit.deg('SUP')>0){ status.innerHTML='<b style="color:var(--elec)">✓ Circuit matches the lab schematic.</b> Pressurize and run your tests.';
+          if(!ST.builtOK){ST.builtOK=true;api.award('pneu_build',25,'Built the pneumatic circuit correctly');} }
+        else if(kit.deg('SUP')===0&&issues.length) status.textContent='Connect: supply → shutoff → regulator → DCV P · DCV A → cap end · DCV B → flow control → rod end · Gauge B on the rod line.';
+        else status.innerHTML=issues.map(i=>'✗ '+i).join('<br>');
+      }
+    }
+    evaluate();
+
     let raf,last=performance.now();
-    const note=root.querySelector('#simNote');
     function tick(now){
-      const dt=Math.min(.05,(now-last)/1000);last=now;
-      const supply=st.shut?st.reg:0;
+      const dt=Math.min(.05,(now-last)/1000); last=now;
+      const edges=internalEdges();
+      const press=kit.reach(['SUP'],edges);
+      const supply=(ST.shut&&press.has('RG.o'))?ST.reg:0;
+      const capFed=ST.shut&&press.has('C.cap')&&supply>4;
+      const rodFed=ST.shut&&press.has('C.rod')&&supply>4&&ST.dcv===-1;
+      // exhaust path from rod when extending
+      const exh=kit.reach(['C.rod'],edges);
+      const rodExhaustOK=ST.dcv===1&&exh.has('D.EB');
       let v=0;
-      if(supply>4){
-        if(st.dcv===1) v = st.fc===0?0 : (0.08+0.16*st.fc)*(supply/30);       // metered extension
-        if(st.dcv===-1) v = -0.85*(supply/30);                                 // free retraction via check
-      } else if(st.pos>0 && !st.shut){ v=0; }
-      st.pos=Math.max(0,Math.min(1,st.pos+v*dt));
-      // gauge B: back pressure while extending and moving
-      const target = (st.dcv===1&&v>0&&st.pos<1)? supply*(0.55+0.35*(1-st.fc/3))
-                   : (st.dcv===-1&&supply>4)? supply : (st.pos>=1&&st.dcv===1? supply:0);
-      st.gB+= (target-st.gB)*Math.min(1,dt*4);
-      setGauge(svg,'gA',supply,60); setGauge(svg,'gB',st.gB,60);
-      svg.querySelector('#piston').setAttribute('x',6+st.pos*64);
-      svg.querySelector('#rod').setAttribute('x',16+st.pos*64);
-      ['lnSupply'].forEach(i=>svg.getElementById(i).classList.toggle('live',supply>4));
-      svg.getElementById('lnA').classList.toggle('live',supply>4);
-      svg.getElementById('lnWork').classList.toggle('live',supply>4&&st.dcv===1);
-      svg.getElementById('lnRod').classList.toggle('live',(st.dcv===1&&st.gB>5)||(st.dcv===-1&&supply>4));
-      // messages & milestones
-      if(st.dcv===1&&supply>4&&st.fc===0&&st.pos<1) note.textContent='Cylinder stalled — flow-control is CLOSED (exhaust can\'t escape).';
-      else if(st.dcv===1&&st.pos>0&&st.pos<1) note.textContent='Extending: Gauge B shows back pressure (meter-out).';
-      else if(st.dcv===-1&&st.pos>0) {note.textContent='Retracting fast — check valve bypasses the restriction.'; st.didRetract=true;}
+      if(capFed&&ST.dcv===1){
+        if(!rodExhaustOK) v=0;
+        else if(EV.fcvCorrect) v=ST.fc===0?0:(0.08+0.16*ST.fc)*(supply/30);
+        else v=0.8*(supply/30); // reversed: check bypasses — uncontrolled
+      }
+      if(rodFed&&ST.dcv===-1){
+        const capExh=kit.reach(['C.cap'],edges).has('D.EA');
+        if(capExh) v=EV.fcvCorrect?-0.85*(supply/30):-(ST.fc===0?0:(0.07+0.14*ST.fc))*(supply/30);
+      }
+      ST.pos=Math.max(0,Math.min(1,ST.pos+v*dt));
+      const tgtB=(EV.gaugeRod&&ST.dcv===1&&v>0&&ST.pos<1&&EV.fcvCorrect)?supply*(0.55+0.35*(1-ST.fc/3))
+        :(EV.gaugeRod&&ST.dcv===-1&&rodFed)?supply:(EV.gaugeRod&&ST.pos>=1&&ST.dcv===1?supply*0.0:0);
+      ST.gB+=(tgtB-ST.gB)*Math.min(1,dt*4);
+      setGauge(svg,'gA',supply,60); setGauge(svg,'gB',ST.gB,60);
+      svg.querySelector('#pPiston').setAttribute('x',4+ST.pos*60);
+      svg.querySelector('#pRod').setAttribute('x',14+ST.pos*60);
+      kit.paint(ST.shut&&supply>4?press:new Set());
+      // narration
+      if(ST.mode==='build'&&EV.issues.length&&ST.shut&&supply>4) note.textContent='Circuit fault — see status above.';
+      else if(capFed&&ST.dcv===1&&!rodExhaustOK&&ST.pos<1) note.textContent='STALLED: rod-end air has no exhaust path through the DCV.';
+      else if(capFed&&ST.dcv===1&&ST.fc===0&&EV.fcvCorrect&&ST.pos<1) note.textContent='STALLED: flow-control closed — exhaust can\u2019t escape.';
+      else if(capFed&&ST.dcv===1&&!EV.fcvCorrect&&ST.pos<1) note.textContent='⚠ Fast, uncontrolled extension — flow-control reversed (check bypassing).';
+      else if(ST.dcv===1&&ST.pos>0&&ST.pos<1) note.textContent='Extending — Gauge B shows meter-out back pressure.';
+      else if(ST.dcv===-1&&ST.pos>0) {note.textContent=EV.fcvCorrect?'Fast retraction via the bypass check.':'⚠ Slow retraction — reversed valve now meters this stroke.'; ST.retracted=true;}
       else note.textContent='';
-      if(st.dcv===1&&st.pos>=1&&!st.extDone&&st.extStart){
-        st.extDone=true;
-        const t=((now-st.extStart)/1000).toFixed(1);
-        root.querySelector('#extTime').textContent=`extension time: ${t} s @ ${st.fc} turn`;
-        if(Math.abs(st.reg-30)<=2) api.award('pneu_30psi',15,'Ran extension at the lab setpoint (30 psi)');
-        if(st.didRetract) api.award('pneu_both',15,'Compared extension vs retraction speed');
+      if(ST.dcv===1&&ST.pos>=1&&!ST.extDone&&ST.extStart){
+        ST.extDone=true;
+        root.querySelector('#pExtTime').textContent=`ext time: ${((now-ST.extStart)/1000).toFixed(1)}s @ ${ST.fc}T`;
+        if(Math.abs(ST.reg-30)<=2)api.award('pneu_30psi',15,'Extension at the 30 psi lab setpoint');
+        if(ST.retracted)api.award('pneu_both',15,'Compared extension vs retraction');
       }
       raf=requestAnimationFrame(tick);
     }
@@ -722,200 +1124,354 @@ SIMS.sim_pneu = {
     return ()=>cancelAnimationFrame(raf);
   }
 };
-
-/* ============ 2. HYDRAULICS — 850-H1 meter-out ============ */
+/* ============ 2. HYDRAULICS — buildable (850-H1) ============ */
 SIMS.sim_hyd = {
   title:"Hydraulic Meter-Out Circuit (850-H1)", stack:"hyd",
-  desc:"Power unit → flow meter → 4/3 DCV → Tee B → flow control → Tee A → load-spring cylinder. Bring Gauge S to 300 psi with the relief, then run your data table tests.",
+  desc:"Hose it like the trainer: supply manifold → flow meter → DCV → Tee B → flow control → Tee A → cylinder, with the return to the return manifold. Forget the return line and the pump deadheads over the relief.",
   mount(root,api){
     root.innerHTML=`
     <div class="simwrap">
-      <svg viewBox="0 0 360 230" class="schematic accent-hyd">
-        <g transform="translate(34,40)">${gaugeFace('gS','GAUGE S')}</g>
-        <g transform="translate(160,40)">${gaugeFace('ghB','GAUGE B')}</g>
-        <g transform="translate(286,40)">${gaugeFace('ghA','GAUGE A')}</g>
-        <path id="hSup" class="pipe" d="M14 160 H58"/>
-        <path id="hFm" class="pipe" d="M86 160 H110"/>
-        <path id="hB" class="pipe" d="M158 160 H190"/>
-        <path id="hA" class="pipe" d="M234 160 H268"/>
-        <g id="fm" transform="translate(58,148)"><circle class="comp" cx="14" cy="12" r="13"/><path class="comp" d="M7 12 h14 m-4 -4 l4 4 l-4 4"/><text x="14" y="38" text-anchor="middle" class="svgtag">FLOW</text><text x="14" y="48" text-anchor="middle" class="svgval" id="fmv">0.0 gpm</text></g>
-        <g id="hdcv" transform="translate(110,138)">
-          <rect class="comp" x="0" y="0" width="48" height="44"/>
-          <line class="comp" x1="16" y1="0" x2="16" y2="44"/><line class="comp" x1="32" y1="0" x2="32" y2="44"/>
-          <g id="hspool"><path class="comp" d="M4 36 L12 8 M9 8 h3 v3"/><path class="comp" d="M12 36 L4 8 M4 11 v-3 h3"/><line class="comp" x1="20" y1="8" x2="20" y2="36"/><line class="comp" x1="28" y1="8" x2="28" y2="36"/><path class="comp" d="M36 8 L44 36 M41 36 h3 v-3"/><path class="comp" d="M44 8 L36 36 M36 33 v3 h3"/></g>
-          <text x="24" y="58" text-anchor="middle" class="svgtag">4/3 DCV</text>
+      <div class="seg" id="hMode"><button data-m="guided" class="on">Guided (pre-connected)</button><button data-m="build">🔧 Build it yourself</button></div>
+      <div class="buildstatus" id="hStatus"></div>
+      <svg id="hsvg" viewBox="0 0 360 312" class="schematic accent-hyd">
+        <g transform="translate(40,38)">${gaugeFace('gS','GAUGE S','var(--gold)')}</g>
+        <g transform="translate(180,38)">${gaugeFace('ghB','GAUGE B','var(--hyd)')}</g>
+        <g transform="translate(312,38)">${gaugeFace('ghA','GAUGE A','var(--hyd)')}</g>
+        <!-- power unit: supply + return manifolds, relief & gauge S internal -->
+        <g transform="translate(10,112)">
+          <rect class="comp" x="0" y="0" width="54" height="64" rx="5"/>
+          <text x="27" y="-8" text-anchor="middle" class="svgtag">POWER UNIT</text>
+          <text x="27" y="16" text-anchor="middle" class="svgtag" style="fill:var(--gold)">SUPPLY</text>
+          <text x="27" y="52" text-anchor="middle" class="svgtag">RETURN</text>
+          <path class="comp" d="M8 28 h38" opacity=".4"/>
         </g>
-        <g id="hfcv" transform="translate(190,146)">
-          <rect class="comp" x="0" y="0" width="44" height="28" rx="4"/>
-          <path class="comp" d="M6 22 L36 8 m-6 -2 l6 2 l-2 6"/><path class="comp" d="M22 -8 v8 M16 -10 h12"/>
-          <text x="22" y="42" text-anchor="middle" class="svgtag">FLOW CTRL</text>
+        <path class="pipe" d="M37 112 C 37 90 40 72 40 60" opacity=".5" stroke-dasharray="3 4"/>
+        <!-- flow meter -->
+        <g transform="translate(96,112)"><circle class="comp" cx="16" cy="14" r="14"/><path class="comp" d="M7 14 h18 m-5 -4 l5 4 l-5 4"/><text x="16" y="42" text-anchor="middle" class="svgtag">FLOW METER</text><text x="16" y="52" text-anchor="middle" class="svgval" id="hFmV" style="fill:var(--gold)">0.0 gpm</text></g>
+        <!-- DCV -->
+        <g transform="translate(154,176)">
+          <rect class="comp" x="0" y="0" width="30" height="38" fill="var(--panel)" opacity=".8"/><rect class="comp" x="30" y="0" width="30" height="38" fill="var(--panel)" opacity=".8"/><rect class="comp" x="60" y="0" width="30" height="38" fill="var(--panel)" opacity=".8"/>
+          <path class="comp" d="M4 32 L26 6 M26 32 L4 6"/>
+          <line class="comp" x1="40" y1="6" x2="40" y2="32"/><line class="comp" x1="50" y1="6" x2="50" y2="32"/>
+          <path class="comp" d="M64 32 L86 6 M86 32 L64 6"/>
+          <rect id="hCursor" class="spool-cursor" x="30" y="-4" width="30" height="46" rx="3"/>
+          <text x="45" y="54" text-anchor="middle" class="svgtag">4/3 DCV</text>
         </g>
-        <g transform="translate(252,178)">
-          <rect class="comp" x="0" y="0" width="84" height="30"/>
-          <rect id="hpiston" x="5" y="3" width="8" height="24" fill="currentColor"/>
-          <rect id="hrod" x="13" y="11" width="26" height="8" fill="var(--dim)"/>
-          <path id="spring" class="comp" d="M88 15 l5 -8 l5 16 l5 -16 l5 16 l5 -8" transform="translate(0,0)"/>
-          <text x="42" y="44" text-anchor="middle" class="svgtag">CYL + LOAD SPRING</text>
+        <!-- flow control -->
+        <g transform="translate(252,140)">
+          <rect class="comp" x="0" y="0" width="46" height="28" rx="4"/>
+          <path class="comp" d="M7 22 L39 8 m-6 -2 l6 2 l-2 6"/>
+          <path class="comp" d="M23 0 v-7 m-6 0 h12"/>
+          <text x="23" y="40" text-anchor="middle" class="svgtag">FLOW CTRL</text>
         </g>
-        <text x="10" y="146" class="svgtag">SUPPLY MANIFOLD</text>
-        <text x="270" y="160" class="svgtag" id="dPv">ΔP = 0 psi</text>
+        <!-- cylinder + spring -->
+        <g transform="translate(240,252)">
+          <rect class="comp" x="0" y="0" width="82" height="28"/>
+          <rect id="hPiston" x="4" y="3" width="9" height="22" fill="var(--hyd)" opacity=".75"/>
+          <rect id="hRod" x="13" y="10" width="22" height="8" fill="var(--dim)"/>
+          <path id="hSpring" class="comp" d="M88 14 l5 -7 l5 14 l5 -14 l5 14 l5 -7"/>
+          <text x="41" y="42" text-anchor="middle" class="svgtag">CYL + LOAD SPRING</text>
+        </g>
+        <text x="252" y="232" class="svgval" id="hDp" style="fill:var(--gold)">ΔP = 0</text>
       </svg>
-      <div class="readout"><span id="hext">extension time: —</span><span id="hnote"></span></div>
+      <div class="readout"><span id="hExtTime">extension time: —</span><span id="hNote"></span></div>
       <div class="ctrls">
-        <button id="pu" class="ctl">Power unit: OFF</button>
-        <label class="slider">Relief setting <input id="relief" type="range" min="0" max="500" value="0" step="10"><b id="reliefv">min</b></label>
-        <button id="hshut" class="ctl">Shutoff: CLOSED</button>
-        <label class="slider">Flow-control <input id="hfc" type="range" min="0" max="3" step="0.5" value="0"><b id="hfcvv">closed</b></label>
-        <div class="seg" id="hseg"><button data-p="-1">Retract</button><button data-p="0" class="on">Center</button><button data-p="1">Extend</button></div>
+        <button id="hPu" class="ctl">Power unit: OFF</button>
+        <label class="slider">Relief <input id="hRelief" type="range" min="0" max="500" value="0" step="10"><b id="hReliefV">min</b></label>
+        <button id="hShut" class="ctl">Shutoff: CLOSED</button>
+        <label class="slider">Flow-control <input id="hFc" type="range" min="0" max="3" step="0.5" value="0"><b id="hFcV">closed</b></label>
+        <div class="seg" id="hSeg">
+          <button data-p="1" style="color:var(--elec)">▶ Extend</button>
+          <button data-p="0" class="on">■ Center</button>
+          <button data-p="-1" style="color:var(--hyd)">◀ Retract</button>
+        </div>
+        <button id="hClear" class="ctl" hidden>🗑 Clear hoses</button>
       </div>
     </div>`;
-    const svg=root.querySelector('svg');
-    const st={pu:false,relief:0,shut:false,fc:0,dcv:0,pos:0,gA:0,gB:0,extStart:null,extDone:false,checkedSpring:false};
-    root.querySelector('#pu').onclick=e=>{st.pu=!st.pu;e.target.textContent='Power unit: '+(st.pu?'ON':'OFF');e.target.classList.toggle('on',st.pu);};
-    root.querySelector('#relief').oninput=e=>{st.relief=+e.target.value;root.querySelector('#reliefv').textContent=st.relief?st.relief+' psi':'min';};
-    root.querySelector('#hshut').onclick=e=>{st.shut=!st.shut;e.target.textContent='Shutoff: '+(st.shut?'OPEN':'CLOSED');e.target.classList.toggle('on',st.shut);};
-    root.querySelector('#hfc').oninput=e=>{st.fc=+e.target.value;root.querySelector('#hfcvv').textContent=st.fc===0?'closed':st.fc+' turn'+(st.fc>1?'s':'');};
-    root.querySelectorAll('#hseg button').forEach(b=>b.onclick=()=>{
-      root.querySelectorAll('#hseg button').forEach(x=>x.classList.remove('on'));b.classList.add('on');
-      st.dcv=+b.dataset.p; if(st.dcv===1){st.extStart=performance.now();st.extDone=false;}
-      svg.querySelector('#hspool').setAttribute('transform',`translate(${st.dcv*16},0)`);
+    const svg=root.querySelector('#hsvg');
+    const PORTS=[
+      {id:'PU.s', x:68, y:126, label:'S', color:'var(--gold)', lx:8},
+      {id:'PU.r', x:68, y:162, label:'R', lx:8},
+      {id:'FM.i', x:96, y:126, label:'IN', lx:-6},
+      {id:'FM.o', x:130,y:126, label:'OUT', lx:8},
+      {id:'D.P', x:199, y:172, label:'P', color:'var(--gold)'},
+      {id:'D.T', x:199, y:218, label:'T', ly:14},
+      {id:'D.A', x:162, y:172, label:'A', color:'var(--hyd)', lx:-8},
+      {id:'D.B', x:236, y:172, label:'B', color:'var(--hyd)', lx:8, max:2},
+      {id:'F.v', x:248, y:154, label:'V', lx:-6},
+      {id:'F.c', x:302, y:154, label:'C', color:'var(--hyd)', lx:8, max:2},
+      {id:'C.cap',x:244, y:246, label:'CAP', lx:-14, ly:4},
+      {id:'C.rod',x:318, y:246, label:'ROD', color:'var(--hyd)', lx:14, ly:4, max:2},
+      {id:'GB.p', x:180, y:86, label:'', max:1},
+      {id:'GA.p', x:312, y:86, label:'', max:1},
+    ];
+    const CORRECT=[['PU.s','FM.i'],['FM.o','D.P'],['D.T','PU.r'],['D.A','C.cap'],['D.B','F.v'],['GB.p','D.B'],['F.c','C.rod'],['GA.p','C.rod']];
+    const ST={mode:'guided',pu:false,relief:0,shut:false,fc:0,dcv:0,pos:0,gA:0,gB:0,gS:0,extStart:null,extDone:false,sprang:false,builtOK:false};
+    const note=root.querySelector('#hNote'), status=root.querySelector('#hStatus');
+    let EV={fcvCorrect:true,fmInLine:true,returnOK:true,gaA:false,gaB:false,issues:[]};
+    const kit=PortKit(svg,PORTS,{onChange:()=>evaluate()});
+    kit.flash=m=>note.textContent=m;
+    kit.set(CORRECT); kit.lock(true);
+
+    root.querySelectorAll('#hMode button').forEach(b=>b.onclick=()=>{
+      root.querySelectorAll('#hMode button').forEach(x=>x.classList.remove('on'));b.classList.add('on');
+      ST.mode=b.dataset.m;
+      root.querySelector('#hClear').hidden=ST.mode!=='build';
+      if(ST.mode==='build'){kit.lock(false);kit.clear();status.textContent='Connect: supply S → flow meter → DCV P · DCV T → return R · DCV A → cap end · DCV B → Tee(Gauge B) → flow control → Tee(Gauge A) → rod end.';}
+      else{kit.set(CORRECT);kit.lock(true);status.textContent='';}
+      evaluate();
     });
-    let raf,last=performance.now(); const note=root.querySelector('#hnote');
-    function tick(now){
-      const dt=Math.min(.05,(now-last)/1000);last=now;
-      const sysP=st.pu?st.relief:0;
-      const avail=st.shut?sysP:0;
-      let v=0,flow=0;
-      if(avail>30){
-        if(st.dcv===1&&st.fc>0&&st.pos<1){v=(0.05+0.11*st.fc)*(avail/300);flow=(0.4+0.75*st.fc)*(avail/300);}
-        if(st.dcv===-1&&st.pos>0){v=-0.7*(avail/300);flow=2.2*(avail/300);}
+    root.querySelector('#hClear').onclick=()=>kit.clear();
+    root.querySelector('#hPu').onclick=e=>{ST.pu=!ST.pu;e.target.textContent='Power unit: '+(ST.pu?'ON':'OFF');e.target.classList.toggle('on',ST.pu);};
+    root.querySelector('#hRelief').oninput=e=>{ST.relief=+e.target.value;root.querySelector('#hReliefV').textContent=ST.relief?ST.relief+' psi':'min';};
+    root.querySelector('#hShut').onclick=e=>{ST.shut=!ST.shut;e.target.textContent='Shutoff: '+(ST.shut?'OPEN':'CLOSED');e.target.classList.toggle('on',ST.shut);};
+    root.querySelector('#hFc').oninput=e=>{ST.fc=+e.target.value;root.querySelector('#hFcV').textContent=ST.fc===0?'closed':ST.fc+' turn';};
+    root.querySelectorAll('#hSeg button').forEach(b=>b.onclick=()=>{
+      root.querySelectorAll('#hSeg button').forEach(x=>x.classList.remove('on'));b.classList.add('on');
+      ST.dcv=+b.dataset.p; if(ST.dcv===1){ST.extStart=performance.now();ST.extDone=false;}
+      svg.querySelector('#hCursor').setAttribute('x',ST.dcv===1?0:ST.dcv===0?30:60);
+    });
+
+    function internalEdges(){
+      const e=[['FM.i','FM.o'],['F.v','F.c']];
+      if(ST.dcv===1) e.push(['D.P','D.A'],['D.B','D.T']);
+      if(ST.dcv===-1) e.push(['D.P','D.B'],['D.A','D.T']);
+      return e;
+    }
+    function evaluate(){
+      const issues=[];
+      const rodSide=kit.reach(['C.rod'],[]);
+      EV.fcvCorrect=rodSide.has('F.c')&&!rodSide.has('F.v');
+      if(rodSide.has('F.v')&&!rodSide.has('F.c')) issues.push('Flow-control reversed — check valve will bypass extension.');
+      const sup=kit.reach(['PU.s'],[['FM.i','FM.o']]);
+      EV.fmInLine=kit.same('PU.s','FM.i')&&sup.has('D.P');
+      if(!sup.has('D.P')){
+        if(kit.same('PU.s','D.P')){EV.fmInLine=false; issues.push('Flow meter skipped — it must sit between supply and DCV (you\u2019ll log 0 gpm).');}
+        else issues.push('Supply oil never reaches DCV port P.');
       }
-      // load spring pushes back when pressure removed & DCV centered (trapped pressure relieved)
-      if(st.dcv===0&&avail<30&&st.pos>0){v=-0.18;note.textContent='Load spring returning the rod — trapped pressure relieved through the centered DCV.';
-        if(st.pos<0.05&&!st.checkedSpring){st.checkedSpring=true;api.award('hyd_spring',15,'Saw the load spring retract the cylinder after shutdown');}}
-      st.pos=Math.max(0,Math.min(1,st.pos+v*dt));
-      const tgtB=(st.dcv===1&&avail>30)?avail*0.95:(st.dcv===-1?avail*0.3:0);
-      const tgtA=(st.dcv===1&&v>0&&st.pos<1)?avail*(0.45+0.3*(1-st.fc/3))+st.pos*40:(st.pos>=1&&st.dcv===1?avail*0.95:0);
-      st.gB+=(tgtB-st.gB)*Math.min(1,dt*4); st.gA+=(tgtA-st.gA)*Math.min(1,dt*4);
-      setGauge(svg,'gS',sysP,500);setGauge(svg,'ghB',st.gB,500);setGauge(svg,'ghA',st.gA,500);
-      svg.querySelector('#fmv').textContent=flow.toFixed(1)+' gpm';
-      svg.querySelector('#dPv').textContent='ΔP = '+Math.abs(Math.round(st.gA-st.gB))+' psi';
-      svg.querySelector('#hpiston').setAttribute('x',5+st.pos*40);
-      svg.querySelector('#hrod').setAttribute('x',13+st.pos*40);
-      svg.querySelector('#spring').setAttribute('transform',`translate(${st.pos*40},0) scale(${1-st.pos*0.45},1)`);
-      svg.getElementById('hSup').classList.toggle('live',avail>30);
-      svg.getElementById('hFm').classList.toggle('live',avail>30&&flow>0.05);
-      svg.getElementById('hB').classList.toggle('live',avail>30&&st.dcv!==0);
-      svg.getElementById('hA').classList.toggle('live',st.gA>20);
-      if(st.dcv===1&&st.fc===0&&avail>30&&st.pos<1)note.textContent='No movement — flow-control closed blocks the return oil (meter-out).';
-      else if(st.dcv===1&&v>0)note.textContent='Controlled extension. Log Gauges A/B/S, flow, and time for the data table.';
-      else if(st.dcv===-1&&st.pos>0)note.textContent='Rapid retraction through the bypass check.';
-      else if(!(st.dcv===0&&avail<30&&st.pos>0))note.textContent='';
-      if(st.dcv===1&&st.pos>=1&&!st.extDone&&st.extStart){st.extDone=true;
-        root.querySelector('#hext').textContent=`extension time: ${((now-st.extStart)/1000).toFixed(1)} s @ ${st.fc} turn`;
-        if(Math.abs(sysP-300)<=10)api.award('hyd_300',15,'Ran Test 1 at Gauge S = 300 psi');}
+      EV.returnOK=kit.same('D.T','PU.r');
+      if(!EV.returnOK) issues.push('No return line: DCV T → return manifold. The pump will deadhead over the relief.');
+      if(!kit.same('D.A','C.cap')) issues.push('Cap end isn\u2019t fed from DCV A.');
+      const rodPath=kit.reach(['C.rod'],[['F.v','F.c']]);
+      if(!rodPath.has('D.B')) issues.push('Rod line doesn\u2019t reach DCV B through the flow control.');
+      EV.gaA=kit.same('GA.p','C.rod'); EV.gaB=kit.same('GB.p','D.B');
+      if(!EV.gaA&&kit.deg('GA.p')===0) issues.push('Gauge A not tee\u2019d at the cylinder side of the flow control.');
+      if(!EV.gaB&&kit.deg('GB.p')===0) issues.push('Gauge B not tee\u2019d at the DCV side of the flow control.');
+      EV.issues=issues;
+      if(status&&ST.mode==='build'){
+        if(!issues.length&&kit.deg('PU.s')>0){status.innerHTML='<b style="color:var(--elec)">✓ Circuit matches the 850-H1 schematic.</b> Run the power-unit checkout, set 300 psi, test.';
+          if(!ST.builtOK){ST.builtOK=true;api.award('hyd_build',25,'Built the hydraulic circuit correctly');}}
+        else if(kit.deg('PU.s')===0) status.textContent='Connect: supply S → flow meter → DCV P · DCV T → return R · DCV A → cap end · DCV B → Tee(GB) → flow control → Tee(GA) → rod end.';
+        else status.innerHTML=issues.map(i=>'✗ '+i).join('<br>');
+      }
+    }
+    evaluate();
+
+    let raf,last=performance.now();
+    function tick(now){
+      const dt=Math.min(.05,(now-last)/1000); last=now;
+      const edges=internalEdges();
+      const press=kit.reach(['PU.s'],edges);
+      const pumpOn=ST.pu&&ST.shut;
+      // deadhead: pump on, shifted, but no complete loop (no return or blocked)
+      const exh=kit.reach(['C.rod'],edges);
+      const capExh=kit.reach(['C.cap'],edges);
+      const extLoop=press.has('C.cap')&&exh.has('PU.r');
+      const retLoop=press.has('C.rod')&&capExh.has('PU.r');
+      let sysP=0,v=0,flow=0;
+      if(pumpOn){
+        const moving=(ST.dcv===1&&extLoop&&ST.fc>0&&ST.pos<1&&EV.fcvCorrect)||(ST.dcv===-1&&retLoop&&ST.pos>0)||(ST.dcv===1&&extLoop&&!EV.fcvCorrect&&ST.pos<1);
+        sysP=moving?Math.min(ST.relief,ST.relief*0.85+30):ST.relief; // relief caps it
+        if(ST.dcv===1&&extLoop){
+          if(!EV.fcvCorrect) v=0.7*(ST.relief/300);
+          else v=ST.fc===0?0:(0.05+0.11*ST.fc)*(ST.relief/300);
+          flow=EV.fmInLine?(v>0?(0.4+0.75*ST.fc)*(ST.relief/300):0):0;
+        }
+        if(ST.dcv===-1&&retLoop&&ST.pos>0){
+          v=EV.fcvCorrect?-0.7*(ST.relief/300):-(ST.fc===0?0:(0.05+0.1*ST.fc))*(ST.relief/300);
+          flow=EV.fmInLine?2.0*(ST.relief/300)*(v!==0?1:0):0;
+        }
+      }
+      // spring return on relieved circuit
+      if(ST.dcv===0&&(!pumpOn||sysP<30)&&ST.pos>0){v=-0.18;note.textContent='Load spring returning the rod — trapped pressure relieved through the centered DCV.';
+        if(ST.pos<0.05&&!ST.sprang){ST.sprang=true;api.award('hyd_spring',15,'Load spring retracted the cylinder after shutdown');}}
+      ST.pos=Math.max(0,Math.min(1,ST.pos+v*dt));
+      const tgtB=(EV.gaB&&pumpOn&&ST.dcv!==0)?sysP*0.95:0;
+      const tgtA=(EV.gaA&&ST.dcv===1&&v>0&&ST.pos<1)?sysP*(0.45+0.3*(1-ST.fc/3))+ST.pos*40:(EV.gaA&&ST.pos>=1&&ST.dcv===1&&pumpOn?sysP*0.95:0);
+      ST.gB+=(tgtB-ST.gB)*Math.min(1,dt*4); ST.gA+=(tgtA-ST.gA)*Math.min(1,dt*4);
+      ST.gS+=((pumpOn?sysP:0)-ST.gS)*Math.min(1,dt*4);
+      setGauge(svg,'gS',ST.gS,500);setGauge(svg,'ghB',ST.gB,500);setGauge(svg,'ghA',ST.gA,500);
+      root.querySelector('#hFmV').textContent=flow.toFixed(1)+' gpm';
+      root.querySelector('#hDp').textContent='ΔP = '+Math.abs(Math.round(ST.gA-ST.gB));
+      svg.querySelector('#hPiston').setAttribute('x',4+ST.pos*40);
+      svg.querySelector('#hRod').setAttribute('x',13+ST.pos*40);
+      svg.querySelector('#hSpring').setAttribute('transform',`translate(${ST.pos*40},0) scale(${1-ST.pos*0.4},1)`);
+      kit.paint(pumpOn?press:new Set());
+      if(pumpOn&&ST.dcv!==0&&!EV.returnOK) note.textContent='⚠ DEADHEADED: no return path — all flow over the relief at '+ST.relief+' psi → pure heat.';
+      else if(pumpOn&&ST.dcv===1&&extLoop&&ST.fc===0&&EV.fcvCorrect&&ST.pos<1) note.textContent='Stalled: flow-control closed blocks the return oil (meter-out).';
+      else if(pumpOn&&ST.dcv===1&&extLoop&&!EV.fcvCorrect&&ST.pos<1) note.textContent='⚠ Fast uncontrolled extension — flow-control reversed.';
+      else if(ST.dcv===1&&v>0) note.textContent='Controlled extension — log A/B/S, gpm, time.';
+      else if(ST.dcv===-1&&ST.pos>0&&v<0) note.textContent=EV.fcvCorrect?'Rapid retraction via bypass check.':'⚠ Slow retraction — reversed valve meters this stroke.';
+      else if(!(ST.dcv===0&&ST.pos>0&&(!pumpOn||sysP<30))) note.textContent=ST.mode==='build'&&EV.issues.length&&pumpOn?'Circuit fault — see status above.':'';
+      if(ST.dcv===1&&ST.pos>=1&&!ST.extDone&&ST.extStart){ST.extDone=true;
+        root.querySelector('#hExtTime').textContent=`ext time: ${((now-ST.extStart)/1000).toFixed(1)}s @ ${ST.fc}T`;
+        if(Math.abs(ST.relief-300)<=10)api.award('hyd_300',15,'Test at Gauge S = 300 psi');}
       raf=requestAnimationFrame(tick);
     }
     raf=requestAnimationFrame(tick);
     return ()=>cancelAnimationFrame(raf);
   }
 };
-
-/* ============ 3. RELAY — 90-EC1A ladder (jog / seal-in / timed sequence) ============ */
+/* ============ 3. RELAY — 90-EC1A: wire-it mode + animated sequence ============ */
 SIMS.sim_relay = {
   title:"90-EC1A Ladder — Dual-Cylinder Timed Sequence", stack:"elec",
-  desc:"Your exact ladder. Hold STOP/START like real pushbuttons. Modes build up: Jog → Seal-in → the full timed sequence with 1TR and limit switches.",
+  desc:"Wire-it mode: place every device into the ladder yourself — wrong placements run wrong, with the consequence spelled out. Then run Jog → Seal-in → the full timed sequence.",
   mount(root,api){
     root.innerHTML=`
     <div class="simwrap">
       <div class="seg" id="mode">
-        <button data-m="jog">Jog</button><button data-m="seal">Seal-in</button><button data-m="full" class="on">Timed sequence</button>
+        <button data-m="wire" class="on">🔧 Wire it</button>
+        <button data-m="jog">Jog</button><button data-m="seal">Seal-in</button><button data-m="full">Full sequence</button>
       </div>
-      <svg viewBox="0 0 360 250" class="schematic accent-elec">
-        <line x1="20" y1="14" x2="20" y2="170" class="rail"/><line x1="250" y1="14" x2="250" y2="170" class="rail"/>
-        <text x="14" y="11" class="svgtag">L1</text><text x="246" y="11" class="svgtag">L2</text>
-        <!-- RUNG 1 -->
-        <path id="r1" class="wire" d="M20 36 H250"/>
-        <g id="cSTOP" class="contact nc" transform="translate(38,36)"><line x1="0" y1="0" x2="-6" y2="0" class="wire"/><circle cx="0" cy="0" r="2.5"/><circle cx="18" cy="0" r="2.5"/><line class="blade" x1="0" y1="0" x2="20" y2="-8"/><line class="ncbar" x1="14" y1="-12" x2="18" y2="6"/><text y="16" x="9" text-anchor="middle" class="svgtag">STOP 1PB</text></g>
-        <g id="cSTART" class="contact no" transform="translate(86,36)"><circle cx="0" cy="0" r="2.5"/><circle cx="18" cy="0" r="2.5"/><line class="blade" x1="0" y1="0" x2="16" y2="-9"/><text y="16" x="9" text-anchor="middle" class="svgtag">START 2PB</text></g>
-        <g id="bSeal"><path id="sealwire" class="wire" d="M80 36 v26 h36 v-26"/><g id="cSEAL" class="contact no" transform="translate(89,62)"><circle cx="0" cy="0" r="2.5"/><circle cx="18" cy="0" r="2.5"/><line class="blade" x1="0" y1="0" x2="16" y2="-9"/><text y="14" x="9" text-anchor="middle" class="svgtag">1CRA</text></g></g>
-        <g id="c2LS" class="contact nc" transform="translate(138,36)"><circle cx="0" cy="0" r="2.5"/><circle cx="18" cy="0" r="2.5"/><line class="blade" x1="0" y1="0" x2="20" y2="-8"/><line class="ncbar" x1="14" y1="-12" x2="18" y2="6"/><text y="16" x="9" text-anchor="middle" class="svgtag">2LS</text></g>
-        <g id="c4LS" class="contact nc" transform="translate(180,36)"><circle cx="0" cy="0" r="2.5"/><circle cx="18" cy="0" r="2.5"/><line class="blade" x1="0" y1="0" x2="20" y2="-8"/><line class="ncbar" x1="14" y1="-12" x2="18" y2="6"/><text y="16" x="9" text-anchor="middle" class="svgtag">4LS</text></g>
-        <g id="coil1CR" class="coil" transform="translate(228,36)"><circle r="10"/><text text-anchor="middle" y="3.5" class="svgtag">1CR</text></g>
-        <!-- RUNG 2 -->
-        <path id="r2" class="wire" d="M20 110 H250"/>
-        <g id="c1CRB" class="contact no" transform="translate(50,110)"><circle cx="0" cy="0" r="2.5"/><circle cx="18" cy="0" r="2.5"/><line class="blade" x1="0" y1="0" x2="16" y2="-9"/><text y="16" x="9" text-anchor="middle" class="svgtag">1CRB</text></g>
-        <g id="coil1SOL" class="coil" transform="translate(160,110)"><path class="comp" d="M-12 0 h4 l5 -7 l6 14 l6 -14 l5 7 h4" /><text text-anchor="middle" y="20" class="svgtag">1-SOL · Cyl 1 extend</text></g>
-        <g id="b1TR"><path id="trwire" class="wire" d="M110 110 v28 h118"/><g id="coil1TR" class="coil" transform="translate(228,138)"><circle r="10"/><text text-anchor="middle" y="3.5" class="svgtag">1TR</text><path class="comp" d="M-5 14 h10 l-5 7 z"/></g></g>
-        <!-- RUNG 3 -->
-        <path id="r3" class="wire" d="M20 170 H250"/>
-        <g id="c1TRA" class="contact no timed" transform="translate(50,170)"><circle cx="0" cy="0" r="2.5"/><circle cx="18" cy="0" r="2.5"/><line class="blade" x1="0" y1="0" x2="16" y2="-9"/><path class="comp" d="M4 8 h10 l-5 6 z"/><text y="26" x="9" text-anchor="middle" class="svgtag">1TRA</text></g>
-        <g id="coil2SOL" class="coil" transform="translate(160,170)"><path class="comp" d="M-12 0 h4 l5 -7 l6 14 l6 -14 l5 7 h4"/><text text-anchor="middle" y="20" class="svgtag">2-SOL · Cyl 2 extend</text></g>
-        <!-- cylinders -->
-        <g transform="translate(40,196)">
-          <text x="0" y="8" class="svgtag">CYL 1</text>
-          <rect class="comp" x="34" y="0" width="90" height="22"/><rect id="cy1p" x="38" y="3" width="7" height="16" fill="currentColor"/><rect id="cy1r" x="45" y="8" width="22" height="6" fill="var(--dim)"/>
-          <text x="0" y="42" class="svgtag" transform="translate(0,0)">CYL 2</text>
-          <rect class="comp" x="34" y="32" width="90" height="22"/><rect id="cy2p" x="38" y="35" width="7" height="16" fill="currentColor"/><rect id="cy2r" x="45" y="40" width="22" height="6" fill="var(--dim)"/>
-          <rect id="ls2flag" x="128" y="2" width="6" height="18" rx="2" fill="var(--line)"/>
-          <rect id="ls4flag" x="128" y="34" width="6" height="18" rx="2" fill="var(--line)"/>
-          <text x="140" y="14" class="svgtag">2LS</text><text x="140" y="46" class="svgtag">4LS</text>
+      <div id="wirePanel"></div>
+      <div id="runPanel" hidden>
+      <svg viewBox="0 0 360 258" class="schematic accent-elec">
+        <line x1="20" y1="14" x2="20" y2="174" class="rail"/><line x1="252" y1="14" x2="252" y2="174" class="rail"/>
+        <text x="14" y="11" class="svgtag">L1</text><text x="248" y="11" class="svgtag">L2</text>
+        <path id="r1" class="wire" d="M20 38 H252"/>
+        <g id="cSTOP" class="contact nc" transform="translate(36,38)"><circle cx="0" cy="0" r="2.5"/><circle cx="18" cy="0" r="2.5"/><line class="blade" x1="0" y1="0" x2="20" y2="-8"/><line class="ncbar" x1="14" y1="-12" x2="18" y2="6"/><text y="17" x="9" text-anchor="middle" class="svgtag">STOP 1PB</text></g>
+        <g id="cSTART" class="contact no" transform="translate(86,38)"><circle cx="0" cy="0" r="2.5"/><circle cx="18" cy="0" r="2.5"/><line class="blade" x1="0" y1="0" x2="16" y2="-9"/><text y="17" x="9" text-anchor="middle" class="svgtag">START 2PB</text></g>
+        <g id="bSeal"><path id="sealwire" class="wire" d="M80 38 v28 h38 v-28"/><g id="cSEAL" class="contact no" transform="translate(89,66)"><circle cx="0" cy="0" r="2.5"/><circle cx="18" cy="0" r="2.5"/><line class="blade" x1="0" y1="0" x2="16" y2="-9"/><text y="14" x="9" text-anchor="middle" class="svgtag">1CRA</text></g></g>
+        <g id="c2LS" class="contact nc" transform="translate(140,38)"><circle cx="0" cy="0" r="2.5"/><circle cx="18" cy="0" r="2.5"/><line class="blade" x1="0" y1="0" x2="20" y2="-8"/><line class="ncbar" x1="14" y1="-12" x2="18" y2="6"/><text y="17" x="9" text-anchor="middle" class="svgtag">2LS</text></g>
+        <g id="c4LS" class="contact nc" transform="translate(180,38)"><circle cx="0" cy="0" r="2.5"/><circle cx="18" cy="0" r="2.5"/><line class="blade" x1="0" y1="0" x2="20" y2="-8"/><line class="ncbar" x1="14" y1="-12" x2="18" y2="6"/><text y="17" x="9" text-anchor="middle" class="svgtag">4LS</text></g>
+        <g id="coil1CR" class="coil" transform="translate(230,38)"><circle r="11"/><text text-anchor="middle" y="3.5" class="svgtag">1CR</text></g>
+        <path id="r2" class="wire" d="M20 112 H252"/>
+        <g id="c1CRB" class="contact no" transform="translate(50,112)"><circle cx="0" cy="0" r="2.5"/><circle cx="18" cy="0" r="2.5"/><line class="blade" x1="0" y1="0" x2="16" y2="-9"/><text y="16" x="9" text-anchor="middle" class="svgtag">1CRB</text></g>
+        <g id="coil1SOL" class="coil" transform="translate(158,112)"><path class="comp" d="M-14 0 h4 l5 -8 l6 16 l6 -16 l5 8 h4"/><text text-anchor="middle" y="22" class="svgtag">1-SOL · CYL 1</text></g>
+        <g id="b1TR"><path id="trwire" class="wire" d="M112 112 v30 h118"/><g id="coil1TR" class="coil" transform="translate(230,142)"><circle r="11"/><text text-anchor="middle" y="3.5" class="svgtag">1TR</text><path class="comp" d="M-5 16 h10 l-5 8 z"/></g></g>
+        <path id="r3" class="wire" d="M20 174 H252"/>
+        <g id="c1TRA" class="contact no" transform="translate(50,174)"><circle cx="0" cy="0" r="2.5"/><circle cx="18" cy="0" r="2.5"/><line class="blade" x1="0" y1="0" x2="16" y2="-9"/><path class="comp" d="M4 9 h10 l-5 7 z"/><text y="28" x="9" text-anchor="middle" class="svgtag">1TRA</text></g>
+        <g id="coil2SOL" class="coil" transform="translate(158,174)"><path class="comp" d="M-14 0 h4 l5 -8 l6 16 l6 -16 l5 8 h4"/><text text-anchor="middle" y="22" class="svgtag">2-SOL · CYL 2</text></g>
+        <g transform="translate(30,200)">
+          <text x="0" y="10" class="svgtag" style="fill:var(--elec)">CYL 1</text>
+          <rect class="comp" x="36" y="0" width="86" height="20"/><rect id="cy1p" x="40" y="2" width="7" height="16" fill="var(--elec)" opacity=".8"/><rect id="cy1r" x="47" y="7" width="20" height="6" fill="var(--dim)"/>
+          <text x="0" y="42" class="svgtag" style="fill:var(--acdc)">CYL 2</text>
+          <rect class="comp" x="36" y="30" width="86" height="20"/><rect id="cy2p" x="40" y="32" width="7" height="16" fill="var(--acdc)" opacity=".8"/><rect id="cy2r" x="47" y="37" width="20" height="6" fill="var(--dim)"/>
+          <rect id="ls2flag" x="124" y="1" width="6" height="18" rx="2" fill="var(--line)"/>
+          <rect id="ls4flag" x="124" y="31" width="6" height="18" rx="2" fill="var(--line)"/>
+          <text x="134" y="14" class="svgtag">2LS</text><text x="134" y="44" class="svgtag">4LS</text>
         </g>
-        <g id="timerArcG" transform="translate(310,138)"><circle r="13" fill="none" stroke="var(--line)" stroke-width="3"/><circle id="timerArc" r="13" fill="none" stroke="var(--elec)" stroke-width="3" stroke-dasharray="81.7" stroke-dashoffset="81.7" transform="rotate(-90)"/><text text-anchor="middle" y="4" class="svgtag" id="timerTxt">1TR</text></g>
+        <g id="timerArcG" transform="translate(314,142)">
+          <circle r="14" fill="none" stroke="var(--line)" stroke-width="3.5"/>
+          <circle id="timerArc" r="14" fill="none" stroke="var(--elec)" stroke-width="3.5" stroke-dasharray="88" stroke-dashoffset="88" transform="rotate(-90)"/>
+          <text text-anchor="middle" y="4" class="svgtag" id="timerTxt">1TR</text>
+        </g>
       </svg>
-      <div class="readout"><span id="rstate">Idle — press START</span></div>
+      <div class="readout"><span id="rstate" style="color:var(--dim)">Idle — press START</span></div>
       <div class="ctrls">
         <button id="bSTOP" class="ctl danger">⊘ STOP 1PB (hold)</button>
         <button id="bSTART" class="ctl go">▶ START 2PB (hold)</button>
       </div>
+      </div>
     </div>`;
     const svg=root.querySelector('svg');
-    const st={mode:'full',stop:false,start:false,cr:false,tr:false,trT:0,tra:false,c1:0,c2:0,didSeq:false,didStop:false};
-    const setMode=m=>{st.mode=m;st.cr=st.tr=st.tra=false;st.trT=0;
-      svg.getElementById('bSeal').style.opacity=m==='jog'?0.18:1;
-      ['c2LS','c4LS'].forEach(i=>svg.getElementById(i).style.opacity=m==='full'?1:0.18);
-      svg.getElementById('b1TR').style.opacity=m==='full'?1:0.18;
-      svg.getElementById('r3').parentNode&&0;
-      ['r3','c1TRA','coil2SOL'].forEach(i=>svg.getElementById(i).style.opacity=m==='full'?1:0.18);
-      svg.getElementById('timerArcG').style.opacity=m==='full'?1:0.18;};
+    /* ---- wire-it placement game ---- */
+    const SLOTS=[
+      {id:'s1',rung:'Rung 1',hint:'1st — must kill everything',correct:'stop'},
+      {id:'s2',rung:'Rung 1',hint:'starts the cycle (∥ with s3)',correct:'start'},
+      {id:'s3',rung:'Rung 1',hint:'parallel branch around s2',correct:'seal'},
+      {id:'s4',rung:'Rung 1',hint:'series end-of-sequence switch',correct:'ls'},
+      {id:'s5',rung:'Rung 1',hint:'the load of this rung',correct:'cr'},
+      {id:'s6',rung:'Rung 2',hint:'contact that follows rung 1\u2019s relay',correct:'crb'},
+      {id:'s7',rung:'Rung 2',hint:'loads: extend Cyl 1 + start timing',correct:'sol1tr'},
+      {id:'s8',rung:'Rung 3',hint:'contact that waits 1 second',correct:'tra'},
+      {id:'s9',rung:'Rung 3',hint:'the load: extend Cyl 2',correct:'sol2'},
+    ];
+    const PARTS={stop:'STOP 1PB (NC)',start:'START 2PB (NO)',seal:'1CRA seal-in',ls:'2LS/4LS (NC)',cr:'1CR coil',crb:'1CRB contact',sol1tr:'1-SOL ∥ 1TR',tra:'1TRA timed (NO)',sol2:'2-SOL'};
+    const CONSEQ={
+      s1:'No NC STOP at the head of rung 1 — the circuit can run but can NEVER be stopped safely. Fails dangerous.',
+      s2:'Nothing momentary to start the cycle — or worse, it self-starts on power-up.',
+      s3:'No seal-in around START — the relay drops the instant you release the button (jog behavior).',
+      s4:'No NC limit switch in series — the sequence never ends; cylinders stay out until STOP.',
+      s5:'Rung 1 has no relay coil — closing the contacts does nothing anywhere else.',
+      s6:'Rung 2 isn\u2019t commanded by 1CR — Cylinder 1 never follows the start logic.',
+      s7:'Without 1-SOL ∥ 1TR here, Cylinder 1 won\u2019t extend and the timer never starts.',
+      s8:'Without the TIMED contact 1TRA, Cylinder 2 fires instantly with Cylinder 1 — no 1 s delay.',
+      s9:'Rung 3 has no 2-SOL — Cylinder 2 never extends.',
+    };
+    let placed={}, pickedPart=null, wired=false;
+    const wirePanel=root.querySelector('#wirePanel'), runPanel=root.querySelector('#runPanel');
+    function renderWire(){
+      const used=new Set(Object.values(placed));
+      const pool=Object.entries(PARTS).filter(([k])=>!used.has(k))
+        .map(([k,v])=>`<button class="chip partchip ${pickedPart===k?'on':''}" data-part="${k}">${v}</button>`).join('');
+      let lastRung='';
+      const slots=SLOTS.map(s=>{
+        const head=s.rung!==lastRung?`<div class="eyebrow" style="margin:10px 0 4px">${s.rung}</div>`:''; lastRung=s.rung;
+        const p=placed[s.id];
+        return head+`<button class="slotbtn ${p?(p===s.correct?'ok':'bad'):''}" data-slot="${s.id}">
+          ${p?PARTS[p]:'<span class="sub">'+s.hint+'</span>'}</button>`;
+      }).join('');
+      const wrong=SLOTS.filter(s=>placed[s.id]&&placed[s.id]!==s.correct);
+      const empty=SLOTS.filter(s=>!placed[s.id]);
+      let verdict='';
+      if(!empty.length&&!wrong.length){ verdict='<div class="buildstatus"><b style="color:var(--elec)">✓ Wired exactly like the lab ladder.</b> Switch to Full sequence and run it.</div>';
+        if(!wired){wired=true;api.award('relay_wire',20,'Wired the 90-EC1A ladder correctly');} }
+      else if(wrong.length) verdict='<div class="buildstatus">'+wrong.map(s=>'✗ <b>'+s.rung+'</b>: '+CONSEQ[s.id]).join('<br>')+'</div>';
+      wirePanel.innerHTML=`<p class="sub" style="margin:4px 0 8px">Tap a device, then tap its slot. Tap a filled slot to clear it. Wrong placement = wrong machine behavior.</p>
+        <div class="chips" style="flex-wrap:wrap">${pool||'<span class="sub">All devices placed.</span>'}</div>${slots}${verdict}`;
+      wirePanel.querySelectorAll('.partchip').forEach(c=>c.onclick=()=>{pickedPart=pickedPart===c.dataset.part?null:c.dataset.part;renderWire();});
+      wirePanel.querySelectorAll('.slotbtn').forEach(b=>b.onclick=()=>{
+        const id=b.dataset.slot;
+        if(placed[id]){delete placed[id];}
+        else if(pickedPart){placed[id]=pickedPart;pickedPart=null;}
+        renderWire();
+      });
+    }
+    /* ---- animated run modes ---- */
+    const ST={mode:'wire',stop:false,start:false,cr:false,tr:false,trT:0,tra:false,c1:0,c2:0,didSeq:false,didStop:false};
+    const setMode=m=>{ST.mode=m;ST.cr=ST.tr=ST.tra=false;ST.trT=0;
+      wirePanel.hidden=m!=='wire'; runPanel.hidden=m==='wire';
+      if(m==='wire'){renderWire();return;}
+      svg.getElementById('bSeal').style.opacity=m==='jog'?.2:1;
+      ['c2LS','c4LS'].forEach(i=>svg.getElementById(i).style.opacity=m==='full'?1:.2);
+      ['r3','c1TRA','coil2SOL','b1TR'].forEach(i=>svg.getElementById(i).style.opacity=m==='full'?1:.2);
+      svg.getElementById('timerArcG').style.opacity=m==='full'?1:.2;};
     root.querySelectorAll('#mode button').forEach(b=>b.onclick=()=>{root.querySelectorAll('#mode button').forEach(x=>x.classList.remove('on'));b.classList.add('on');setMode(b.dataset.m);});
-    setMode('full');
-    holdable(root.querySelector('#bSTOP'),()=>st.stop=true,()=>st.stop=false);
-    holdable(root.querySelector('#bSTART'),()=>st.start=true,()=>st.start=false);
-    let raf,last=performance.now();const stateTxt=root.querySelector('#rstate');
+    setMode('wire');
+    holdable(root.querySelector('#bSTOP'),()=>ST.stop=true,()=>ST.stop=false);
+    holdable(root.querySelector('#bSTART'),()=>ST.start=true,()=>ST.start=false);
+    let raf,last=performance.now(); const stTxt=root.querySelector('#rstate');
     function tick(now){
-      const dt=Math.min(.05,(now-last)/1000);last=now;
-      const ls2=st.c1>=0.98, ls4=st.c2>=0.98;             // NC switches struck at full extension
-      const lsOK = st.mode!=='full' || !(ls2&&ls4);        // both struck ⇒ rung breaks, both retract together
-      const stopOK=!st.stop;
-      const path = st.mode==='jog' ? st.start : (st.start||st.cr);
-      st.cr = stopOK && path && lsOK;
-      // timer
-      if(st.mode==='full'&&st.cr){st.tr=true;st.trT=Math.min(1,st.trT+dt);}else{st.tr=false;st.trT=0;}
-      st.tra=st.mode==='full'&&st.tr&&st.trT>=1;
-      const sol1=st.cr, sol2=st.tra;
-      st.c1=Math.max(0,Math.min(1,st.c1+(sol1?0.55:-0.7)*dt));
-      st.c2=Math.max(0,Math.min(1,st.c2+(sol2?0.55:-0.7)*dt));
-      // paint
-      const C=(id,on)=>svg.getElementById(id).classList.toggle('closed',on);
-      C('cSTOP',!st.stop);C('cSTART',st.start);C('cSEAL',st.cr&&st.mode!=='jog');
-      C('c2LS',!ls2);C('c4LS',!ls4);C('c1CRB',st.cr);C('c1TRA',st.tra);
-      const E=(id,on)=>svg.getElementById(id).classList.toggle('energized',on);
-      E('r1',st.cr);E('coil1CR',st.cr);E('r2',st.cr);E('coil1SOL',sol1);E('coil1TR',st.tr);E('r3',st.tra);E('coil2SOL',sol2);E('sealwire',st.cr&&st.mode!=='jog');E('trwire',st.tr);
-      svg.getElementById('timerArc').setAttribute('stroke-dashoffset',81.7*(1-st.trT));
-      svg.getElementById('timerTxt').textContent=st.tr?(st.trT>=1?'✓':((1-st.trT).toFixed(1)+'s')):'1TR';
-      svg.getElementById('cy1p').setAttribute('x',38+st.c1*78);svg.getElementById('cy1r').setAttribute('x',45+st.c1*78);
-      svg.getElementById('cy2p').setAttribute('x',38+st.c2*78);svg.getElementById('cy2r').setAttribute('x',45+st.c2*78);
-      svg.getElementById('ls2flag').setAttribute('fill',ls2?'var(--elec)':'var(--line)');
-      svg.getElementById('ls4flag').setAttribute('fill',ls4?'var(--elec)':'var(--line)');
-      stateTxt.textContent = st.stop?'STOP held — circuit de-energized (NC stop broke rung 1).'
-        : !st.cr&&(st.c1>0||st.c2>0)?'De-energized — both cylinders retracting together.'
-        : st.cr&&!st.tra?'1CR sealed in · Cyl 1 extending · 1TR timing…'
-        : st.tra?'1TRA closed → 2-SOL · Cyl 2 extending.'
-        : st.mode==='jog'?'Jog mode: runs only while START is held (no memory).'
-        : 'Idle — press START';
-      if(st.mode==='full'&&ls2&&ls4&&!st.didSeq){st.didSeq=true;api.award('relay_seq',20,'Completed the full timed sequence');}
-      if(st.stop&&(st.c1>0.2||st.c2>0.2)&&!st.didStop){st.didStop=true;api.award('relay_stop',10,'Verified STOP de-energizes mid-cycle');}
+      const dt=Math.min(.05,(now-last)/1000); last=now;
+      if(ST.mode!=='wire'){
+        const ls2=ST.c1>=0.98, ls4=ST.c2>=0.98;
+        const lsOK=ST.mode!=='full'||!(ls2&&ls4);
+        ST.cr=!ST.stop&&(ST.mode==='jog'?ST.start:(ST.start||ST.cr))&&lsOK;
+        if(ST.mode==='full'&&ST.cr){ST.tr=true;ST.trT=Math.min(1,ST.trT+dt);}else{ST.tr=false;ST.trT=0;}
+        ST.tra=ST.mode==='full'&&ST.tr&&ST.trT>=1;
+        ST.c1=Math.max(0,Math.min(1,ST.c1+(ST.cr?.55:-.7)*dt));
+        ST.c2=Math.max(0,Math.min(1,ST.c2+(ST.tra?.55:-.7)*dt));
+        const C=(id,on)=>{const e=svg.getElementById(id);if(e)e.classList.toggle('closed',on);};
+        C('cSTOP',!ST.stop);C('cSTART',ST.start);C('cSEAL',ST.cr&&ST.mode!=='jog');
+        C('c2LS',!ls2);C('c4LS',!ls4);C('c1CRB',ST.cr);C('c1TRA',ST.tra);
+        const E=(id,on)=>{const e=svg.getElementById(id);if(e)e.classList.toggle('energized',on);};
+        E('r1',ST.cr);E('coil1CR',ST.cr);E('r2',ST.cr);E('coil1SOL',ST.cr);E('coil1TR',ST.tr);E('r3',ST.tra);E('coil2SOL',ST.tra);E('sealwire',ST.cr&&ST.mode!=='jog');E('trwire',ST.tr);
+        svg.getElementById('timerArc').setAttribute('stroke-dashoffset',88*(1-ST.trT));
+        svg.getElementById('timerTxt').textContent=ST.tr?(ST.trT>=1?'✓':(1-ST.trT).toFixed(1)+'s'):'1TR';
+        svg.getElementById('cy1p').setAttribute('x',40+ST.c1*74);svg.getElementById('cy1r').setAttribute('x',47+ST.c1*74);
+        svg.getElementById('cy2p').setAttribute('x',40+ST.c2*74);svg.getElementById('cy2r').setAttribute('x',47+ST.c2*74);
+        svg.getElementById('ls2flag').setAttribute('fill',ls2?'var(--elec)':'var(--line)');
+        svg.getElementById('ls4flag').setAttribute('fill',ls4?'var(--acdc)':'var(--line)');
+        stTxt.textContent=ST.stop?'STOP held — NC contact opened rung 1, everything de-energized.'
+          :!ST.cr&&(ST.c1>0||ST.c2>0)?'De-energized — both cylinders retracting together.'
+          :ST.cr&&!ST.tra?`1CR sealed ✓ · Cyl 1 extending · 1TR: ${ST.trT.toFixed(1)}s…`
+          :ST.tra?'1TRA closed → 2-SOL · Cyl 2 extending.'
+          :ST.mode==='jog'?'Jog: runs only while START is held (no memory).'
+          :'Idle — press START.';
+        if(ST.mode==='full'&&ls2&&ls4&&!ST.didSeq){ST.didSeq=true;api.award('relay_seq',20,'Completed the full timed sequence');}
+        if(ST.stop&&(ST.c1>0.2||ST.c2>0.2)&&!ST.didStop){ST.didStop=true;api.award('relay_stop',10,'Verified STOP mid-cycle');}
+      }
       raf=requestAnimationFrame(tick);
     }
     raf=requestAnimationFrame(tick);
@@ -923,78 +1479,143 @@ SIMS.sim_relay = {
   }
 };
 
-/* ============ 4. AC/DC — T7017A-BDA bench ============ */
+/* ============ 4. AC/DC — buildable (T7017A-BDA) ============ */
 SIMS.sim_acdc = {
   title:"T7017A-BDA — 24 VAC Bench", stack:"acdc",
-  desc:"Knife switch, fuse, isolation transformer, S2 pushbutton, S3 BYPASS/CAP, lamp. Live meter panel mirrors your 15-row checks sheet — including the resistance-check safety rule.",
+  desc:"Wire the whole bench: source → S1 → F1 → transformer primary; secondary → S2 → ammeter → S3 → cap/bypass → lamp. Short L1 to L2 and F1 blows — just like real life.",
   mount(root,api){
     root.innerHTML=`
     <div class="simwrap">
-      <svg viewBox="0 0 360 180" class="schematic accent-acdc">
-        <g id="wPri"><path class="wire" id="w1" d="M28 50 H70"/><path class="wire" id="w2" d="M104 50 H136"/><path class="wire" id="w3" d="M28 130 H136 M28 50 V130"/></g>
-        <circle cx="28" cy="90" r="14" class="comp"/><path class="comp" d="M20 90 q4 -8 8 0 q4 8 8 0"/><text x="6" y="70" class="svgtag">24 VAC</text>
-        <g id="s1g" transform="translate(70,50)"><circle cx="0" cy="0" r="2.5" fill="currentColor"/><circle cx="22" cy="0" r="2.5" fill="currentColor"/><line id="s1blade" class="blade" x1="0" y1="0" x2="20" y2="-12"/><text x="11" y="-16" text-anchor="middle" class="svgtag">S1</text></g>
-        <g transform="translate(104,42)"><rect class="comp" x="0" y="0" width="26" height="14" rx="7"/><line class="comp" x1="0" y1="7" x2="26" y2="7"/><text x="13" y="-4" text-anchor="middle" class="svgtag">F1</text></g>
-        <g transform="translate(136,40)"><path class="comp" d="M8 0 q-8 6 0 12 q-8 6 0 12 q-8 6 0 12 q-8 6 0 12 q-8 6 0 12"/><path class="comp" d="M22 0 q8 6 0 12 q8 6 0 12 q8 6 0 12 q8 6 0 12 q8 6 0 12"/><line class="comp" x1="13" y1="-4" x2="13" y2="66" /><line class="comp" x1="17" y1="-4" x2="17" y2="66"/><text x="15" y="80" text-anchor="middle" class="svgtag">T1  H1-H2 / X1-X2</text></g>
-        <path class="wire" id="w4" d="M158 52 H196"/>
-        <g id="s2g" transform="translate(196,52)"><circle cx="0" cy="0" r="2.5" fill="currentColor"/><circle cx="20" cy="0" r="2.5" fill="currentColor"/><line id="s2blade" class="blade" x1="0" y1="0" x2="18" y2="-11"/><text x="10" y="-15" text-anchor="middle" class="svgtag">S2</text></g>
-        <path class="wire" id="w5" d="M216 52 H238"/>
-        <g transform="translate(238,52)"><circle r="9" class="comp"/><text text-anchor="middle" y="3.5" class="svgtag">A</text><text y="-14" text-anchor="middle" class="svgtag">A–A</text></g>
-        <path class="wire" id="w6" d="M247 52 H266"/>
-        <g id="s3g" transform="translate(266,52)"><circle cx="0" cy="0" r="2.5" fill="currentColor"/><circle cx="26" cy="-12" r="2.5" fill="currentColor"/><circle cx="26" cy="14" r="2.5" fill="currentColor"/><line id="s3blade" class="blade" x1="0" y1="0" x2="24" y2="-11"/><text x="36" y="-12" class="svgtag">BYP</text><text x="36" y="22" class="svgtag">CAP</text></g>
-        <path class="wire" id="wByp" d="M292 -12 m0 0 M292 40 H318 V70" transform="translate(0,0)"/>
-        <path class="wire" id="wCap" d="M292 66 H300 M308 66 H318 V70"/>
-        <g transform="translate(300,58)"><line class="comp" x1="0" y1="0" x2="0" y2="16"/><line class="comp" x1="8" y1="0" x2="8" y2="16"/><text x="4" y="30" text-anchor="middle" class="svgtag">C1</text></g>
-        <g id="lampg" transform="translate(318,92)"><circle r="13" class="comp"/><path class="comp" d="M-8 -8 L8 8 M8 -8 L-8 8"/><circle id="lampGlow" r="19" fill="var(--acdc)" opacity="0"/><text y="32" text-anchor="middle" class="svgtag">LAMP</text></g>
-        <path class="wire" id="w7" d="M318 105 V140 H158 V64"/>
+      <div class="seg" id="aMode"><button data-m="guided" class="on">Guided (pre-wired)</button><button data-m="build">🔧 Wire it yourself</button></div>
+      <div class="buildstatus" id="aStatus"></div>
+      <svg id="asvg" viewBox="0 0 360 232" class="schematic accent-acdc">
+        <circle cx="30" cy="60" r="14" class="comp"/><path class="comp" d="M22 60 q4 -9 8 0 q4 9 8 0"/><text x="30" y="36" text-anchor="middle" class="svgtag">24 VAC</text>
+        <g transform="translate(78,40)"><circle cx="0" cy="0" r="2.5" fill="currentColor" opacity=".6"/><circle cx="26" cy="0" r="2.5" fill="currentColor" opacity=".6"/><line id="s1blade" class="blade" x1="0" y1="0" x2="23" y2="-13"/><text x="13" y="-18" text-anchor="middle" class="svgtag">S1 KNIFE</text></g>
+        <g transform="translate(132,32)"><rect class="comp" x="0" y="0" width="30" height="15" rx="7"/><line id="fuseEl" class="comp" x1="3" y1="7.5" x2="27" y2="7.5"/><text x="15" y="-6" text-anchor="middle" class="svgtag" id="fuseLbl">F1</text></g>
+        <g transform="translate(196,30)">
+          <path class="comp" d="M8 0 q-8 6 0 12 q-8 6 0 12 q-8 6 0 12 q-8 6 0 12"/>
+          <path class="comp" d="M22 0 q8 6 0 12 q8 6 0 12 q8 6 0 12 q8 6 0 12"/>
+          <line class="comp" x1="13" y1="-4" x2="13" y2="56"/><line class="comp" x1="17" y1="-4" x2="17" y2="56"/>
+          <text x="15" y="72" text-anchor="middle" class="svgtag">T1 ISOLATION ≈1:1</text>
+        </g>
+        <g transform="translate(264,40)"><circle cx="0" cy="0" r="2.5" fill="currentColor" opacity=".6"/><circle cx="22" cy="0" r="2.5" fill="currentColor" opacity=".6"/><line id="s2blade" class="blade" x1="0" y1="0" x2="19" y2="-11"/><text x="11" y="-16" text-anchor="middle" class="svgtag">S2 PUSH</text></g>
+        <g transform="translate(318,40)"><circle r="10" class="comp"/><text text-anchor="middle" y="4" class="svgtag">A</text><text y="-16" text-anchor="middle" class="svgtag" style="fill:var(--gold)">A–A</text></g>
+        <g transform="translate(264,118)"><circle cx="0" cy="0" r="2.5" fill="currentColor" opacity=".6"/><circle cx="26" cy="-12" r="2.5" fill="currentColor" opacity=".6"/><circle cx="26" cy="14" r="2.5" fill="currentColor" opacity=".6"/><line id="s3blade" class="blade" x1="0" y1="0" x2="24" y2="-11"/><text x="-2" y="-12" text-anchor="middle" class="svgtag">S3</text><text x="40" y="-14" class="svgtag" style="fill:var(--elec)">BYP</text><text x="40" y="22" class="svgtag" style="fill:var(--acdc)">CAP</text></g>
+        <g transform="translate(310,150)"><line class="comp" x1="0" y1="0" x2="0" y2="16"/><line class="comp" x1="9" y1="0" x2="9" y2="16"/><text x="4" y="30" text-anchor="middle" class="svgtag">C1</text></g>
+        <g transform="translate(196,170)"><circle r="14" class="comp"/><path class="comp" d="M-9 -9 L9 9 M9 -9 L-9 9"/><circle id="lampGlow" r="20" fill="var(--acdc)" opacity="0" style="transition:opacity .2s"/><text y="32" text-anchor="middle" class="svgtag">LAMP</text></g>
       </svg>
-      <div class="meterpanel" id="mp"></div>
+      <div class="meterpanel" id="amp"></div>
       <div class="ctrls">
         <div class="seg" id="mmode"><button data-m="live" class="on">Live checks</button><button data-m="ohm">Resistance checks</button></div>
-        <button id="s1" class="ctl">S1 knife: OPEN</button>
-        <button id="s2" class="ctl go">S2 pushbutton (hold)</button>
-        <button id="s3" class="ctl">S3: BYPASS</button>
-        <button id="disch" class="ctl" hidden>⚡ Discharge capacitor</button>
+        <button id="as1" class="ctl">S1: OPEN</button>
+        <button id="as2" class="ctl go">S2 (hold)</button>
+        <button id="as3" class="ctl">S3: BYPASS</button>
+        <button id="adisch" class="ctl" hidden>⚡ Discharge C1</button>
+        <button id="afuse" class="ctl danger" hidden>Replace F1</button>
+        <button id="aClear" class="ctl" hidden>🗑 Clear wires</button>
       </div>
     </div>`;
-    const svg=root.querySelector('svg');
-    const st={s1:false,s2:false,s3:'byp',mode:'live',capCharged:false,discharged:true,sawBoth:{byp:false,cap:false}};
-    const mp=root.querySelector('#mp');
-    root.querySelector('#s1').onclick=e=>{st.s1=!st.s1;e.target.textContent='S1 knife: '+(st.s1?'CLOSED':'OPEN');e.target.classList.toggle('on',st.s1);if(st.s1){st.discharged=false;}};
-    holdable(root.querySelector('#s2'),()=>st.s2=true,()=>st.s2=false);
-    root.querySelector('#s3').onclick=e=>{st.s3=st.s3==='byp'?'cap':'byp';e.target.textContent='S3: '+(st.s3==='byp'?'BYPASS':'CAP');};
-    root.querySelector('#disch').onclick=e=>{st.discharged=true;e.target.hidden=true;api.award('acdc_disch',10,'Discharged the capacitor before Ω checks');};
-    root.querySelectorAll('#mmode button').forEach(b=>b.onclick=()=>{root.querySelectorAll('#mmode button').forEach(x=>x.classList.remove('on'));b.classList.add('on');st.mode=b.dataset.m;
-      root.querySelector('#disch').hidden=!(st.mode==='ohm'&&!st.discharged&&!st.s1);});
+    const svg=root.querySelector('#asvg');
+    const PORTS=[
+      {id:'SRC.1',x:30,y:42,label:'L1',ly:-8,color:'var(--gold)'},
+      {id:'SRC.2',x:30,y:78,label:'L2',ly:16},
+      {id:'S1.a',x:78,y:40,label:''},{id:'S1.b',x:104,y:40,label:''},
+      {id:'F1.a',x:128,y:40,label:''},{id:'F1.b',x:166,y:40,label:''},
+      {id:'XF.h1',x:196,y:24,label:'H1',lx:-12},{id:'XF.h2',x:196,y:88,label:'H2',lx:-12,ly:4},
+      {id:'XF.x1',x:226,y:24,label:'X1',lx:12,color:'var(--acdc)'},{id:'XF.x2',x:226,y:88,label:'X2',lx:12,ly:4,color:'var(--acdc)'},
+      {id:'S2.a',x:264,y:40,label:''},{id:'S2.b',x:286,y:40,label:''},
+      {id:'AM.a',x:308,y:40,label:''},{id:'AM.b',x:328,y:40,label:'',lx:6},
+      {id:'S3.c',x:264,y:118,label:'COM',lx:-16,ly:4},
+      {id:'S3.b',x:290,y:106,label:''},
+      {id:'S3.k',x:290,y:132,label:''},
+      {id:'C1.a',x:310,y:148,label:''},{id:'C1.b',x:310,y:168,label:'',ly:14},
+      {id:'LP.a',x:212,y:166,label:'',max:2},{id:'LP.b',x:182,y:174,label:'',lx:-8},
+    ];
+    const CORRECT=[['SRC.1','S1.a'],['S1.b','F1.a'],['F1.b','XF.h1'],['XF.h2','SRC.2'],
+      ['XF.x1','S2.a'],['S2.b','AM.a'],['AM.b','S3.c'],['S3.b','LP.a'],['S3.k','C1.a'],['C1.b','LP.a'],['LP.b','XF.x2']];
+    const ST={mode:'guided',s1:false,s2:false,s3:'byp',meter:'live',discharged:true,fuseOK:true,seen:{byp:false,cap:false},builtOK:false};
+    const status=root.querySelector('#aStatus'), mp=root.querySelector('#amp');
+    const kit=PortKit(svg,PORTS,{onChange:()=>evaluate()});
+    kit.set(CORRECT); kit.lock(true);
+
+    root.querySelectorAll('#aMode button').forEach(b=>b.onclick=()=>{
+      root.querySelectorAll('#aMode button').forEach(x=>x.classList.remove('on'));b.classList.add('on');
+      ST.mode=b.dataset.m; root.querySelector('#aClear').hidden=ST.mode!=='build';
+      if(ST.mode==='build'){kit.lock(false);kit.clear();status.textContent='Wire: L1→S1→F1→H1, H2→L2 (primary loop) · X1→S2→A–A→S3 · BYP→lamp, CAP→C1→lamp · lamp→X2.';}
+      else{kit.set(CORRECT);kit.lock(true);status.textContent='';ST.fuseOK=true;}
+      evaluate();
+    });
+    root.querySelector('#aClear').onclick=()=>{kit.clear();ST.fuseOK=true;};
+    root.querySelector('#as1').onclick=e=>{ST.s1=!ST.s1;e.target.textContent='S1: '+(ST.s1?'CLOSED':'OPEN');e.target.classList.toggle('on',ST.s1);if(ST.s1)ST.discharged=false;};
+    holdable(root.querySelector('#as2'),()=>ST.s2=true,()=>ST.s2=false);
+    root.querySelector('#as3').onclick=e=>{ST.s3=ST.s3==='byp'?'cap':'byp';e.target.textContent='S3: '+(ST.s3==='byp'?'BYPASS':'CAP');};
+    root.querySelector('#adisch').onclick=e=>{ST.discharged=true;e.target.hidden=true;api.award('acdc_disch',10,'Discharged C1 before Ω checks');};
+    root.querySelector('#afuse').onclick=e=>{ST.fuseOK=true;e.target.hidden=true;};
+    root.querySelectorAll('#mmode button').forEach(b=>b.onclick=()=>{root.querySelectorAll('#mmode button').forEach(x=>x.classList.remove('on'));b.classList.add('on');ST.meter=b.dataset.m;});
+
+    function evaluate(){
+      if(ST.mode!=='build'){status.textContent='';return;}
+      const need=[['SRC.1','S1.a','L1 → S1'],['S1.b','F1.a','S1 → F1'],['F1.b','XF.h1','F1 → H1'],['XF.h2','SRC.2','H2 → L2'],
+        ['XF.x1','S2.a','X1 → S2'],['S2.b','AM.a','S2 → ammeter'],['AM.b','S3.c','ammeter → S3 COM'],
+        ['S3.b','LP.a','S3 BYP → lamp'],['S3.k','C1.a','S3 CAP → C1'],['C1.b','LP.a','C1 → lamp'],['LP.b','XF.x2','lamp → X2']];
+      const missing=need.filter(([a,b])=>!kit.same(a,b)).map(x=>x[2]);
+      if(!missing.length){status.innerHTML='<b style="color:var(--elec)">✓ Bench wired correctly.</b> Close S1 and run your checks.';
+        if(!ST.builtOK){ST.builtOK=true;api.award('acdc_build',20,'Wired the AC/DC bench correctly');}}
+      else if(kit.conns.length===0) status.textContent='Wire: L1→S1→F1→H1, H2→L2 (primary loop) · X1→S2→A–A→S3 · BYP→lamp, CAP→C1→lamp · lamp→X2.';
+      else status.innerHTML='Missing/wrong: '+missing.join(' · ');
+    }
+    evaluate();
+    const row=(k,v,hi)=>`<div class="mrow"><span>${k}</span><b style="${hi?'color:var(--gold)':''}">${v}</b></div>`;
     let raf;
     function tick(){
-      const live=st.s1, on=live&&st.s2;
-      let lampV=0,amps=0;
-      if(on){ if(st.s3==='byp'){lampV=22.8;amps=0.95;st.capCharged=false;} else {lampV=13.4;amps=0.56;st.capCharged=true;st.discharged=false;} st.sawBoth[st.s3]=true;
-        if(st.sawBoth.byp&&st.sawBoth.cap)api.award('acdc_compare',15,'Compared BYPASS vs CAP under power'); }
-      const watts=lampV*amps;
-      svg.getElementById('s1blade').setAttribute('x2',st.s1?22:20);svg.getElementById('s1blade').setAttribute('y2',st.s1?0:-12);
-      svg.getElementById('s2blade').setAttribute('x2',st.s2?20:18);svg.getElementById('s2blade').setAttribute('y2',st.s2?0:-11);
-      svg.getElementById('s3blade').setAttribute('y2',st.s3==='byp'?-11:13);
-      ['w1','w2','w3'].forEach(i=>svg.getElementById(i).classList.toggle('live',live));
-      ['w4'].forEach(i=>svg.getElementById(i).classList.toggle('live',live));
-      ['w5','w6','wByp','wCap','w7'].forEach(i=>svg.getElementById(i).classList.toggle('live',on));
-      svg.getElementById('wCap').style.opacity=st.s3==='cap'?1:.25;
-      svg.getElementById('wByp').style.opacity=st.s3==='byp'?1:.25;
-      svg.getElementById('lampGlow').setAttribute('opacity',(watts/21.7*0.55).toFixed(2));
-      if(st.mode==='live'){
-        mp.innerHTML=row('1 · Primary H1–H2',live?'24.1 VAC':'0 VAC')+row('2 · Secondary X1–X2',live?'23.8 VAC':'0 VAC')
-          +row('7/10 · Lamp V (S2 held)',on?lampV.toFixed(1)+' VAC':'—')+row('8/11 · Current at A–A',on?amps.toFixed(2)+' A':'—')
-          +row('9/12 · P = V × I',on?watts.toFixed(1)+' W':'—')+row('13 · Brightness '+(st.s3==='byp'?'BYPASS':'CAP'),on?(st.s3==='byp'?'full':'dim'):'off');
-      } else {
-        if(st.s1){mp.innerHTML=`<div class="warnrow">⚠ Power is ON — open S1 before resistance checks.</div>`;}
-        else if(!st.discharged){mp.innerHTML=`<div class="warnrow">⚠ C1 is charged — readings erratic. Discharge before measuring (sheet safety note).</div>`;root.querySelector('#disch').hidden=false;}
-        else{mp.innerHTML=row('3 · F1 fuse','0.3 Ω ✓ continuity')+row('4 · Primary winding','6.8 Ω')+row('5 · Secondary winding','7.1 Ω')+row('6 · Lamp (cold)','11.6 Ω')+`<div class="okrow">Cold lamp Ω ≪ hot V/I — filament resistance rises with temperature.</div>`;
-          api.award('acdc_ohm',15,'Completed de-energized resistance checks safely');}
+      const edges=[];
+      if(ST.s1)edges.push(['S1.a','S1.b']);
+      if(ST.fuseOK)edges.push(['F1.a','F1.b']);
+      if(ST.s2)edges.push(['S2.a','S2.b']);
+      edges.push(['AM.a','AM.b']);
+      edges.push(ST.s3==='byp'?['S3.c','S3.b']:['S3.c','S3.k']);
+      edges.push(['C1.a','C1.b']);
+      // primary: dead short check (L1 reaches L2 without a load: transformer & lamp have no internal edges, so any path = short)
+      const priNet=kit.reach(['SRC.1'],edges);
+      const shorted=ST.s1&&ST.fuseOK&&priNet.has('SRC.2');
+      if(shorted){ST.fuseOK=false;root.querySelector('#afuse').hidden=false;}
+      const primaryOK=ST.s1&&ST.fuseOK&&priNet.has('XF.h1')&&kit.reach(['SRC.2'],edges).has('XF.h2');
+      // secondary
+      const secA=kit.reach(['XF.x1'],edges), secB=kit.reach(['XF.x2'],edges);
+      const secShort=primaryOK&&secA.has('XF.x2');
+      if(secShort){ST.fuseOK=false;root.querySelector('#afuse').hidden=false;}
+      const lampLoop=primaryOK&&secA.has('LP.a')&&secB.has('LP.b');
+      const viaCap=lampLoop&&ST.s3==='cap'&&secA.has('C1.a');
+      const s2Bypassed=lampLoop&&!ST.s2;
+      const on=lampLoop&&(ST.s2||s2Bypassed&&!kit.same('XF.x1','S2.a'));
+      let lV=0,A=0;
+      if(on){ if(viaCap){lV=13.4;A=0.56;ST.discharged=false;} else {lV=22.8;A=0.95;} ST.seen[viaCap?'cap':'byp']=true;
+        if(ST.seen.byp&&ST.seen.cap)api.award('acdc_compare',15,'Compared BYPASS vs CAP'); }
+      svg.getElementById('s1blade').setAttribute('y2',ST.s1?0:-13);
+      svg.getElementById('s2blade').setAttribute('y2',ST.s2?0:-11);
+      svg.getElementById('s3blade').setAttribute('y2',ST.s3==='byp'?-11:13);
+      svg.getElementById('fuseEl').style.opacity=ST.fuseOK?1:0.15;
+      svg.querySelector('#fuseLbl').textContent=ST.fuseOK?'F1':'F1 ✗ BLOWN';
+      svg.getElementById('lampGlow').setAttribute('opacity',((lV*A/21.7)*0.6).toFixed(2));
+      kit.paint(ST.s1&&ST.fuseOK?new Set([...priNet,...(primaryOK?[...secA]:[])]):new Set());
+      if(ST.meter==='live'){
+        mp.innerHTML=(!ST.fuseOK?`<div class="warnrow">⚠ F1 BLOWN — you shorted the circuit. Find the wrong wire, then replace the fuse.</div>`:'')
+          +(s2Bypassed&&on?`<div class="warnrow">⚠ Lamp is on WITHOUT S2 — S2 is bypassed, so 'while S2 pressed' readings are impossible. Re-route through S2.</div>`:'')
+          +row('1 · Primary H1–H2',primaryOK?'24.1 VAC':'0 VAC')
+          +row('2 · Secondary X1–X2',primaryOK?'23.8 VAC':'0 VAC',primaryOK)
+          +row(`7/10 · Lamp V (${viaCap?'CAP':'BYPASS'})`,on?lV.toFixed(1)+' VAC':'—',on)
+          +row(`8/11 · A–A current`,on?A.toFixed(2)+' A':'—',on)
+          +row('9/12 · P = V × I',on?(lV*A).toFixed(1)+' W':'—',on)
+          +row('13 · Brightness',on?(viaCap?'DIM — Xc drops part of the 24 V':'FULL — lamp across the whole secondary'):'off');
+      }else{
+        if(ST.s1)mp.innerHTML=`<div class="warnrow">⚠ Open S1 first — resistance checks need power OFF.</div>`;
+        else if(!ST.discharged){mp.innerHTML=`<div class="warnrow">⚠ C1 holds charge — readings erratic. Discharge first (sheet safety note).</div>`;root.querySelector('#adisch').hidden=false;}
+        else{mp.innerHTML=row('3 · F1 continuity',ST.fuseOK?'~0.3 Ω ✓':'OL — open (blown)')+row('4 · Primary winding','6.8 Ω')+row('5 · Secondary winding','7.1 Ω')+row('6 · Lamp (cold)','11.6 Ω')
+          +`<div class="okrow">Cold filament ≪ hot V/I (≈24 Ω) — resistance climbs with temperature.</div>`;
+          api.award('acdc_ohm',15,'De-energized resistance checks done safely');}
       }
       raf=requestAnimationFrame(tick);
     }
-    const row=(k,v)=>`<div class="mrow"><span>${k}</span><b>${v}</b></div>`;
     raf=requestAnimationFrame(tick);
     return ()=>cancelAnimationFrame(raf);
   }
@@ -1002,41 +1623,21 @@ SIMS.sim_acdc = {
 
 </script>
 <script>
-/* Mechatronics Stack Mastery — app shell, routing, gamification */
+/* Mechatronics Stack Mastery v3 — app shell + 100% local AI tutor */
 
 /* ---------- state ---------- */
 const DEFAULT = { xp:0, badges:[], streak:0, lastDay:null,
-  quizBest:{},          // quizId -> best %
-  quizDone:{},          // quizId -> {qIndex:true} first-time-correct tracking
-  labSteps:{},          // labId -> {i:true}
-  labDone:{},           // labId -> true
-  simAwards:{},         // milestoneId -> true
-  simSeen:{} };         // simId -> true
-let ST = load();
-function load(){ try{ return Object.assign({},DEFAULT,JSON.parse(localStorage.getItem('msm_state')||'{}')); }catch(e){ return {...DEFAULT}; } }
+  quizBest:{}, quizDone:{}, labSteps:{}, labDone:{}, simAwards:{}, simSeen:{}, scenDone:{} };
+let ST = (()=>{ try{ return Object.assign({},DEFAULT,JSON.parse(localStorage.getItem('msm_state')||'{}')); }catch(e){ return {...DEFAULT}; } })();
 function save(){ localStorage.setItem('msm_state',JSON.stringify(ST)); }
-
 function today(){ return new Date().toISOString().slice(0,10); }
-function bumpStreak(){
-  const t=today();
-  if(ST.lastDay===t) return;
-  const y=new Date(Date.now()-864e5).toISOString().slice(0,10);
-  ST.streak = (ST.lastDay===y) ? ST.streak+1 : 1;
-  ST.lastDay=t; save();
-}
+function bumpStreak(){ const t=today(); if(ST.lastDay===t)return; const y=new Date(Date.now()-864e5).toISOString().slice(0,10); ST.streak=(ST.lastDay===y)?ST.streak+1:1; ST.lastDay=t; save(); }
 function level(){ return Math.floor(ST.xp/150)+1; }
 function levelPct(){ return (ST.xp%150)/150*100; }
-
-function toast(msg){
-  const t=document.getElementById('toast');
-  t.textContent=msg; t.classList.add('show');
-  clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'),2200);
-}
-function addXP(n,label){
-  ST.xp+=n; bumpStreak(); save(); renderHeader();
-  toast(`+${n} XP${label?' · '+label:''}`);
-  checkBadges();
-}
+function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'),2200); }
+function addXP(n,label){ ST.xp+=n; bumpStreak(); save(); renderHeader(); toast(`+${n} XP${label?' · '+label:''}`); checkBadges(); }
+function el(html){ const t=document.createElement('template'); t.innerHTML=html.trim(); return t.content.firstElementChild; }
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
 
 /* ---------- badges ---------- */
 const BADGES=[
@@ -1045,53 +1646,52 @@ const BADGES=[
  {id:'oil',ico:'🛢️',name:'Oil Pressure',test:()=>(ST.quizBest.q_hyd||0)>=80},
  {id:'relay',ico:'🎛️',name:'Relay Wrangler',test:()=>(ST.quizBest.q_relay||0)>=80},
  {id:'wave',ico:'🌊',name:'Wave Rider',test:()=>(ST.quizBest.q_acdc||0)>=80},
+ {id:'rookie',ico:'🌱',name:'Foundations',test:()=>['qb_pneu','qb_hyd','qb_elec','qb_acdc'].every(q=>(ST.quizBest[q]||0)>=80)},
+ {id:'fixer',ico:'🔧',name:'Troubleshooter',test:()=>SCENARIOS.every(s=>ST.scenDone[s.id])},
  {id:'labrat',ico:'🥼',name:'Lab Rat',test:()=>LABS.every(l=>ST.labDone[l.id])},
  {id:'simulant',ico:'🕹️',name:'Simulant',test:()=>Object.keys(SIMS).every(k=>ST.simSeen[k])},
  {id:'streak3',ico:'🔥',name:'3-Day Streak',test:()=>ST.streak>=3},
  {id:'centurion',ico:'🏆',name:'Level 5',test:()=>level()>=5},
 ];
-function checkBadges(){
-  BADGES.forEach(b=>{ if(!ST.badges.includes(b.id)&&b.test()){ ST.badges.push(b.id); save();
-    setTimeout(()=>toast(`${b.ico} Badge unlocked: ${b.name}`),900); renderHeader(); }});
-}
+function checkBadges(){ BADGES.forEach(b=>{ if(!ST.badges.includes(b.id)&&b.test()){ ST.badges.push(b.id); save(); setTimeout(()=>toast(`${b.ico} Badge: ${b.name}`),900); renderHeader(); }}); }
 
 /* ---------- mastery ---------- */
 function mastery(stack){
   const qs=QUIZZES.filter(q=>q.stack===stack);
-  const quiz=qs.length? qs.reduce((a,q)=>a+(ST.quizBest[q.id]||0),0)/qs.length/100 :0;
+  const quiz=qs.length?qs.reduce((a,q)=>a+(ST.quizBest[q.id]||0),0)/qs.length/100:0;
   const labs=LABS.filter(l=>l.stack===stack);
-  const lab=labs.length? labs.filter(l=>ST.labDone[l.id]).length/labs.length :0;
+  const lab=labs.length?labs.filter(l=>ST.labDone[l.id]).length/labs.length:0;
   const sims=Object.entries(SIMS).filter(([,v])=>v.stack===stack);
-  const sim=sims.length? sims.filter(([k])=>ST.simSeen[k]).length/sims.length :0;
+  const sim=sims.length?sims.filter(([k])=>ST.simSeen[k]).length/sims.length:0;
   return Math.round((quiz*0.6+lab*0.25+sim*0.15)*100);
 }
 
-/* ---------- header / nav ---------- */
+/* ---------- nav ---------- */
 function renderHeader(){
   document.getElementById('hdr').innerHTML=`
     <span class="brand">MECH·STACKS</span><span class="spacer"></span>
     <span class="pill gold">◆ ${ST.xp} XP · L${level()}</span>
-    ${ST.streak>1?`<span class="pill fire">🔥 ${ST.streak}</span>`:''}`;
+    ${ST.streak>1?`<span class="pill fire">🔥 ${ST.streak}</span>`:''}
+    <button class="aibtn" onclick="openChat()">⚡ AI</button>`;
 }
 const TABS=[
  ['home','Home','M3 11l9-8 9 8M5 9v11h14V9'],
  ['sym','Symbols','M4 7h6v6H4zM14 7h6M14 11h6M4 17h16'],
  ['sim','Sim','M7 8l-4 4 4 4M17 8l4 4-4 4M13 5l-2 14'],
  ['labs','Labs','M9 3h6M10 3v6l-5 9a2 2 0 002 3h10a2 2 0 002-3l-5-9V3'],
- ['quiz','Quiz','M9 9a3 3 0 115 2c-.7.7-2 1-2 2.5M12 17.5v.5'],
+ ['quiz','Train','M9 9a3 3 0 115 2c-.7.7-2 1-2 2.5M12 17.5v.5'],
 ];
 let route='home', cleanup=null;
 function nav(r){
   if(cleanup){cleanup();cleanup=null;}
   route=r; window.scrollTo(0,0);
   document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.r===r.split('/')[0]));
-  const m=document.getElementById('main');
-  const base=r.split('/')[0], arg=r.split('/')[1];
+  const m=document.getElementById('main'), base=r.split('/')[0], arg=r.split('/')[1];
   if(base==='home') renderHome(m);
   else if(base==='sym') renderSymbols(m);
   else if(base==='sim') arg?renderSim(m,arg):renderSimList(m);
   else if(base==='labs') arg?renderLab(m,arg):renderLabList(m);
-  else if(base==='quiz') arg?renderQuiz(m,arg):renderQuizList(m);
+  else if(base==='quiz') arg?(arg.startsWith('ts_')?renderScenario(m,arg):renderQuiz(m,arg)):renderTrain(m);
 }
 
 /* ---------- HOME ---------- */
@@ -1106,11 +1706,18 @@ function ringSVG(pct,color){
 function renderHome(m){
   const rows=Object.entries(STACKS).map(([k,s])=>{
     const pct=mastery(k);
-    return `<div class="card tap" onclick="nav('quiz')">
-      <div class="cardrow">${ringSVG(pct,s.color)}
-        <div class="grow"><div class="eyebrow">${s.tag}</div><b>${s.name}</b>
-          <div class="sub">${pct===0?'Not started':pct<50?'In progress':pct<80?'Solid — push to 80%+':'Mastered'}</div></div>
-      </div></div>`;}).join('');
+    return `<div class="card tap" onclick="nav('quiz')"><div class="cardrow">${ringSVG(pct,s.color)}
+      <div class="grow"><div class="eyebrow">${s.tag}</div><b>${s.name}</b>
+      <div class="sub">${pct===0?'Not started':pct<50?'In progress':pct<80?'Solid — push to 80%+':'Mastered ✓'}</div></div>
+    </div></div>`;}).join('');
+  const paths=PATHS.map(p=>{
+    const done=p.items.filter(i=>i.check(ST)).length;
+    return `<div class="card pathcard">
+      <div class="cardrow"><div class="grow"><b>${p.ico} ${p.name}</b><div class="sub">${p.desc}</div></div>
+      <span class="pill">${done}/${p.items.length}</span></div>
+      ${p.items.map(i=>`<div class="pathitem ${i.check(ST)?'done':''}" onclick="nav('${i.route}')">
+        <span class="pdot">${i.check(ST)?'✓':''}</span><span>${i.t}</span></div>`).join('')}
+    </div>`;}).join('');
   const bs=BADGES.map(b=>`<div class="badge ${ST.badges.includes(b.id)?'got':''}"><div class="ico">${b.ico}</div><b>${b.name}</b></div>`).join('');
   m.innerHTML=`
     <h2 style="margin-top:4px">Stack Mastery</h2>
@@ -1119,10 +1726,15 @@ function renderHome(m){
       <div class="bar"><i style="width:${levelPct()}%"></i></div>
       <div class="sub" style="margin-top:6px">${150-ST.xp%150} XP to Level ${level()+1} · ${ST.streak||0}-day streak</div>
     </div></div></div>
+    <div class="card tap" style="border-color:var(--acdc)" onclick="openChat()">
+      <div class="cardrow"><div class="grow"><b>⚡ AI Tutor — 100% local, no API key</b>
+      <div class="sub">Instant answers from all lab content + your uploaded PDFs/PPTs. Optional on-device AI model.</div></div>
+      <span style="color:var(--acdc)">›</span></div></div>
     ${rows}
+    <h3 style="margin-top:18px">Learning Paths</h3>
+    ${paths}
     <div class="card tap" onclick="openRef()"><div class="cardrow">
-      <div class="grow"><b>📐 Quick Reference</b><div class="sub">Setpoints, formulas, ladder↔Boolean, safety</div></div><span>›</span>
-    </div></div>
+      <div class="grow"><b>📐 Quick Reference</b><div class="sub">Setpoints, formulas, ladder↔Boolean, safety</div></div><span>›</span></div></div>
     <h3 style="margin-top:18px">Badges</h3>
     <div class="badges">${bs}</div>`;
 }
@@ -1140,19 +1752,13 @@ let symFilter='all', symQ='';
 function renderSymbols(m){
   const chips=[['all','All'],...Object.entries(STACKS).map(([k,s])=>[k,s.name])]
     .map(([k,n])=>`<button class="chip ${symFilter===k?'on':''}" data-f="${k}">${n}</button>`).join('');
-  const list=SYMBOLS.filter(s=>(symFilter==='all'||s.stack===symFilter)&&
-    (symQ===''||s.name.toLowerCase().includes(symQ)||s.what.toLowerCase().includes(symQ)));
-  m.innerHTML=`
-    <h2 style="margin-top:4px">Symbol Library</h2>
+  const list=SYMBOLS.filter(s=>(symFilter==='all'||s.stack===symFilter)&&(symQ===''||s.name.toLowerCase().includes(symQ)||s.what.toLowerCase().includes(symQ)));
+  m.innerHTML=`<h2 style="margin-top:4px">Symbol Library</h2>
     <input class="search" id="sq" placeholder="Search ${SYMBOLS.length} symbols…" value="${symQ}">
     <div class="chips">${chips}</div>
-    <div class="symgrid">${list.map(s=>`
-      <button class="symcard" data-id="${s.id}" style="color:${STACKS[s.stack].color}">
-        ${s.svg}<b style="color:var(--ink)">${s.name}</b>
-      </button>`).join('')}</div>
+    <div class="symgrid">${list.map(s=>`<button class="symcard" data-id="${s.id}" style="color:${STACKS[s.stack].color}">${s.svg}<b style="color:var(--ink)">${s.name}</b></button>`).join('')}</div>
     ${list.length===0?'<p class="sub">No matches.</p>':''}`;
-  m.querySelector('#sq').oninput=e=>{symQ=e.target.value.toLowerCase();renderSymbols(m);
-    const i=m.querySelector('#sq');i.focus();i.setSelectionRange(i.value.length,i.value.length);};
+  m.querySelector('#sq').oninput=e=>{symQ=e.target.value.toLowerCase();renderSymbols(m);const i=m.querySelector('#sq');i.focus();i.setSelectionRange(i.value.length,i.value.length);};
   m.querySelectorAll('.chip').forEach(c=>c.onclick=()=>{symFilter=c.dataset.f;renderSymbols(m);});
   m.querySelectorAll('.symcard').forEach(c=>c.onclick=()=>openSymbol(c.dataset.id));
 }
@@ -1164,6 +1770,7 @@ function openSymbol(id){
     <div class="symhero" style="color:${STACKS[s.stack].color}">${s.svg}</div>
     <p style="font-size:15px">${s.what}</p>
     ${s.mistakes.map(mi=>`<div class="mist"><b>COMMON MISTAKE</b><br>${mi}</div>`).join('')}
+    <button class="btn block" style="margin-bottom:8px" onclick="this.closest('.sheet').remove();openChat('Explain ${s.name.replace(/'/g,'')} in more depth — when would I use it on the trainer?')">⚡ Ask AI about this</button>
     <button class="btn block" id="cl">Got it</button></div></div>`);
   document.body.appendChild(sh);
   sh.addEventListener('click',e=>{if(e.target===sh||e.target.id==='cl')sh.remove();});
@@ -1172,12 +1779,10 @@ function openSymbol(id){
 /* ---------- SIM ---------- */
 function renderSimList(m){
   m.innerHTML=`<h2 style="margin-top:4px">Circuit Simulators</h2>
-    <p class="sub">Interactive versions of your four trainer circuits. Milestones pay XP.</p>`+
-    Object.entries(SIMS).map(([k,s])=>`
-    <div class="card tap" onclick="nav('sim/${k}')"><div class="cardrow">
+    <p class="sub">Animated versions of the trainer circuits. XP for milestones.</p>`+
+    Object.entries(SIMS).map(([k,s])=>`<div class="card tap" onclick="nav('sim/${k}')"><div class="cardrow">
       <span class="stackdot" style="background:${STACKS[s.stack].color}"></span>
-      <div class="grow"><b>${s.title}</b><div class="sub">${STACKS[s.stack].name}${ST.simSeen[k]?' · ✓ visited':''}</div></div><span>›</span>
-    </div></div>`).join('');
+      <div class="grow"><b>${s.title}</b><div class="sub">${STACKS[s.stack].name}${ST.simSeen[k]?' · ✓':''}</div></div><span>›</span></div></div>`).join('');
 }
 function renderSim(m,key){
   const sim=SIMS[key]; if(!sim){nav('sim');return;}
@@ -1185,68 +1790,95 @@ function renderSim(m,key){
   m.innerHTML=`<button class="backbtn" onclick="nav('sim')">‹ Simulators</button>
     <div class="eyebrow" style="color:${STACKS[sim.stack].color}">${STACKS[sim.stack].tag}</div>
     <h2>${sim.title}</h2><p class="sub">${sim.desc}</p><div id="simroot"></div>`;
-  const api={ award(id,xp,label){ if(ST.simAwards[id])return; ST.simAwards[id]=true; save(); addXP(xp,label); } };
+  const api={award(id,xp,label){if(ST.simAwards[id])return;ST.simAwards[id]=true;save();addXP(xp,label);}};
   cleanup=sim.mount(m.querySelector('#simroot'),api);
 }
 
 /* ---------- LABS ---------- */
 function renderLabList(m){
   m.innerHTML=`<h2 style="margin-top:4px">Guided Labs</h2>
-    <p class="sub">Your actual STACK lab sheets as check-off walkthroughs. +5 XP per step, +50 on completion.</p>`+
-    LABS.map(l=>{
-      const total=l.steps.length, done=Object.keys(ST.labSteps[l.id]||{}).length;
+    <p class="sub">STACK lab sheets as check-off walkthroughs. +5 XP per step, +50 on completion.</p>`+
+    LABS.map(l=>{const total=l.steps.length, done=Object.keys(ST.labSteps[l.id]||{}).length;
       return `<div class="card tap" onclick="nav('labs/${l.id}')"><div class="cardrow">
         <span class="stackdot" style="background:${STACKS[l.stack].color}"></span>
         <div class="grow"><b>${l.title}</b><div class="sub">${l.trainer}</div>
-          <div class="bar"><i style="width:${done/total*100}%;background:${STACKS[l.stack].color}"></i></div></div>
-        <span>${ST.labDone[l.id]?'✓':done+'/'+total}</span>
-      </div></div>`;}).join('');
+          <div class="bar"><i style="width:${done/total*100}%;background:${STACKS[l.stack].color}"></i></div>
+        </div><span>${ST.labDone[l.id]?'✓':done+'/'+total}</span></div></div>`;}).join('');
 }
 function renderLab(m,id){
   const l=LABS.find(x=>x.id===id); if(!l){nav('labs');return;}
   ST.labSteps[id]=ST.labSteps[id]||{};
-  const steps=l.steps.map((s,i)=>`
-    <div class="step ${ST.labSteps[id][i]?'done':''}" data-i="${i}">
-      <div class="cb">${ST.labSteps[id][i]?'✓':''}</div><div class="txt">${s}</div>
-    </div>`).join('');
   m.innerHTML=`<button class="backbtn" onclick="nav('labs')">‹ Labs</button>
     <div class="eyebrow" style="color:${STACKS[l.stack].color}">${STACKS[l.stack].tag} · ${l.trainer}</div>
     <h2>${l.title}</h2><p class="sub">${l.objective}</p>
     <div class="safety"><h4>⚠ SAFETY</h4><ul>${l.safety.map(s=>`<li>${s}</li>`).join('')}</ul></div>
-    <div class="card">${steps}</div>
+    <div class="card">${l.steps.map((s,i)=>`
+      <div class="step ${ST.labSteps[id][i]?'done':''}" data-i="${i}">
+        <div class="cb">${ST.labSteps[id][i]?'✓':''}</div><div class="txt">${s}</div></div>`).join('')}</div>
     <div class="card"><b>Sign-off prep</b><div class="sub" style="margin-top:6px">
       ${l.signoff.map(q=>`<div style="margin:6px 0">• ${q}</div>`).join('')}</div></div>
-    <button class="btn block" onclick="nav('sim/${l.sim}')">Open the matching simulator ›</button>`;
+    <button class="btn block" style="margin-bottom:8px" onclick="nav('sim/${l.sim}')">Open the matching simulator ›</button>
+    <button class="btn block" onclick="openChat('Walk me through the ${l.title} sequence step by step and quiz me on the sign-off questions')">⚡ AI walkthrough</button>`;
   m.querySelectorAll('.step').forEach(st=>st.onclick=()=>{
     const i=st.dataset.i;
-    if(ST.labSteps[id][i]) { delete ST.labSteps[id][i]; save(); renderLab(m,id); return; }
-    ST.labSteps[id][i]=true; save(); addXP(5,'Lab step');
-    if(Object.keys(ST.labSteps[id]).length===l.steps.length && !ST.labDone[id]){
-      ST.labDone[id]=true; save(); setTimeout(()=>addXP(50,l.title+' complete'),600); checkBadges();
-    }
+    if(ST.labSteps[id][i]){delete ST.labSteps[id][i];save();renderLab(m,id);return;}
+    ST.labSteps[id][i]=true;save();addXP(5,'Lab step');
+    if(Object.keys(ST.labSteps[id]).length===l.steps.length&&!ST.labDone[id]){
+      ST.labDone[id]=true;save();setTimeout(()=>addXP(50,l.title+' complete'),600);checkBadges();}
     renderLab(m,id);
   });
 }
 
-/* ---------- QUIZ ---------- */
-function renderQuizList(m){
-  m.innerHTML=`<h2 style="margin-top:4px">Quizzes</h2>
-    <p class="sub">Built from your Required Checks & Questions sheets. +10 XP per first-time correct answer.</p>`+
-    QUIZZES.map(q=>`
-    <div class="card tap" onclick="nav('quiz/${q.id}')"><div class="cardrow">
-      <span class="stackdot" style="background:${STACKS[q.stack].color}"></span>
-      <div class="grow"><b>${q.title}</b><div class="sub">${q.questions.length} questions</div></div>
-      <span>${ST.quizBest[q.id]!=null?ST.quizBest[q.id]+'%':'—'}</span>
-    </div></div>`).join('');
+/* ---------- TRAIN (quizzes + scenarios) ---------- */
+const LEVELS={beginner:['🌱 Fundamentals','Start here — vocabulary & core concepts'],lab:['🥼 Stack Lab Prep','Built from the lab sheets — sign-off material'],adv:['⚙️ Advanced','Cross-domain & real-world gotchas']};
+function renderTrain(m){
+  const groups=Object.entries(LEVELS).map(([lv,[name,sub]])=>{
+    const qs=QUIZZES.filter(q=>q.level===lv);
+    if(!qs.length)return'';
+    return `<h3 style="margin-top:16px">${name}</h3><p class="sub" style="margin-top:-4px">${sub}</p>`+
+      qs.map(q=>`<div class="card tap" onclick="nav('quiz/${q.id}')"><div class="cardrow">
+        <span class="stackdot" style="background:${STACKS[q.stack].color}"></span>
+        <div class="grow"><b>${q.title}</b><div class="sub">${q.questions.length} questions</div></div>
+        <span>${ST.quizBest[q.id]!=null?ST.quizBest[q.id]+'%':'—'}</span></div></div>`).join('');
+  }).join('');
+  const scen=SCENARIOS.map(s=>`<div class="card tap" onclick="nav('quiz/${s.id}')"><div class="cardrow">
+    <span class="stackdot" style="background:${STACKS[s.stack].color}"></span>
+    <div class="grow"><b>${s.title}</b><div class="sub">${STACKS[s.stack].name} scenario</div></div>
+    <span>${ST.scenDone[s.id]?'✓':'›'}</span></div></div>`).join('');
+  m.innerHTML=`<h2 style="margin-top:4px">Train</h2>${groups}
+    <h3 style="margin-top:18px">🔧 Troubleshooting Scenarios</h3>
+    <p class="sub" style="margin-top:-4px">Something's wrong on the bench — diagnose it. +15 XP each.</p>${scen}`;
 }
+function renderScenario(m,id){
+  const s=SCENARIOS.find(x=>x.id===id); if(!s){nav('quiz');return;}
+  m.innerHTML=`<button class="backbtn" onclick="nav('quiz')">‹ Train</button>
+    <div class="eyebrow" style="color:${STACKS[s.stack].color}">${STACKS[s.stack].tag} · TROUBLESHOOTING</div>
+    <h2>${s.title}</h2>
+    <div class="scen-setup"><b>ON THE BENCH</b>${s.setup}</div>
+    <h3 style="font-size:16px">${s.q}</h3>
+    ${s.a.map((a,j)=>`<button class="qopt" data-j="${j}">${a}</button>`).join('')}
+    <div id="exp"></div>`;
+  let answered=false;
+  m.querySelectorAll('.qopt').forEach(b=>b.onclick=()=>{
+    if(answered)return; answered=true;
+    const j=+b.dataset.j, ok=j===s.c;
+    if(ok){b.classList.add('correct'); if(!ST.scenDone[id]){ST.scenDone[id]=true;save();addXP(15,'Scenario solved');checkBadges();}}
+    else{b.classList.add('wrong');m.querySelectorAll('.qopt')[s.c].classList.add('correct');}
+    m.querySelector('#exp').innerHTML=`<div class="qexp">${s.x}</div>
+      <button class="btn primary block" style="margin-top:12px" onclick="nav('quiz')">Back to Train</button>
+      <button class="btn block" style="margin-top:8px" onclick="openChat('Explain more about this fault: ${s.title}. ${s.q}')">⚡ Dig deeper with AI</button>`;
+  });
+}
+
+/* ---------- QUIZ ---------- */
 function renderQuiz(m,id){
   const qz=QUIZZES.find(x=>x.id===id); if(!qz){nav('quiz');return;}
   ST.quizDone[id]=ST.quizDone[id]||{};
   let i=0, score=0;
   function q(){
-    if(i>=qz.questions.length){ return done(); }
+    if(i>=qz.questions.length)return done();
     const Q=qz.questions[i];
-    m.innerHTML=`<button class="backbtn" onclick="nav('quiz')">‹ Quizzes</button>
+    m.innerHTML=`<button class="backbtn" onclick="nav('quiz')">‹ Train</button>
       <div class="qprog">${qz.title} · ${i+1}/${qz.questions.length}</div>
       <h3>${Q.q}</h3>
       ${Q.a.map((a,j)=>`<button class="qopt" data-j="${j}">${a}</button>`).join('')}
@@ -1255,37 +1887,331 @@ function renderQuiz(m,id){
     m.querySelectorAll('.qopt').forEach(b=>b.onclick=()=>{
       if(answered)return; answered=true;
       const j=+b.dataset.j, ok=j===Q.c;
-      if(ok){score++; b.classList.add('correct');
-        if(!ST.quizDone[id][i]){ST.quizDone[id][i]=true;save();addXP(10,'Correct');}}
-      else{b.classList.add('wrong'); m.querySelectorAll('.qopt')[Q.c].classList.add('correct');}
+      if(ok){score++;b.classList.add('correct');if(!ST.quizDone[id][i]){ST.quizDone[id][i]=true;save();addXP(10,'Correct');}}
+      else{b.classList.add('wrong');m.querySelectorAll('.qopt')[Q.c].classList.add('correct');}
       m.querySelector('#exp').innerHTML=`<div class="qexp">${Q.x}</div>
         <button class="btn primary block" style="margin-top:12px" id="nx">${i+1<qz.questions.length?'Next ›':'Finish'}</button>`;
       m.querySelector('#nx').onclick=()=>{i++;q();window.scrollTo(0,0);};
     });
   }
   function done(){
-    const pct=Math.round(score/qz.questions.length*100);
-    const best=ST.quizBest[id]||0;
+    const pct=Math.round(score/qz.questions.length*100), best=ST.quizBest[id]||0;
     if(pct>best){ST.quizBest[id]=pct;save();checkBadges();}
-    m.innerHTML=`<button class="backbtn" onclick="nav('quiz')">‹ Quizzes</button>
+    m.innerHTML=`<button class="backbtn" onclick="nav('quiz')">‹ Train</button>
       <div class="card" style="text-align:center;padding:28px 16px">
         <div style="font-size:42px">${pct>=80?'🏅':pct>=50?'💪':'📚'}</div>
         <h2>${pct}%</h2>
         <p class="sub">${score}/${qz.questions.length} correct · best ${Math.max(pct,best)}%</p>
-        ${pct>=80?'<p class="sub">Sign-off ready.</p>':'<p class="sub">80%+ unlocks the stack badge — review the explanations and rerun.</p>'}
+        ${pct>=80?'<p class="sub">Tier cleared.</p>':'<p class="sub">80%+ clears this tier — review the explanations and retry.</p>'}
         <button class="btn primary block" onclick="nav('quiz/${id}')" style="margin-top:8px">Retry</button>
-        <button class="btn block" onclick="nav('quiz')" style="margin-top:8px">All quizzes</button>
-      </div>`;
+        <button class="btn block" onclick="nav('quiz')" style="margin-top:8px">All training</button></div>`;
   }
   q();
 }
 
+/* ================================================================
+   LOCAL AI TUTOR — zero cost, no API key
+   Engine A "Instant": rule-based + retrieval over built-in content and
+                       uploaded documents. Always works, fully offline.
+   Engine B "Local model": WebLLM on-device LLM (WebGPU). Optional
+                       download (~350–900 MB once, cached by browser).
+   RAG: PDFs (pdf.js) / PPTX (JSZip) / TXT parsed in-browser, chunked,
+        stored in IndexedDB, retrieved by keyword scoring per question.
+   ================================================================ */
+
+/* ---------- IndexedDB for documents ---------- */
+const DB={
+  open(){ return new Promise((res,rej)=>{ const r=indexedDB.open('msm_docs',1);
+    r.onupgradeneeded=()=>r.result.createObjectStore('docs',{keyPath:'id'});
+    r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error); }); },
+  async all(){ const db=await this.open(); return new Promise((res,rej)=>{ const r=db.transaction('docs').objectStore('docs').getAll(); r.onsuccess=()=>res(r.result||[]); r.onerror=()=>rej(r.error); }); },
+  async put(doc){ const db=await this.open(); return new Promise((res,rej)=>{ const r=db.transaction('docs','readwrite').objectStore('docs').put(doc); r.onsuccess=()=>res(); r.onerror=()=>rej(r.error); }); },
+  async del(id){ const db=await this.open(); return new Promise((res,rej)=>{ const r=db.transaction('docs','readwrite').objectStore('docs').delete(id); r.onsuccess=()=>res(); r.onerror=()=>rej(r.error); }); },
+};
+let userDocs=[];   // cached in memory: [{id,name,chunks:[{title,text}]}]
+async function loadDocs(){ try{ userDocs=await DB.all(); }catch(e){ userDocs=[]; } }
+
+/* ---------- built-in knowledge chunks ---------- */
+let BUILTIN=null;
+function builtinChunks(){
+  if(BUILTIN) return BUILTIN;
+  const c=[];
+  SYMBOLS.forEach(s=>c.push({src:'built-in',title:s.name,text:`${s.what} Common mistakes: ${s.mistakes.join(' ')}`}));
+  LABS.forEach(l=>{
+    c.push({src:'built-in',title:l.title+' — procedure',text:`${l.objective} Steps: ${l.steps.map((s,i)=>(i+1)+') '+s).join(' ')}`});
+    c.push({src:'built-in',title:l.title+' — safety',text:l.safety.join(' ')});
+  });
+  QUIZZES.forEach(q=>q.questions.forEach(Q=>c.push({src:'built-in',title:q.title,text:`Q: ${Q.q} Answer: ${Q.a[Q.c]}. ${Q.x}`})));
+  SCENARIOS.forEach(s=>c.push({src:'built-in',title:'Troubleshooting: '+s.title,text:`${s.setup} ${s.q} Answer: ${s.a[s.c]}. ${s.x}`}));
+  REFERENCE.forEach(r=>c.push({src:'built-in',title:r.h,text:r.items.join('. ')}));
+  BUILTIN=c; return c;
+}
+
+/* ---------- retrieval ---------- */
+const STOP=new Set(['the','and','for','with','that','this','what','when','why','how','does','can','will','would','should','about','from','your','have','has','was','were','are','is','of','to','in','on','a','an','it','its','my','me','i','you','do','at','by','or','be','as']);
+function terms(q){ return q.toLowerCase().replace(/[^a-z0-9\s\-]/g,' ').split(/\s+/).filter(w=>w.length>2&&!STOP.has(w)); }
+function scoreChunk(qt,chunk){
+  const hay=(chunk.title+' '+chunk.text).toLowerCase();
+  let s=0;
+  qt.forEach(t=>{ if(chunk.title.toLowerCase().includes(t)) s+=3;
+    const m=hay.split(t).length-1; s+=Math.min(m,3); });
+  return s;
+}
+function retrieve(q,n=3){
+  const qt=terms(q); if(!qt.length) return [];
+  const all=[...builtinChunks(),...userDocs.flatMap(d=>d.chunks.map(c=>({...c,src:d.name})))];
+  return all.map(c=>({c,s:scoreChunk(qt,c)})).filter(x=>x.s>1)
+    .sort((a,b)=>b.s-a.s).slice(0,n).map(x=>x.c);
+}
+
+/* ---------- rule-based fast answers ---------- */
+const RULES=[
+ {re:/(δp|delta\s*p|pressure\s*drop)/i, a:"**ΔP across the flow-control valve** = |Gauge A − Gauge B|.\nExample: Gauge A = 180 psi, Gauge B = 290 psi → ΔP = 110 psi.\nIt's the pressure 'spent' pushing oil/air through the restriction — bigger opening, smaller ΔP."},
+ {re:/p\s*=\s*v|watt|lamp\s*power|power\s*calc/i, a:"**Power: P = V × I** (volts × amps = watts).\nFrom the AC/DC lab: BYPASS ≈ 22.8 V × 0.95 A ≈ 21.7 W. CAP ≈ 13.4 V × 0.56 A ≈ 7.5 W.\nAlways multiply V and I from the SAME selector position."},
+ {re:/turns?\s*ratio|transformer\s*(ratio|formula|equation)/i, a:"**Transformer ratio: Vs/Vp = Ns/Np** — voltage scales with turns.\nCurrent scales inversely (Ip/Is = Ns/Np) because power is conserved: Vp·Ip ≈ Vs·Is.\nThe T7017A is ≈1:1 — an ISOLATION transformer: same ~24 VAC out, but galvanically separated."},
+ {re:/xc|capacitive\s*reactance|reactance/i, a:"**Capacitive reactance: Xc = 1/(2πfC)** — the capacitor's AC opposition in ohms.\nInductive: XL = 2πfL.\nIn the CAP position, Xc in series with the lamp divides the 24 V, so the lamp gets less voltage → dimmer, less current."},
+ {re:/psi\s*(to|→|->)?\s*kpa|kpa\s*conver|convert.*psi/i, a:"**psi → kPa: multiply by 6.895.**\n30 psi ≈ 207 kPa (pneumatics setpoint) · 300 psi ≈ 2070 kPa (hydraulics setpoint)."},
+ {re:/setpoint|what\s*pressure.*(set|lab)|regulator\s*setting/i, a:"**Lab setpoints:**\n• Pneumatics: Gauge A = 30 psi / 207 kPa\n• Hydraulics: Gauge S = 300 psi / 2070 kPa (relief starts at MINIMUM)\n• Relay lab: 1TR = 1 second\n• AC/DC: 24 VAC source, ≈1:1 isolation transformer"},
+ {re:/meter[\s-]*out/i, a:"**Meter-out flow control** restricts the EXHAUST side of the cylinder, not the supply.\n• Back pressure builds on the leaving side (that's what Gauge B shows)\n• Controls the metered stroke only — the check valve frees the reverse stroke\n• Resists runaway loads (the trapped fluid acts as a brake)\nResult: smooth controlled extension + rapid retraction."},
+ {re:/seal[\s-]*in|holding\s*circuit|stay.*energized|memory\s*circuit/i, a:"**Seal-in circuit** = the relay's own NO contact (1CRA) wired in parallel with the START button.\nPress START → 1CR energizes → 1CRA closes around the button → release START and the relay holds itself.\nBoolean: 1CR = STOP AND (START OR 1CRA). It's 1-bit memory in hardware."},
+];
+
+/* ---------- Instant engine ---------- */
+function instantAnswer(q){
+  for(const r of RULES){ if(r.re.test(q)){
+    const extra=retrieve(q,1);
+    return r.a+(extra.length?`\n\n———\n📌 **${extra[0].title}** (${extra[0].src})\n${extra[0].text.slice(0,260)}…`:'');
+  }}
+  const hits=retrieve(q,3);
+  if(!hits.length) return "I couldn't match that to anything in the lab content or your uploaded documents.\n\nTry: a symbol name (\"flow control valve\"), a concept (\"meter-out\", \"seal-in\", \"isolation transformer\"), a formula (\"ΔP\", \"P = V×I\"), or a fault (\"cylinder won't extend\").\n\nOr switch to the **Local model** engine for free-form answers.";
+  return hits.map(h=>`📌 **${h.title}**${h.src!=='built-in'?` _(from ${h.src})_`:''}\n${h.text}`).join('\n\n');
+}
+function quizMe(){
+  const all=QUIZZES.flatMap(q=>q.questions.map(Q=>({...Q,from:q.title})));
+  const Q=all[Math.floor(Math.random()*all.length)];
+  const letters=['A','B','C','D'];
+  chatPendingQuiz={answer:Q.c,expl:Q.x,opts:Q.a};
+  return `**Pop quiz** _(${Q.from})_\n\n${Q.q}\n\n${Q.a.map((a,i)=>letters[i]+') '+a).join('\n')}\n\nReply with A, B, C, or D.`;
+}
+let chatPendingQuiz=null;
+
+/* ---------- WebLLM engine ---------- */
+let llm={engine:null,loading:false,model:null,err:null,progress:''};
+const LLM_MODELS=[
+ {id:'Qwen2.5-0.5B-Instruct-q4f16_1-MLC',label:'Qwen 0.5B — fastest (~350 MB)'},
+ {id:'Llama-3.2-1B-Instruct-q4f16_1-MLC',label:'Llama 3.2 1B — smarter (~700 MB)'},
+];
+async function loadLLM(modelId){
+  if(llm.loading) return;
+  llm.loading=true; llm.err=null; llm.model=modelId; updateModelBar();
+  try{
+    if(!navigator.gpu) throw new Error('WebGPU not available on this browser. iOS 18+ Safari or recent Chrome/Edge required. Use the Instant engine instead — it works everywhere.');
+    const webllm=await import('https://esm.run/@mlc-ai/web-llm');
+    llm.engine=await webllm.CreateMLCEngine(modelId,{
+      initProgressCallback:p=>{llm.progress=`${Math.round((p.progress||0)*100)}% — ${p.text||'loading'}`;updateModelBar();}
+    });
+    llm.progress='Ready ✓'; toast('Local model loaded');
+  }catch(e){ llm.err=e.message||String(e); llm.engine=null; }
+  llm.loading=false; updateModelBar();
+}
+function llmSystemPrompt(ragText){
+  return `You are a mechatronics lab tutor for Amatrol STACK trainers (pneumatics, hydraulics 850-H1, relay control 90-EC1A, AC/DC T7017A-BDA). Be concise, specific, practical — like a senior technician. Key setpoints: pneumatics Gauge A=30 psi/207 kPa; hydraulics Gauge S=300 psi/2070 kPa, relief starts minimum; relay timer 1TR=1 s; AC/DC 24 VAC ≈1:1 isolation transformer. Core ideas: meter-out throttles cylinder EXHAUST (back pressure on Gauge B, check valve frees reverse stroke); seal-in = relay's own NO contact parallels START; series contacts=AND, parallel=OR, NC=NOT; P=V×I; Vs/Vp=Ns/Np; Xc=1/(2πfC); ΔP=|GaugeA−GaugeB|; safety: power off + discharge cap before Ω checks, relieve trapped pressure, never leak-check with hands.${ragText?'\n\nRelevant reference material for this question:\n'+ragText:''}`;
+}
+async function llmAnswer(q,history){
+  const rag=retrieve(q,3).map(c=>`[${c.title}] ${c.text}`).join('\n').slice(0,2400);
+  const msgs=[{role:'system',content:llmSystemPrompt(rag)},...history.slice(-6),{role:'user',content:q}];
+  const out=await llm.engine.chat.completions.create({messages:msgs,max_tokens:400,temperature:0.4});
+  return out.choices[0].message.content;
+}
+
+/* ---------- document upload & parsing ---------- */
+function loadScript(src){ return new Promise((res,rej)=>{ if(document.querySelector(`script[src="${src}"]`))return res();
+  const s=document.createElement('script'); s.src=src; s.onload=res; s.onerror=()=>rej(new Error('Failed to load '+src)); document.head.appendChild(s); }); }
+
+function chunkText(text,title){
+  const clean=text.replace(/\s+/g,' ').trim(); const chunks=[];
+  for(let i=0;i<clean.length;i+=550){
+    let end=Math.min(i+650,clean.length);
+    const dot=clean.lastIndexOf('. ',end); if(dot>i+300) end=dot+1;
+    chunks.push({title:`${title} (part ${chunks.length+1})`,text:clean.slice(i,end)});
+    i=end-550;
+    if(chunks.length>200)break;
+  }
+  return chunks;
+}
+async function parseFile(file){
+  const name=file.name, lower=name.toLowerCase();
+  if(lower.endsWith('.txt')||lower.endsWith('.md')){
+    return chunkText(await file.text(),name);
+  }
+  if(lower.endsWith('.pdf')){
+    await loadScript('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js');
+    pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    const pdf=await pdfjsLib.getDocument({data:await file.arrayBuffer()}).promise;
+    let text='';
+    for(let p=1;p<=Math.min(pdf.numPages,60);p++){
+      const pg=await pdf.getPage(p); const tc=await pg.getTextContent();
+      text+=tc.items.map(i=>i.str).join(' ')+'\n';
+    }
+    if(text.trim().length<40) throw new Error('No selectable text found — this PDF looks like a scan/photo. Export a text-based PDF or paste the text into a .txt file.');
+    return chunkText(text,name);
+  }
+  if(lower.endsWith('.pptx')){
+    await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js');
+    const zip=await JSZip.loadAsync(await file.arrayBuffer());
+    const slides=Object.keys(zip.files).filter(f=>/^ppt\/slides\/slide\d+\.xml$/.test(f)).sort();
+    let text='';
+    for(const f of slides){
+      const xml=await zip.files[f].async('string');
+      const matches=[...xml.matchAll(/<a:t>([^<]*)<\/a:t>/g)].map(m=>m[1]).join(' ');
+      text+=matches+'\n';
+    }
+    if(text.trim().length<20) throw new Error('No text found in this PPTX.');
+    return chunkText(text,name);
+  }
+  throw new Error('Supported: .pdf, .pptx, .txt, .md  (old .ppt and scanned PDFs are not — re-export as PDF with text or PPTX)');
+}
+async function handleUpload(input){
+  const files=[...input.files]; input.value='';
+  for(const f of files){
+    toast('Parsing '+f.name+'…');
+    try{
+      const chunks=await parseFile(f);
+      const doc={id:f.name+'_'+Date.now(),name:f.name,chunks,added:Date.now()};
+      await DB.put(doc); userDocs.push(doc);
+      toast(`✓ ${f.name}: ${chunks.length} sections indexed`);
+    }catch(e){ toast('⚠ '+e.message); }
+  }
+  renderDocsPanel();
+}
+async function deleteDoc(id){
+  await DB.del(id); userDocs=userDocs.filter(d=>d.id!==id); renderDocsPanel(); toast('Document removed');
+}
+
+/* ---------- chat UI ---------- */
+let chatMsgs=[], chatLoading=false, chatEngine='instant';
+function openChat(prefill){
+  if(document.querySelector('.chatmodal')){ if(prefill){const i=document.getElementById('chatq'); if(i){i.value=prefill;sendChat();}} return; }
+  const modal=el(`<div class="chatmodal">
+    <div class="chatmodal-hdr">
+      <div><div class="eyebrow" style="color:var(--acdc)">AI TUTOR · 100% LOCAL</div>
+      <h2>Mechatronics Tutor</h2></div>
+      <span class="spacer"></span>
+      <button class="btn" style="flex:none;padding:8px 12px;font-size:18px" onclick="this.closest('.chatmodal').remove()">✕</button>
+    </div>
+    <div class="seg engseg" id="engseg">
+      <button data-e="instant" class="on">⚡ Instant (offline)</button>
+      <button data-e="llm">🧠 Local model</button>
+    </div>
+    <div class="modelbar" id="modelbar" hidden></div>
+    <div class="docpanel" id="docpanel"></div>
+    <div class="quickbtns">
+      <button onclick="quickAsk('Explain meter-out flow control like I am new to it')">Explain meter-out</button>
+      <button onclick="quickAsk('Walk me through the 90-EC1A timed sequence step by step')">Relay sequence</button>
+      <button onclick="quickAsk('My cylinder will not extend, how do I troubleshoot it?')">Troubleshoot</button>
+      <button onclick="quickAsk('__quiz__')">Quiz me</button>
+      <button onclick="quickAsk('What are all the lab setpoints?')">Setpoints</button>
+    </div>
+    <div id="chatInner" style="flex:1;overflow:hidden;display:flex;flex-direction:column"></div>
+  </div>`);
+  document.body.appendChild(modal);
+  modal.querySelectorAll('#engseg button').forEach(b=>b.onclick=()=>{
+    modal.querySelectorAll('#engseg button').forEach(x=>x.classList.remove('on'));b.classList.add('on');
+    chatEngine=b.dataset.e; updateModelBar();
+    if(chatEngine==='llm'&&!llm.engine&&!llm.loading) showModelPicker();
+  });
+  loadDocs().then(renderDocsPanel);
+  renderChatInner();
+  if(prefill) setTimeout(()=>{const i=document.getElementById('chatq');if(i){i.value=prefill;sendChat();}},100);
+}
+function renderDocsPanel(){
+  const p=document.getElementById('docpanel'); if(!p)return;
+  p.innerHTML=`<div class="docpanel-hd">
+      <span>📄 Your documents (${userDocs.length}) — stored on this device</span><span class="grow"></span>
+      <label class="chip" style="cursor:pointer">+ Add<input type="file" accept=".pdf,.pptx,.txt,.md" multiple hidden onchange="handleUpload(this)"></label>
+    </div>
+    ${userDocs.map(d=>`<div class="docrow"><b>${esc(d.name)}</b><span class="sub">${d.chunks.length} sections</span>
+      <button class="del" onclick="deleteDoc('${d.id}')">✕</button></div>`).join('')}`;
+}
+function updateModelBar(){
+  const b=document.getElementById('modelbar'); if(!b)return;
+  if(chatEngine!=='llm'){b.hidden=true;return;}
+  b.hidden=false;
+  if(llm.err) b.innerHTML=`⚠ ${esc(llm.err)} <button class="chip" style="margin-left:8px" onclick="showModelPicker()">Retry</button>`;
+  else if(llm.engine) b.innerHTML=`🧠 ${llm.model.split('-q4')[0]} loaded ✓ — runs on-device, cached for next time`;
+  else if(llm.loading) b.innerHTML=`Downloading model (one time, cached after): ${esc(llm.progress)}<div class="bar"><i style="width:${parseInt(llm.progress)||2}%"></i></div>`;
+  else b.innerHTML=`No model loaded. <button class="chip" onclick="showModelPicker()">Choose model</button>`;
+}
+function showModelPicker(){
+  const sh=el(`<div class="sheet"><div>
+    <div class="eyebrow" style="color:var(--acdc)">LOCAL AI MODEL</div>
+    <h2>One-time download</h2>
+    <p class="sub">Runs fully on your device via WebGPU (iOS 18+ Safari / recent Chrome). Downloads once, then cached — works offline after. On Wi-Fi recommended.</p>
+    ${LLM_MODELS.map(m=>`<button class="btn block" style="margin-bottom:8px" onclick="loadLLM('${m.id}');this.closest('.sheet').remove()">${m.label}</button>`).join('')}
+    <p class="sub" style="font-size:12px">Tip: the ⚡ Instant engine answers from your lab content with zero download — for sign-off prep it's usually all you need.</p>
+    <button class="btn block" id="cl">Cancel</button></div></div>`);
+  document.body.appendChild(sh);
+  sh.addEventListener('click',e=>{if(e.target===sh||e.target.id==='cl')sh.remove();});
+}
+function renderChatInner(){
+  const inner=document.getElementById('chatInner'); if(!inner)return;
+  inner.innerHTML=`
+    <div class="chatbox" id="chatbox">${chatMsgs.map(renderMsg).join('')}
+      ${chatMsgs.length===0?`<div class="msg msg-assistant">I know your four STACK labs inside out — every symbol, setpoint, sequence, and sign-off question — plus anything you upload above (lab PDFs, slides, notes).\n\n⚡ <b>Instant</b>: immediate answers from that content, fully offline.\n🧠 <b>Local model</b>: a small AI running on your phone for free-form conversation (one-time download).\n\nTry the quick buttons, or ask anything.</div>`:''}</div>
+    <div class="chat-bar">
+      <input class="search" id="chatq" placeholder="Ask about any STACK concept…" style="margin:0"
+        onkeydown="if(event.key==='Enter'){event.preventDefault();sendChat();}">
+      <button class="sendbtn" id="chatbtn" onclick="sendChat()">↑</button>
+    </div>`;
+  setTimeout(()=>{const b=document.getElementById('chatbox');if(b)b.scrollTop=b.scrollHeight;},50);
+}
+function mdLite(s){
+  return esc(s).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/_(.+?)_/g,'<i>$1</i>').replace(/\n/g,'<br>');
+}
+function renderMsg(m){ return `<div class="msg msg-${m.role}">${mdLite(m.content)}</div>`; }
+function quickAsk(q){ const i=document.getElementById('chatq'); if(!i)return; i.value=q; sendChat(); }
+
+async function sendChat(){
+  if(chatLoading)return;
+  const inp=document.getElementById('chatq'); if(!inp)return;
+  let txt=inp.value.trim(); if(!txt)return;
+  inp.value='';
+  // pending quiz answer?
+  if(chatPendingQuiz && /^[abcd]$/i.test(txt)){
+    const idx='abcd'.indexOf(txt.toLowerCase());
+    const pq=chatPendingQuiz; chatPendingQuiz=null;
+    chatMsgs.push({role:'user',content:txt.toUpperCase()});
+    chatMsgs.push({role:'assistant',content:(idx===pq.answer?'✓ Correct! ':'✗ Not quite — the answer is '+'ABCD'[pq.answer]+') '+pq.opts[pq.answer]+'.\n\n')+pq.expl});
+    renderChatInner(); return;
+  }
+  if(txt==='__quiz__'){ chatMsgs.push({role:'user',content:'Quiz me'}); chatMsgs.push({role:'assistant',content:quizMe()}); renderChatInner(); return; }
+  chatMsgs.push({role:'user',content:txt});
+  chatLoading=true;
+  const box=document.getElementById('chatbox');
+  if(box){box.innerHTML=chatMsgs.map(renderMsg).join('')+`<div class="msg msg-assistant msg-loading">Thinking</div>`;box.scrollTop=box.scrollHeight;}
+  let reply;
+  try{
+    if(chatEngine==='llm'&&llm.engine){
+      reply=await llmAnswer(txt,chatMsgs.slice(0,-1).map(m=>({role:m.role,content:m.content})));
+    }else{
+      if(chatEngine==='llm') reply='(Local model not loaded yet — answering with the Instant engine.)\n\n'+instantAnswer(txt);
+      else reply=instantAnswer(txt);
+    }
+  }catch(e){ reply='Local model error: '+e.message+'\n\nFalling back to Instant:\n\n'+instantAnswer(txt); }
+  chatMsgs.push({role:'assistant',content:reply});
+  chatLoading=false;
+  renderChatInner();
+}
+
 /* ---------- boot ---------- */
-window.nav=nav; window.openRef=openRef;
+window.nav=nav; window.openRef=openRef; window.openChat=openChat;
+window.handleUpload=handleUpload; window.deleteDoc=deleteDoc;
+window.quickAsk=quickAsk; window.sendChat=sendChat;
+window.showModelPicker=showModelPicker; window.loadLLM=loadLLM;
 document.getElementById('tabs').innerHTML=TABS.map(([r,n,p])=>`
   <button data-r="${r}" onclick="nav('${r}')"><svg viewBox="0 0 24 24"><path d="${p}"/></svg>${n}</button>`).join('');
-renderHeader(); bumpStreak(); nav('home');
-if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+renderHeader(); bumpStreak(); nav('home'); loadDocs();
+if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
 
 </script>
 </body>
