@@ -190,6 +190,16 @@ input[type=range]{flex:1;accent-color:var(--gold);min-height:34px}
 .refblock li{font-size:14px;color:var(--dim);margin:5px 0}
 .backbtn{font:600 13px var(--mono);color:var(--dim);padding:6px 0;margin-bottom:6px;display:inline-flex;gap:6px;align-items:center}
 
+/* course */
+.plain{border-left:3px solid var(--gold);background:var(--panel2);border-radius:0 10px 10px 0;
+  padding:8px 12px;margin:10px 0;font-size:13.5px}
+.plain b{color:var(--gold);font:600 11px var(--mono);letter-spacing:.08em}
+.lesson-body{font-size:14.5px;line-height:1.55}
+.lesson-body p{margin:8px 0}
+.formula{background:var(--panel2);border-radius:8px;padding:8px 12px;margin:8px 0;font:600 13.5px var(--mono);color:var(--gold)}
+.lessonchk{flex:none;font:600 11px var(--mono);padding:7px 12px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--dim)}
+.lessonchk.on{border-color:var(--elec);color:var(--elec)}
+
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 
 /* ===== AI CHAT MODAL ===== */
@@ -1269,6 +1279,317 @@ const PATHS=[
     {t:"Advanced Cross-Domain quiz ≥80%", route:"quiz/qa_mix", check:s=>(s.quizBest.qa_mix||0)>=80},
     {t:"Reach Level 5", route:"home", check:s=>Math.floor(s.xp/150)+1>=5},
   ]},
+];
+
+/* ---------- COURSE — theory readings, one unit per stack ---------- */
+const UNITS=[
+{ id:"pneu",
+  summary:"Pneumatics uses compressed air to push pistons and valves — you control speed and direction by controlling where that air goes.",
+  objectives:[
+    "Explain how a basic pneumatic circuit moves air from supply to actuator and back to atmosphere.",
+    "Read and apply DCV (directional control valve) symbols — ways, positions, and spool type.",
+    "Convert working pressure between psi and kPa.",
+    "Explain why meter-out flow control gives smoother speed control than meter-in." ],
+  lessons:[
+    { title:"Compressed Air Fundamentals",
+      plain:"In plain English: pneumatics is just using squeezed-up air, instead of electricity or muscle, to push things.",
+      body:[
+        "A pneumatic circuit starts with a compressor that fills shop air lines with pressurized air, well above what any single circuit needs.",
+        "At the trainer, that supply first passes through a shutoff valve (safety isolation) and a pressure regulator, which reduces and HOLDS a steady working pressure — your lab sets this to 30 psi (207 kPa) on Gauge A.",
+        "Pressure (psi) measures force per area; flow (cfm) measures how much air volume moves per minute. A regulator controls pressure; a flow-control valve controls flow — they are not the same knob." ],
+      formulas:["psi → kPa: multiply by 6.895 (30 psi ≈ 207 kPa)"] },
+    { title:"Directional Control & Actuation",
+      plain:"In plain English: a directional control valve (DCV) is an air traffic switch — it decides which port air goes IN and which port it comes OUT of.",
+      body:[
+        "A DCV is described by 'ways' (number of ports) and 'positions' (number of switching states). A 5/3 valve has 5 ports and 3 positions — most trainer circuits use this to extend, retract, or center a double-acting cylinder.",
+        "A double-acting cylinder has two ports: cap-end and rod-end. Sending air to the cap-end and exhausting the rod-end extends the rod; reversing it retracts. The rod side has less area, so it produces slightly less force on retraction at the same pressure.",
+        "Air that isn't doing work has to go somewhere — it exhausts to atmosphere through the DCV's exhaust ports, often through a muffler. Never plug an exhaust port; that traps pressure and stalls the cylinder." ] },
+    { title:"Flow Control & Circuit Design",
+      plain:"In plain English: to slow a cylinder down smoothly, you restrict the air LEAVING it, not the air going in — that's called meter-out.",
+      body:[
+        "Meter-out flow control installs a needle valve (with a one-way check valve in parallel) on the EXHAUST side. It throttles air leaving the cylinder during the controlled stroke, while the check valve lets the return stroke free-flow.",
+        "Meter-in (restricting the supply side instead) sounds simpler but performs worse with single-acting or spring-loaded loads — air is compressible, so a meter-in circuit can let the load 'jump' before the throttled air catches up.",
+        "ΔP across the flow-control valve is just the pressure difference measured by gauges on either side of it. A bigger ΔP means a tighter restriction." ],
+      formulas:["ΔP = |Gauge A − Gauge B|"] } ],
+  glossary:[
+    {t:"Shutoff valve", d:"Manual on/off valve that isolates air supply from the rest of the circuit."},
+    {t:"Regulator", d:"Reduces and holds supply pressure at a set value."},
+    {t:"DCV (directional control valve)", d:"Valve that routes air to extend, retract, or center an actuator."},
+    {t:"Double-acting cylinder", d:"Cylinder that air can drive in both directions."},
+    {t:"Meter-out", d:"Flow control that restricts the exhaust side of an actuator for smooth, load-resistant speed control."},
+    {t:"ΔP (pressure drop)", d:"Difference in pressure across a component, here across the flow-control valve."} ] },
+
+{ id:"hyd",
+  summary:"Hydraulics works like pneumatics but with oil instead of air — because oil doesn't compress, it gives precise, powerful, load-independent motion.",
+  objectives:[
+    "Explain why incompressible fluid gives hydraulics a force/precision advantage over air.",
+    "Describe the role of a relief valve in setting and protecting system pressure.",
+    "Calculate force from pressure and area (F = P × A).",
+    "Apply ΔP calculations to flow-control valve readings." ],
+  lessons:[
+    { title:"Hydraulic Power Fundamentals",
+      plain:"In plain English: hydraulics pumps oil instead of air, and because oil barely compresses, the system reacts instantly and can push a lot harder.",
+      body:[
+        "A hydraulic power unit uses an electric motor to drive a pump that draws oil from a reservoir and pushes it into the circuit. Unlike air, oil is essentially incompressible — pressure builds immediately and doesn't 'spring' under load.",
+        "Force from a hydraulic cylinder follows F = P × A: pressure (psi) times the piston's working area (in²) gives force (lb). Small increases in bore size or pressure produce large jumps in available force.",
+        "Because oil is a closed-loop fluid (not vented to atmosphere like air), every hydraulic circuit needs a return path back to the reservoir — there's no 'exhaust to atmosphere' step like in pneumatics." ],
+      formulas:["F = P × A (force = pressure × piston area)"] },
+    { title:"Pressure Control & Safety",
+      plain:"In plain English: the relief valve is the pressure safety net — it opens before anything in the system can be over-pressurized and damaged.",
+      body:[
+        "A relief valve is a normally-closed valve set to open and dump flow back to tank once system pressure reaches its setting. It's not a flow controller — if it's passing flow continuously during normal operation, the circuit is overheating, not working correctly.",
+        "Lab procedure starts the relief valve at MINIMUM pressure before starting the pump, then raises it gradually to the working setpoint (Gauge S = 300 psi / 2070 kPa). This prevents a pressure spike at startup.",
+        "At shutdown, the relief should be returned to minimum and the DCV used to bleed off any trapped pressure before disconnecting anything — trapped hydraulic pressure can store enough energy to cause injury." ] },
+    { title:"Flow Control & Performance",
+      plain:"In plain English: the flow-control valve sets cylinder speed, and the flow meter plus two gauges let you measure exactly how much restriction you've added.",
+      body:[
+        "Just like pneumatics, hydraulic flow control is usually installed meter-out: it throttles oil LEAVING the cylinder, giving smooth, load-independent speed control regardless of whether the load is pushing or pulling.",
+        "A flow meter reads gpm or lpm directly in the line. Gauges A and B sit on either side of the flow-control valve; ΔP tells you how much pressure drop that restriction is creating at the current setting.",
+        "Because oil doesn't compress, hydraulic speed control is far more precise and repeatable than pneumatic speed control — this is why hydraulics is preferred for heavy, precise, or slow-controlled motion." ],
+      formulas:["ΔP = |Gauge A − Gauge B|"] } ],
+  glossary:[
+    {t:"Reservoir", d:"Vented tank that hydraulic fluid is drawn from and returned to."},
+    {t:"Relief valve", d:"Safety valve that opens to tank once system pressure reaches its setpoint, capping maximum pressure."},
+    {t:"Flow meter", d:"Instrument that reads flow rate (gpm/lpm) in a hydraulic line."},
+    {t:"F = P × A", d:"Force equals pressure times piston area — the basic hydraulic force formula."},
+    {t:"Meter-out", d:"Flow control on the exhaust/return side of the actuator."} ] },
+
+{ id:"elec",
+  summary:"Relay control builds 'if this, then that' logic out of physical switches and electromagnetic coils, wired between two power rails.",
+  objectives:[
+    "Read ladder diagrams: rails, rungs, contacts, and coils.",
+    "Explain how AND/OR/NOT logic map to series/parallel contacts and NC contacts.",
+    "Design a seal-in (memory) circuit from a momentary start button.",
+    "Explain how an on-delay timer changes a sequence's timing." ],
+  lessons:[
+    { title:"Relay Logic Fundamentals",
+      plain:"In plain English: a relay ladder is a row of switches between two power rails — close enough of the right switches and the load at the end turns on.",
+      body:[
+        "A ladder diagram has two vertical rails, L1 (hot) and L2 (neutral/common), and horizontal rungs between them. Each rung is one logic statement that ends in exactly one load — never a contact to the right of the load.",
+        "Contacts come in two flavors: normally-open (NO), open until something operates it, and normally-closed (NC), closed until operated. Symbols always show the de-energized, unactuated state — not whatever state the machine happens to be sitting in.",
+        "Series contacts implement AND logic (every contact must close to pass power); parallel contacts implement OR logic (any one path closing is enough); an NC contact implements NOT (it blocks power exactly when its input is active)." ] },
+    { title:"Seal-in & Memory Circuits",
+      plain:"In plain English: a seal-in circuit lets a momentary push of a button keep something running even after you let go — the relay 'remembers' it's on.",
+      body:[
+        "A momentary START pushbutton (NO) only closes while pressed. To keep the relay (1CR) energized after release, wire one of the relay's own NO contacts (1CRA) in parallel with START — once 1CR energizes, 1CRA closes and holds the circuit on its own.",
+        "STOP must be wired NC, in series with everything else on that rung. This is a fail-safe choice: if the STOP button's wire ever breaks, the circuit behaves as if STOP were pressed (drops out) rather than as if it were never wired at all.",
+        "In Boolean form: 1CR = STOP AND (START OR 1CRA). That's exactly one bit of memory built entirely from hardware contacts — no software involved." ],
+      formulas:["1CR = STOP AND (START OR 1CRA)"] },
+    { title:"Timers & Sequencing",
+      plain:"In plain English: an on-delay timer makes something wait a set number of seconds after it's told to start before its contact actually closes.",
+      body:[
+        "A time-delay relay (1TR) energizes immediately like any coil, but its timed contact (1TRA) doesn't close until after the preset delay elapses — this creates a timed handoff, e.g. Cylinder 2 extending exactly 1 second after Cylinder 1.",
+        "On-delay timer contacts reset INSTANTLY the moment the timer coil de-energizes — they don't hold the delay on the way back down. Don't expect 1TRA to stay closed for a second after 1TR drops out.",
+        "Limit switches (wired NC in this lab) let the machine sequence itself: when the moving cylinder trips the switch, it opens, dropping 1CR and retracting both cylinders automatically." ] } ],
+  glossary:[
+    {t:"NO contact", d:"Open at rest, closes when operated."},
+    {t:"NC contact", d:"Closed at rest, opens when operated."},
+    {t:"Seal-in", d:"A relay's own contact wired to hold itself energized after a momentary start signal is released."},
+    {t:"1TR (on-delay timer)", d:"Coil energizes immediately; its contact closes only after a preset delay."},
+    {t:"Rung", d:"One horizontal logic line in a ladder diagram, ending in a single load."} ] },
+
+{ id:"acdc",
+  summary:"AC and DC power behave differently because AC constantly reverses direction — that single fact is why we need transformers, RMS math, and reactance.",
+  objectives:[
+    "Distinguish AC from DC and explain what RMS voltage represents.",
+    "Calculate electrical power using P = V × I.",
+    "Explain transformer turns ratio and why isolation transformers matter for safety.",
+    "Explain capacitive and inductive reactance and how they depend on frequency." ],
+  lessons:[
+    { title:"AC vs DC Fundamentals",
+      plain:"In plain English: DC flows one direction like a steady river; AC sloshes back and forth dozens of times a second, like a wave.",
+      body:[
+        "DC (direct current) maintains one polarity. AC (alternating current) reverses direction periodically; in North America, the standard utility frequency is 60 Hz — 60 full cycles every second.",
+        "Because AC voltage is constantly changing, a single AC voltage reading uses RMS (root-mean-square) — the equivalent steady DC voltage that would deliver the same average power. A 24 VAC reading IS an RMS value, not a peak value.",
+        "Electrical power follows P = V × I (power = voltage × current, in watts). On the trainer's lamp circuit, always multiply V and I measured at the SAME selector position — mixing readings from different positions gives a meaningless number." ],
+      formulas:["P = V × I"] },
+    { title:"Transformers & Isolation",
+      plain:"In plain English: a transformer trades voltage for current (or back) using two coils of wire — and an isolation transformer does that 1:1, mainly to keep you electrically separated from the source for safety.",
+      body:[
+        "A transformer has a primary coil (input) and secondary coil (output) wound around a shared core, with no direct electrical connection between them — only a magnetic link. The voltage ratio matches the turns ratio: Vs/Vp = Ns/Np.",
+        "Current scales the opposite way: Ip/Is = Ns/Np, because power in ≈ power out, so Vp·Ip ≈ Vs·Is. Step up the voltage and you step down the current, and vice versa.",
+        "The T7017A trainer's transformer is roughly 1:1 — it doesn't change voltage much, but it provides galvanic ISOLATION: the secondary side has no direct electrical path back to the building's utility wiring." ],
+      formulas:["Vs/Vp = Ns/Np","Ip/Is = Ns/Np"] },
+    { title:"Reactance & AC Circuit Behavior",
+      plain:"In plain English: capacitors and inductors push back against AC current, and how hard they push back changes with frequency — that pushback is called reactance.",
+      body:[
+        "Capacitive reactance Xc = 1/(2πfC) — it goes DOWN as frequency goes up. In the CAP position of the lab circuit, Xc in series with the lamp divides the 24 V, leaving the lamp dimmer and drawing less current.",
+        "Inductive reactance XL = 2πfL behaves oppositely — it goes UP as frequency increases. Both Xc and XL are measured in ohms, but unlike resistance they depend on frequency.",
+        "This frequency-dependence is the whole reason AC circuit analysis needs its own toolkit beyond simple DC resistance." ],
+      formulas:["Xc = 1/(2πfC)","XL = 2πfL"] } ],
+  glossary:[
+    {t:"RMS voltage", d:"The equivalent steady DC value of an AC voltage that delivers the same average power."},
+    {t:"P = V × I", d:"Electrical power equals voltage times current."},
+    {t:"Turns ratio", d:"Ratio of secondary to primary winding turns, equal to the voltage ratio of a transformer."},
+    {t:"Isolation transformer", d:"Transformer (often ~1:1) used to electrically separate a circuit from its source for safety."},
+    {t:"Reactance", d:"Frequency-dependent opposition to AC current from capacitors (Xc) or inductors (XL)."} ] },
+
+{ id:"plc",
+  summary:"A PLC replaces a panel of wired relays with software that re-reads every input and re-solves the whole ladder dozens of times a second.",
+  objectives:[
+    "Describe the 3 phases of a PLC scan cycle and why their order matters.",
+    "Translate a hardwired relay ladder into PLC I/O addressing.",
+    "Explain why a PLC's TON timer behaves like a hardwired on-delay timer.",
+    "Compare scan-based PLC logic with the instantaneous behavior of wired relays." ],
+  lessons:[
+    { title:"What Is a PLC?",
+      plain:"In plain English: a PLC is a small industrial computer that takes the place of a cabinet full of relays, running the same kind of ladder logic — but in software, not wires.",
+      body:[
+        "A Programmable Logic Controller (PLC) connects to real-world inputs (buttons, limit switches, sensors) and outputs (solenoids, motor starters, lights) through I/O modules, then runs a ladder-logic program to decide what the outputs should do.",
+        "Inputs and outputs are addressed, not just named — I:1/0 might be the STOP button and O:2/0 a solenoid output. This addressing is how a physical wiring terminal maps to a specific bit the program can read or write.",
+        "Unlike a wired relay, which reacts to a changed input instantly because it's a physical electrical path, a PLC's logic only updates on its own schedule — the scan cycle — which is fast but not instantaneous." ] },
+    { title:"The Scan Cycle",
+      plain:"In plain English: every scan, the PLC takes a single 'snapshot' of all its inputs, figures out the whole ladder using only that snapshot, then updates all the outputs at once.",
+      body:[
+        "Each scan has three phases, always in this order: (1) read all physical inputs into an input image table, (2) solve the entire ladder program using that frozen snapshot, (3) write the computed results to the output image table, updating the physical outputs.",
+        "A rung that LOOKS like it should see an input change mid-scan won't — the PLC is working from the snapshot taken at the start of that scan. The change is picked up on the NEXT scan, not immediately.",
+        "A timer instruction like TON (timer-on-delay) accumulates time across multiple scans and exposes a .DN ('done') bit once its preset elapses — the software equivalent of a hardwired on-delay relay's timed contact." ] },
+    { title:"PLC vs Hardwired Relays",
+      plain:"In plain English: PLCs took over from relay panels because changing the logic just means editing a program instead of re-wiring a cabinet.",
+      body:[
+        "A hardwired relay panel is fast and simple for fixed logic, but every logic change means physically rewiring contacts and coils. A PLC running the equivalent logic in software can be reprogrammed in minutes, with no rewiring.",
+        "Seal-in logic looks almost identical between the two: a hardwired 1CR = STOP AND (START OR 1CRA) becomes a PLC rung with a Run coil sealed in by its own Run contact, gated by the same STOP/START/limit-switch inputs.",
+        "The tradeoff is the scan delay: a wired relay reacts within microseconds of an electrical change, while a PLC reacts on its next scan — irrelevant for nearly all industrial control speeds, but the conceptual line between 'instant wired logic' and 'scanned software logic.'" ] } ],
+  glossary:[
+    {t:"Scan cycle", d:"The repeating read-inputs → solve-logic → write-outputs cycle a PLC runs continuously."},
+    {t:"I/O addressing", d:"The scheme (e.g., I:1/0, O:2/0) that maps physical terminals to bits the program can use."},
+    {t:"TON (timer-on-delay)", d:"PLC instruction that sets a .DN bit true after a preset time has elapsed since it was enabled."},
+    {t:"Input/output image table", d:"A snapshot of all input or output bit states used during one scan."} ] },
+
+{ id:"sens",
+  summary:"Sensors turn a physical condition into an electrical signal a controller can read, and getting the wiring type right matters as much as picking the right sensor.",
+  objectives:[
+    "Differentiate PNP (sourcing) and NPN (sinking) sensor outputs and wire them correctly to a PLC input card.",
+    "Explain the 4-20 mA current-loop standard and why it uses a 'live zero.'",
+    "Convert a 4-20 mA loop reading to its represented physical value.",
+    "Identify common sensor wiring mistakes." ],
+  lessons:[
+    { title:"Digital Sensors",
+      plain:"In plain English: a proximity sensor is a switch with no moving parts — it just flips on or off when something gets close enough.",
+      body:[
+        "A digital (discrete) sensor outputs one of two states: present/absent, near/far, on/off. Inductive proximity sensors detect metal targets without touching them — useful for counting, end-of-travel detection, or part presence.",
+        "Sensors are wired as PNP (sourcing — switches + supply to the load when active) or NPN (sinking — switches the common/− side when active). A PNP sensor must be wired to a sourcing input card, and NPN to a sinking card — mixing the two means the input never sees a valid signal even though the sensor itself works fine.",
+        "Most proximity sensors also offer NO or NC output logic, independent of PNP/NPN — so a sensor can be PNP+NO, PNP+NC, NPN+NO, or NPN+NC. Always check both specs before wiring." ] },
+    { title:"Analog Sensors & the 4-20 mA Loop",
+      plain:"In plain English: instead of sending a voltage that could be thrown off by wire resistance, many industrial sensors send a current — and current doesn't change just because the wire is long.",
+      body:[
+        "A 4-20 mA current loop represents a measured range (e.g., 0-150 psi) as a current between 4 mA (0%/minimum) and 20 mA (100%/maximum). Current loops are immune to voltage drop over long wire runs, which is why they're standard in industrial transmitters.",
+        "4 mA — not 0 mA — represents the minimum reading. This 'live zero' lets the system distinguish between 'measuring zero' (4 mA, loop healthy) and 'broken wire/dead sensor' (0 mA, no current at all).",
+        "To convert a loop reading to its physical value: percent = (mA − 4)/16, then value = percent × full-scale range. For example, 12 mA on a 0-150 psi loop = (12−4)/16 = 50% = 75 psi." ],
+      formulas:["percent = (mA − 4) / 16","value = percent × full-scale range"] },
+    { title:"Choosing & Wiring Sensors",
+      plain:"In plain English: most 'sensor doesn't work' problems aren't bad sensors — they're a sourcing/sinking mismatch or a sensor set up for the wrong target distance.",
+      body:[
+        "When selecting a sensor, match it to the target material (inductive for metal, capacitive for nonmetal, photoelectric for line-of-sight, ultrasonic for distance), the required sensing range, and the controller's input card type.",
+        "Before troubleshooting wiring, check the sensor's own status LED — most light when the sensor detects a target, independent of what the PLC sees. If the LED is correct but the PLC input never changes, suspect a PNP/NPN mismatch.",
+        "For loop instruments, a broken wire reads as 0 mA at the receiving end (below the 4 mA live zero) — a deliberate, detectable fault signature." ] } ],
+  glossary:[
+    {t:"PNP (sourcing)", d:"Sensor output type that switches the positive supply to the load when active."},
+    {t:"NPN (sinking)", d:"Sensor output type that switches the common/negative side to the load when active."},
+    {t:"4-20 mA loop", d:"Industrial analog signal standard where current represents a measured range; 4 mA = 0%, 20 mA = 100%."},
+    {t:"Live zero", d:"The use of 4 mA (not 0 mA) as the minimum loop value, so a broken wire is detectable as 0 mA."} ] },
+
+{ id:"mot",
+  summary:"AC motors spin at a speed set by line frequency and pole count, and a VFD controls that speed by changing the frequency the motor sees.",
+  objectives:[
+    "Calculate synchronous speed from frequency and pole count.",
+    "Explain motor slip and why a motor's actual speed is slightly below sync speed.",
+    "Explain reversing-starter interlocking and the hazard it prevents.",
+    "Describe how a VFD's V/Hz control affects torque above and below base frequency." ],
+  lessons:[
+    { title:"AC Induction Motor Fundamentals",
+      plain:"In plain English: an AC motor's top speed is set by two things you can count — how fast the power alternates (frequency) and how many magnetic poles the motor has.",
+      body:[
+        "Synchronous speed Ns = 120 × f / P, where f is line frequency in Hz and P is the number of poles. A standard 4-pole motor on 60 Hz line power has Ns = 120×60/4 = 1800 RPM.",
+        "An induction motor's rotor never quite catches up to that synchronous speed — the difference is called slip, and it's what actually induces current (and torque) in the rotor. A typical motor might run at 1750 RPM against an 1800 RPM sync speed — about 3% slip.",
+        "More poles means a lower synchronous speed at the same frequency; fewer poles means higher speed — this is why motors are sold by pole count (2, 4, 6, 8-pole) as a primary speed spec." ],
+      formulas:["Ns = 120 × f / P"] },
+    { title:"Motor Starters & Reversing",
+      plain:"In plain English: a reversing starter swaps two motor leads to run the motor backward — but if both directions ever got energized at the same time, it would create a dead short, so interlocking exists to make that impossible.",
+      body:[
+        "A reversing starter uses two contactors — one wired for forward rotation, one for reverse (with two motor leads swapped) — sharing the same motor. Energizing the forward contactor spins the motor one way; energizing the reverse contactor spins it the other.",
+        "If forward and reverse contactors both closed at once, line-to-line voltage would be shorted directly across two phases — a severe fault. Interlocking (electrical, mechanical, or both) physically prevents both contactors from energizing simultaneously.",
+        "Always wire STOP as NC and design any direction-selection logic so the interlock can never be bypassed — this is a hard safety requirement, not a style choice." ] },
+    { title:"Variable Frequency Drives",
+      plain:"In plain English: a VFD changes a motor's speed by changing the frequency of the power it feeds the motor — but it also has to change the voltage to match, or the motor runs weak or burns up.",
+      body:[
+        "A VFD's basic control strategy is Volts/Hertz (V/Hz): as it raises output frequency, it raises output voltage proportionally, keeping the V/Hz ratio constant up to the motor's rated (base) frequency, typically 60 Hz. This keeps available torque roughly constant across that speed range.",
+        "Above base frequency, the VFD can't keep raising voltage (it's already at maximum), so the V/Hz ratio drops and available torque falls off — pushing a motor well above 60 Hz trades torque for speed.",
+        "Below base frequency, torque is largely maintained (often 100%), which is why VFDs are popular for variable-speed pumps, fans, and conveyors: full torque is available with smooth, controlled acceleration instead of an across-the-line shock start." ] } ],
+  glossary:[
+    {t:"Synchronous speed", d:"Theoretical no-slip rotor speed: Ns = 120f/P."},
+    {t:"Slip", d:"The difference between synchronous speed and actual rotor speed, which is what generates rotor torque."},
+    {t:"Interlocking", d:"A safeguard that prevents two contactors (e.g., forward/reverse) from energizing at the same time."},
+    {t:"V/Hz control", d:"A VFD's strategy of raising voltage and frequency together to keep motor torque roughly constant below base frequency."},
+    {t:"Base frequency", d:"The motor's rated frequency (commonly 60 Hz) above which a VFD can no longer maintain full V/Hz ratio."} ] },
+
+{ id:"micro",
+  summary:"A microcontroller is a tiny computer with built-in pins for reading switches and driving outputs — and a lot of 'real-world' engineering is just cleaning up noisy signals before code can trust them.",
+  objectives:[
+    "Differentiate a microcontroller's role from a PLC's role in a control system.",
+    "Explain contact bounce and why debounce logic is necessary.",
+    "Explain PWM and how duty cycle relates to an effective analog output level.",
+    "Identify when software debounce vs. hardware debounce is appropriate." ],
+  lessons:[
+    { title:"Microcontroller Basics",
+      plain:"In plain English: a microcontroller is a tiny, cheap, single-chip computer with pins you can wire directly to switches, sensors, and small loads.",
+      body:[
+        "A microcontroller (MCU) integrates a processor, memory, and I/O pins (GPIO) on one chip. Compared to a PLC, it's smaller, cheaper, and programmed in code rather than ladder logic — common in embedded products and robotics rather than industrial control panels.",
+        "Each GPIO pin can typically be a digital input or output, and many support PWM output and analog input on top of that — far more flexible per-pin than a fixed PLC I/O card, but with less industrial ruggedness and fewer built-in safety features.",
+        "Where a PLC scan cycle reads/solves/writes on a fixed schedule, an MCU program runs a tight loop that can check inputs and update outputs thousands of times per second — fast enough that contact bounce becomes a visible problem if not handled." ] },
+    { title:"Signal Conditioning — Debounce",
+      plain:"In plain English: a mechanical switch doesn't close cleanly — it bounces open and shut several times in a few milliseconds, and without debounce logic your code sees that as several separate presses instead of one.",
+      body:[
+        "Contact bounce happens because the metal contacts inside a mechanical switch physically vibrate against each other for a few milliseconds when pressed or released, generating multiple rapid transitions instead of one clean edge.",
+        "Software debounce ignores additional transitions for a short window (commonly 10-50 ms) after the first detected change — by the time that window ends, the bounce has settled and the signal reads as a single clean event.",
+        "Hardware debounce uses an RC filter or a dedicated debounce IC to smooth the electrical signal before it reaches the microcontroller pin — useful when you don't want to spend code/CPU time on it, at the cost of extra components." ] },
+    { title:"PWM & Analog Output",
+      plain:"In plain English: PWM fakes an analog signal by switching a digital output on and off very fast — the fraction of time it's ON (the duty cycle) is what determines the effective 'analog' level.",
+      body:[
+        "Pulse-width modulation (PWM) holds an output pin at a fixed frequency but varies the percentage of each cycle spent HIGH (duty cycle) versus LOW. 0% duty is always off, 100% is always on, and 50% looks like 'half power' to an averaging load.",
+        "This is how microcontrollers control motor speed, LED brightness, and servo position without a true analog output circuit — the load itself (or a simple filter) averages the rapid switching into an effective continuous level.",
+        "PWM frequency matters too: too low and switching becomes visible/audible (flickering, whining); too high and some loads can't respond fast enough. Typical PWM frequencies range from a few hundred Hz to tens of kHz." ] } ],
+  glossary:[
+    {t:"GPIO", d:"General-purpose input/output pin on a microcontroller, configurable as digital input or output."},
+    {t:"Contact bounce", d:"Rapid, unintended on/off transitions produced by a mechanical switch as its contacts settle."},
+    {t:"Debounce", d:"Software or hardware technique that filters out contact bounce so only one clean transition is registered."},
+    {t:"PWM (pulse-width modulation)", d:"Technique that approximates an analog output level by varying the duty cycle of a fast digital switching signal."},
+    {t:"Duty cycle", d:"The percentage of each PWM cycle spent in the HIGH (on) state."} ] },
+
+{ id:"ctrl",
+  summary:"Closed-loop control means a system constantly checks its own error (setpoint minus actual) and corrects itself — PID is just three different ways of reacting to that error, combined.",
+  objectives:[
+    "Differentiate open-loop and closed-loop control.",
+    "Explain the individual roles of the P, I, and D terms in a PID controller.",
+    "Explain steady-state droop in a P-only controller and why integral action removes it.",
+    "Explain integral windup and how anti-windup prevents it." ],
+  lessons:[
+    { title:"Open-Loop vs. Closed-Loop Control",
+      plain:"In plain English: open-loop control gives a command and hopes; closed-loop control gives a command, measures the result, and keeps adjusting until the result matches what was wanted.",
+      body:[
+        "An open-loop system has no feedback — it applies a fixed action regardless of outcome (e.g., a toaster set for a fixed time, with no temperature sensing). It's simple but can't compensate for disturbances or changing conditions.",
+        "A closed-loop (feedback) system continuously measures the actual process variable (PV), compares it to the desired setpoint (SP), and computes an error that drives a controller's output to push PV toward SP.",
+        "Almost every precision industrial process — temperature, pressure, position, speed — uses closed-loop control because real-world disturbances make open-loop control too imprecise to hold a target value." ],
+      formulas:["error = SP − PV"] },
+    { title:"The PID Controller",
+      plain:"In plain English: PID reacts to error three different ways at once — proportional reacts to how big the error is right now, integral reacts to how long the error has stuck around, and derivative reacts to how fast the error is changing.",
+      body:[
+        "Proportional (P) action produces an output directly proportional to the current error. A P-only controller reacts immediately but typically settles with a steady-state offset (droop) — the bigger the load, the bigger the leftover error needed just to keep producing enough output.",
+        "Integral (I) action accumulates error over time. As long as ANY error persists, the integral term keeps growing the output until error reaches zero — this is what eliminates the steady-state droop that P alone leaves behind.",
+        "Derivative (D) action reacts to the RATE of change of error. It adds a 'braking' effect that anticipates overshoot — pulling output back down as the process variable approaches the setpoint quickly — which can reduce overshoot but also amplifies measurement noise if overused." ],
+      formulas:["output = Kp·error + Ki·∫error dt + Kd·(d(error)/dt)"] },
+    { title:"Tuning & Real-World Behavior",
+      plain:"In plain English: tuning PID is a tradeoff game — push too hard for speed and you overshoot; integrate too aggressively without limits and the controller can get 'stuck' overcorrecting (windup).",
+      body:[
+        "Overshoot is how far the process variable swings past the setpoint before settling; settling time is how long it takes to stabilize. Higher Kp generally speeds response but increases overshoot; adding Kd can tame that overshoot at the cost of noise sensitivity.",
+        "Integral windup happens when the controller's output saturates (hits its maximum) while error is still present — the integral term keeps accumulating even though the extra output can't be delivered, so when the process finally catches up, the controller way overshoots before it can 'unwind' that excess.",
+        "Anti-windup pauses integral accumulation while the output is saturated, so the integral term never builds up more than the system can actually use — keeping the eventual recovery clean instead of a big overshoot-and-settle swing." ] } ],
+  glossary:[
+    {t:"Setpoint (SP)", d:"The desired target value for the process variable."},
+    {t:"Process variable (PV)", d:"The actual, measured value of whatever is being controlled."},
+    {t:"Droop", d:"A P-only controller's steady-state offset between setpoint and process variable under load."},
+    {t:"Integral windup", d:"Excess integral accumulation while a controller's output is saturated, causing overshoot once it un-saturates."},
+    {t:"Anti-windup", d:"A technique that pauses integral accumulation while the controller output is saturated."} ] },
 ];
 
 </script>
@@ -2537,7 +2858,7 @@ SIMS.sim_ctrl = {
 
 /* ---------- state ---------- */
 const DEFAULT = { xp:0, badges:[], streak:0, lastDay:null,
-  quizBest:{}, quizDone:{}, labSteps:{}, labDone:{}, simAwards:{}, simSeen:{}, scenDone:{} };
+  quizBest:{}, quizDone:{}, labSteps:{}, labDone:{}, simAwards:{}, simSeen:{}, scenDone:{}, courseDone:{} };
 let ST = (()=>{ try{ return Object.assign({},DEFAULT,JSON.parse(localStorage.getItem('msm_state')||'{}')); }catch(e){ return {...DEFAULT}; } })();
 function save(){ localStorage.setItem('msm_state',JSON.stringify(ST)); }
 function today(){ return new Date().toISOString().slice(0,10); }
@@ -2586,6 +2907,7 @@ function renderHeader(){
 }
 const TABS=[
  ['home','Home','M3 11l9-8 9 8M5 9v11h14V9'],
+ ['course','Course','M12 6c-2-1.5-5-2-8-1v13c3-1 6-.5 8 1c2-1.5 5-2 8-1V5c-3-1-6-.5-8 1zM12 6v13'],
  ['sym','Symbols','M4 7h6v6H4zM14 7h6M14 11h6M4 17h16'],
  ['sim','Sim','M7 8l-4 4 4 4M17 8l4 4-4 4M13 5l-2 14'],
  ['labs','Labs','M9 3h6M10 3v6l-5 9a2 2 0 002 3h10a2 2 0 002-3l-5-9V3'],
@@ -2598,10 +2920,54 @@ function nav(r){
   document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.r===r.split('/')[0]));
   const m=document.getElementById('main'), base=r.split('/')[0], arg=r.split('/')[1];
   if(base==='home') renderHome(m);
+  else if(base==='course') arg?renderCourseUnit(m,arg):renderCourseList(m);
   else if(base==='sym') renderSymbols(m);
   else if(base==='sim') arg?renderSim(m,arg):renderSimList(m);
   else if(base==='labs') arg?renderLab(m,arg):renderLabList(m);
   else if(base==='quiz') arg?(arg.startsWith('ts_')?renderScenario(m,arg):renderQuiz(m,arg)):renderTrain(m);
+}
+
+/* ---------- COURSE ---------- */
+function renderCourseList(m){
+  m.innerHTML=`<h2 style="margin-top:4px">Course</h2>
+    <p class="sub">Theory readings for each unit — read these before the symbols, sim, and lab for that stack.</p>`+
+    UNITS.map(u=>{
+      const s=STACKS[u.id], done=Object.keys(ST.courseDone[u.id]||{}).length, total=u.lessons.length;
+      return `<div class="card tap" onclick="nav('course/${u.id}')"><div class="cardrow">
+        <span class="stackdot" style="background:${s.color}"></span>
+        <div class="grow"><div class="eyebrow">${s.tag}</div><b>${s.name}</b>
+        <div class="sub">${u.summary}</div>
+        <div class="bar"><i style="width:${total?done/total*100:0}%;background:${s.color}"></i></div></div>
+        <span class="pill">${done}/${total}</span></div></div>`;
+    }).join('');
+}
+function renderCourseUnit(m,id){
+  const u=UNITS.find(x=>x.id===id); if(!u){nav('course');return;}
+  const s=STACKS[id];
+  ST.courseDone[id]=ST.courseDone[id]||{};
+  m.innerHTML=`<button class="backbtn" onclick="nav('course')">‹ Course</button>
+    <div class="eyebrow" style="color:${s.color}">${s.tag}</div>
+    <h2>${s.name}</h2><p class="sub">${u.summary}</p>
+    <div class="card"><b>Learning objectives</b><ul style="margin:8px 0 0;padding-left:18px">
+      ${u.objectives.map(o=>`<li class="sub" style="margin:4px 0">${o}</li>`).join('')}</ul></div>
+    ${u.lessons.map((l,i)=>`
+      <div class="card">
+        <div class="cardrow"><div class="grow"><b>${i+1}. ${l.title}</b></div>
+        <button class="lessonchk ${ST.courseDone[id][i]?'on':''}" data-i="${i}">${ST.courseDone[id][i]?'✓ Read':'Mark read'}</button></div>
+        <div class="plain"><b>PLAIN ENGLISH</b><br>${l.plain}</div>
+        <div class="lesson-body">${l.body.map(p=>`<p>${p}</p>`).join('')}</div>
+        ${(l.formulas||[]).map(f=>`<div class="formula">${f}</div>`).join('')}
+      </div>`).join('')}
+    <div class="card refblock"><h3>Glossary</h3>
+      ${u.glossary.map(g=>`<div style="margin:8px 0"><b style="color:${s.color}">${g.t}</b><div class="sub">${g.d}</div></div>`).join('')}
+    </div>
+    <button class="btn block" style="margin-bottom:8px" onclick="openChat('Quiz me on the ${s.name.replace(/'/g,'')} unit reading')">⚡ Ask AI about this unit</button>
+    <button class="btn primary block" onclick="nav('sym')">Continue to Symbols ›</button>`;
+  m.querySelectorAll('.lessonchk').forEach(b=>b.onclick=()=>{
+    const i=b.dataset.i;
+    if(ST.courseDone[id][i]){delete ST.courseDone[id][i];save();renderCourseUnit(m,id);}
+    else{ST.courseDone[id][i]=true;addXP(8,'Lesson read');checkBadges();renderCourseUnit(m,id);}
+  });
 }
 
 /* ---------- HOME ---------- */
