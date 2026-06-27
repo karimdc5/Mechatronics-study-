@@ -222,6 +222,16 @@ input[type=range]{flex:1;accent-color:var(--gold);min-height:34px}
   .certificate{border-width:1px;box-shadow:none}
 }
 
+/* teacher dashboard */
+.rostertable{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}
+.rostertable th{text-align:left;color:var(--dim);font:600 10.5px var(--mono);letter-spacing:.06em;
+  text-transform:uppercase;padding:6px 8px;border-bottom:1px solid var(--line)}
+.rostertable td{padding:8px 8px;border-bottom:1px solid var(--panel2)}
+.rostertable td.num{font:600 13px var(--mono);color:var(--gold);text-align:right}
+.filebtn{display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;
+  background:var(--panel2);border:1px dashed var(--line);border-radius:12px;padding:16px;
+  font-weight:600;color:var(--dim);min-height:44px;text-align:center}
+
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 
 /* ===== AI CHAT MODAL ===== */
@@ -3122,7 +3132,7 @@ SIMS.sim_ctrl = {
 /* ---------- state ---------- */
 const DEFAULT = { xp:0, badges:[], streak:0, lastDay:null,
   quizBest:{}, quizDone:{}, labSteps:{}, labDone:{}, simAwards:{}, simSeen:{}, scenDone:{}, courseDone:{},
-  examBest:{}, examDone:{}, studentName:'' };
+  examBest:{}, examDone:{}, studentName:'', classCode:'' };
 let ST = (()=>{ try{ return Object.assign({},DEFAULT,JSON.parse(localStorage.getItem('msm_state')||'{}')); }catch(e){ return {...DEFAULT}; } })();
 function save(){ localStorage.setItem('msm_state',JSON.stringify(ST)); }
 function today(){ return new Date().toISOString().slice(0,10); }
@@ -3191,6 +3201,7 @@ function nav(r){
   else if(base==='quiz') arg?(arg.startsWith('ts_')?renderScenario(m,arg):renderQuiz(m,arg)):renderTrain(m);
   else if(base==='exam') renderExam(m,arg);
   else if(base==='cert') renderCertificate(m);
+  else if(base==='teacher') renderTeacher(m);
 }
 
 /* ---------- COURSE ---------- */
@@ -3278,7 +3289,99 @@ function renderHome(m){
     <div class="card tap" onclick="openRef()"><div class="cardrow">
       <div class="grow"><b>📐 Quick Reference</b><div class="sub">Setpoints, formulas, ladder↔Boolean, safety</div></div><span>›</span></div></div>
     <h3 style="margin-top:18px">Badges</h3>
-    <div class="badges">${bs}</div>`;
+    <div class="badges">${bs}</div>
+    <h3 style="margin-top:18px">Student Profile</h3>
+    <div class="card">
+      <label class="sub">Name<br><input id="pname" value="${(ST.studentName||'').replace(/"/g,'&quot;')}" placeholder="Your full name" style="width:100%;margin-top:4px;background:var(--panel2);border:1px solid var(--line);border-radius:10px;color:var(--ink);padding:9px 11px;font:inherit;min-height:40px"></label>
+      <label class="sub" style="display:block;margin-top:10px">Class code<br><input id="pclass" value="${(ST.classCode||'').replace(/"/g,'&quot;')}" placeholder="e.g. MECH-101-A" style="width:100%;margin-top:4px;background:var(--panel2);border:1px solid var(--line);border-radius:10px;color:var(--ink);padding:9px 11px;font:inherit;min-height:40px"></label>
+      <button class="btn primary block" style="margin-top:12px" onclick="exportProgress()">⬇ Export my progress (send to teacher)</button>
+    </div>
+    <p class="sub" style="text-align:center;margin-top:14px"><a href="#" onclick="nav('teacher');return false" style="color:var(--dim);text-decoration:underline">Teacher Dashboard ›</a></p>`;
+  m.querySelector('#pname').onchange=e=>{ST.studentName=e.target.value;save();};
+  m.querySelector('#pclass').onchange=e=>{ST.classCode=e.target.value;save();};
+}
+function downloadFile(filename,content,mime){
+  const blob=new Blob([content],{type:mime});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob); a.download=filename;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+}
+function exportProgress(){
+  const sids=Object.keys(STACKS);
+  const examScores={}; sids.forEach(sid=>examScores[sid]=ST.examBest['ex_'+sid]||0);
+  const unitsPassed=sids.filter(sid=>(ST.examBest['ex_'+sid]||0)>=EXAM_PASS).length;
+  const finalScore=ST.examBest.ex_final||0, finalPassed=finalScore>=EXAM_PASS;
+  const data={
+    app:'msm', version:1, exportedAt:new Date().toISOString(),
+    studentName:ST.studentName||'(unnamed)', classCode:ST.classCode||'',
+    xp:ST.xp, level:level(), badges:ST.badges.length,
+    examScores, unitsPassed, unitsTotal:sids.length,
+    finalScore, finalPassed, certificateEligible:unitsPassed===sids.length&&finalPassed
+  };
+  const safe=(ST.studentName||'student').replace(/[^a-z0-9]+/gi,'_').toLowerCase();
+  downloadFile(`${safe}-progress.json`, JSON.stringify(data,null,2), 'application/json');
+  toast('Progress exported');
+}
+
+/* ---------- TEACHER DASHBOARD (local-only, no server) ---------- */
+function loadRoster(){ try{ return JSON.parse(localStorage.getItem('msm_roster')||'[]'); }catch(e){ return []; } }
+function saveRoster(r){ localStorage.setItem('msm_roster',JSON.stringify(r)); }
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function renderTeacher(m){
+  const roster=loadRoster();
+  const rows=roster.map(s=>`<tr>
+    <td>${escapeHtml(s.studentName)}</td>
+    <td>${escapeHtml(s.classCode||'—')}</td>
+    <td class="num">${s.xp}</td>
+    <td class="num">${s.unitsPassed}/${s.unitsTotal}</td>
+    <td class="num">${s.finalScore}%</td>
+    <td class="num">${s.certificateEligible?'✓':'—'}</td>
+  </tr>`).join('');
+  m.innerHTML=`<button class="backbtn" onclick="nav('home')">‹ Home</button>
+    <h2>Teacher Dashboard</h2>
+    <p class="sub">Import each student's exported progress JSON to build a class roster. Everything stays in this browser — nothing is uploaded anywhere.</p>
+    <label class="filebtn" for="rosterfile">📂 Import student progress file(s)</label>
+    <input type="file" id="rosterfile" accept=".json" multiple style="display:none">
+    ${roster.length?`
+    <table class="rostertable"><thead><tr>
+      <th>Name</th><th>Class</th><th>XP</th><th>Units</th><th>Final</th><th>Cert</th>
+    </tr></thead><tbody>${rows}</tbody></table>
+    <div class="ctrls" style="margin-top:14px">
+      <button class="ctl go" id="csvbtn">⬇ Export CSV</button>
+      <button class="ctl danger" id="clearbtn">Clear roster</button>
+    </div>`:`<p class="sub" style="margin-top:14px">No students imported yet.</p>`}`;
+  m.querySelector('#rosterfile').onchange=async e=>{
+    const files=[...e.target.files];
+    let added=0;
+    for(const f of files){
+      try{
+        const data=JSON.parse(await f.text());
+        if(data.app!=='msm'||!data.studentName)continue;
+        const list=loadRoster();
+        const idx=list.findIndex(s=>s.studentName.toLowerCase()===data.studentName.toLowerCase()&&(s.classCode||'')===(data.classCode||''));
+        if(idx>=0)list[idx]=data; else list.push(data);
+        saveRoster(list);
+        added++;
+      }catch(err){}
+    }
+    toast(added?`Imported ${added} file${added>1?'s':''}`:'No valid progress files found');
+    renderTeacher(m);
+  };
+  if(roster.length){
+    m.querySelector('#csvbtn').onclick=()=>{
+      const header=['Name','Class Code','XP','Level','Units Passed','Units Total','Final Exam %','Final Passed','Certificate Eligible','Exported At'];
+      const lines=[header.join(',')];
+      roster.forEach(s=>{
+        lines.push([s.studentName,s.classCode||'',s.xp,s.level,s.unitsPassed,s.unitsTotal,s.finalScore,s.finalPassed,s.certificateEligible,s.exportedAt]
+          .map(v=>`"${String(v).replace(/"/g,'""')}"`).join(','));
+      });
+      downloadFile('class-roster.csv', lines.join('\n'), 'text/csv');
+    };
+    m.querySelector('#clearbtn').onclick=()=>{
+      if(confirm('Clear the entire imported roster? This cannot be undone.')){ saveRoster([]); renderTeacher(m); }
+    };
+  }
 }
 function openRef(){
   const sh=el(`<div class="sheet"><div>
