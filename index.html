@@ -1271,11 +1271,32 @@ const REFERENCE = [
   "Seal-in = (START OR own-contact) AND STOP — that's 1-bit memory",
   "NAND = NC contacts in parallel · NOR = NC contacts in series",
   "Loads (coils, solenoids, lamps) on the L2 side, one per rung"]},
+{ h:"Sensors & 4-20mA loops", items:[
+  "4-20mA 'live zero': %range = (mA−4)/16 · value = %range × span + min",
+  "0mA on a powered loop = fault (open circuit), never a valid reading — 4mA is the true zero",
+  "PNP (sourcing) output drives current OUT to the load; NPN (sinking) pulls current IN from the load — match to the input card",
+  "Digital sensor outputs are NO/NC, fast but distance-limited; analog (4-20mA, 0-10V) outputs scale with the measured quantity"]},
+{ h:"Motors & drives", items:[
+  "Synchronous speed: Ns = 120 × f / P (f = line frequency Hz, P = number of poles)",
+  "Slip = Ns − Nactual; induction motors always run slightly below Ns under load (slip makes torque possible)",
+  "VFD V/Hz control: keep voltage proportional to frequency below base speed, so motor flux (and torque) stays constant",
+  "Always electrically interlock FWD/REV contactors (opposite contactor's NC aux in series) — never rely on button timing alone"]},
+{ h:"Microcontrollers & embedded I/O", items:[
+  "PWM duty cycle % = (ON time / period) × 100 — controls average voltage to motors/LEDs without a variable resistor",
+  "Debounce: ignore rapid re-triggers for ~20-50ms after a digital input changes state, so one physical press = one logical event",
+  "Brownout: a current surge (e.g., motor inrush) sags supply voltage below the chip's minimum and resets the board — budget current, add decoupling",
+  "Pull-up/pull-down resistors give a digital input a defined idle state when nothing is actively driving it"]},
+{ h:"Control systems & PID", items:[
+  "Error e(t) = Setpoint − Actual; PID output = Kp·e + Ki·∫e dt + Kd·de/dt",
+  "P alone leaves steady-state error (offset that never closes) — I eliminates it by accumulating error over time",
+  "Integral windup: I keeps accumulating while the output is saturated, causing overshoot when it finally unsaturates — fix with anti-windup clamping",
+  "D reacts to the rate of change of error — adds damping/responsiveness but amplifies noise if overused"]},
 { h:"Safety — non-negotiable", items:[
   "Pneumatic: shutoff CLOSED while connecting; verify tubing seated; end centered + depressurized",
   "Hydraulic: relief at min for startup; never leak-check with hands; relieve trapped pressure at shutdown",
   "Electrical: power OFF + cap DISCHARGED before Ω checks; ammeter in SERIES only; STOP buttons are NC",
-  "All stacks: stored energy (springs, caps, trapped pressure) acts after power is off"]},
+  "Motors & drives: lock out/tag out before touching terminals; a stopped motor can still be live; verify zero speed before manual intervention",
+  "All stacks: stored energy (springs, caps, trapped pressure, spinning mass) acts after power is off"]},
 ];
 
 /* ===== EXTENDED CONTENT: tiered quizzes, troubleshooting scenarios, learning paths ===== */
@@ -1529,28 +1550,43 @@ const SCENARIOS=[
 
 /* ---------- LEARNING PATHS ---------- */
 const PATHS=[
-{ id:"path_beg", name:"Beginner Track", ico:"🌱", desc:"New to fluid power & controls. Build the vocabulary first.",
+{ id:"path_beg", name:"Beginner Track", ico:"🌱", desc:"New to mechatronics. Build the vocabulary first, across all 9 units.",
   items:[
-    {t:"Browse the Symbol Library (all 4 stacks)", route:"sym", check:s=>Object.keys(s.simSeen).length>=0 && false},
     {t:"Pneumatics Fundamentals quiz ≥80%", route:"quiz/qb_pneu", check:s=>(s.quizBest.qb_pneu||0)>=80},
     {t:"Hydraulics Fundamentals quiz ≥80%", route:"quiz/qb_hyd", check:s=>(s.quizBest.qb_hyd||0)>=80},
     {t:"Ladder Logic Fundamentals quiz ≥80%", route:"quiz/qb_elec", check:s=>(s.quizBest.qb_elec||0)>=80},
     {t:"AC/DC Fundamentals quiz ≥80%", route:"quiz/qb_acdc", check:s=>(s.quizBest.qb_acdc||0)>=80},
+    {t:"PLC & Ladder Programming Fundamentals quiz ≥80%", route:"quiz/qb_plc", check:s=>(s.quizBest.qb_plc||0)>=80},
+    {t:"Sensors & Transducers Fundamentals quiz ≥80%", route:"quiz/qb_sens", check:s=>(s.quizBest.qb_sens||0)>=80},
+    {t:"Motors & Drives Fundamentals quiz ≥80%", route:"quiz/qb_mot", check:s=>(s.quizBest.qb_mot||0)>=80},
+    {t:"Microcontrollers Fundamentals quiz ≥80%", route:"quiz/qb_micro", check:s=>(s.quizBest.qb_micro||0)>=80},
+    {t:"Control Systems & PID Fundamentals quiz ≥80%", route:"quiz/qb_ctrl", check:s=>(s.quizBest.qb_ctrl||0)>=80},
   ]},
-{ id:"path_lab", name:"Stack Lab Prep", ico:"🥼", desc:"Sign-off ready: run every sim, walk every lab, pass every lab quiz.",
+{ id:"path_lab", name:"Stack Lab Prep", ico:"🥼", desc:"Sign-off ready: run every sim, walk every lab, pass every lab quiz across all 9 units.",
   items:[
-    {t:"Run all 4 circuit simulators", route:"sim", check:s=>['sim_pneu','sim_hyd','sim_relay','sim_acdc'].every(k=>s.simSeen[k])},
-    {t:"Complete all 4 guided labs", route:"labs", check:s=>LABS.every(l=>s.labDone[l.id])},
+    {t:"Run all 9 circuit simulators", route:"sim", check:s=>Object.keys(SIMS).every(k=>s.simSeen[k])},
+    {t:"Complete all 9 guided labs", route:"labs", check:s=>LABS.every(l=>s.labDone[l.id])},
     {t:"Pneumatics Lab Prep ≥80%", route:"quiz/q_pneu", check:s=>(s.quizBest.q_pneu||0)>=80},
     {t:"Hydraulics Lab Prep ≥80%", route:"quiz/q_hyd", check:s=>(s.quizBest.q_hyd||0)>=80},
     {t:"Relay Lab Prep ≥80%", route:"quiz/q_relay", check:s=>(s.quizBest.q_relay||0)>=80},
     {t:"AC/DC Lab Prep ≥80%", route:"quiz/q_acdc", check:s=>(s.quizBest.q_acdc||0)>=80},
+    {t:"PLC Lab Prep ≥80%", route:"quiz/q_plc", check:s=>(s.quizBest.q_plc||0)>=80},
+    {t:"Sensors Lab Prep ≥80%", route:"quiz/q_sens", check:s=>(s.quizBest.q_sens||0)>=80},
+    {t:"Motors & Drives Lab Prep ≥80%", route:"quiz/q_mot", check:s=>(s.quizBest.q_mot||0)>=80},
+    {t:"Microcontrollers Lab Prep ≥80%", route:"quiz/q_micro", check:s=>(s.quizBest.q_micro||0)>=80},
+    {t:"Control Systems Lab Prep ≥80%", route:"quiz/q_ctrl", check:s=>(s.quizBest.q_ctrl||0)>=80},
   ]},
 { id:"path_adv", name:"Advanced Track", ico:"⚙️", desc:"Think like a troubleshooter: scenarios + cross-domain challenge.",
   items:[
-    {t:"Solve all 8 troubleshooting scenarios", route:"quiz", check:s=>SCENARIOS.every(sc=>(s.scenDone||{})[sc.id])},
+    {t:"Solve all 18 troubleshooting scenarios", route:"quiz", check:s=>SCENARIOS.every(sc=>(s.scenDone||{})[sc.id])},
     {t:"Advanced Cross-Domain quiz ≥80%", route:"quiz/qa_mix", check:s=>(s.quizBest.qa_mix||0)>=80},
     {t:"Reach Level 5", route:"home", check:s=>Math.floor(s.xp/150)+1>=5},
+  ]},
+{ id:"path_cert", name:"Certification Track", ico:"🎓", desc:"Ready for the real test: pass all 9 unit exams, the final, and earn your certificate.",
+  items:[
+    {t:"Pass all 9 unit exams (≥70%)", route:"quiz", check:s=>Object.keys(STACKS).every(sid=>(s.examBest['ex_'+sid]||0)>=EXAM_PASS)},
+    {t:"Pass the Final Exam (≥70%)", route:"exam/ex_final", check:s=>(s.examBest.ex_final||0)>=EXAM_PASS},
+    {t:"Claim your Certificate of Completion", route:"cert", check:s=>Object.keys(STACKS).every(sid=>(s.examBest['ex_'+sid]||0)>=EXAM_PASS)&&(s.examBest.ex_final||0)>=EXAM_PASS},
   ]},
 ];
 
@@ -3151,12 +3187,19 @@ const BADGES=[
  {id:'oil',ico:'🛢️',name:'Oil Pressure',test:()=>(ST.quizBest.q_hyd||0)>=80},
  {id:'relay',ico:'🎛️',name:'Relay Wrangler',test:()=>(ST.quizBest.q_relay||0)>=80},
  {id:'wave',ico:'🌊',name:'Wave Rider',test:()=>(ST.quizBest.q_acdc||0)>=80},
- {id:'rookie',ico:'🌱',name:'Foundations',test:()=>['qb_pneu','qb_hyd','qb_elec','qb_acdc'].every(q=>(ST.quizBest[q]||0)>=80)},
+ {id:'rookie',ico:'🌱',name:'Foundations',test:()=>['qb_pneu','qb_hyd','qb_elec','qb_acdc','qb_plc','qb_sens','qb_mot','qb_micro','qb_ctrl'].every(q=>(ST.quizBest[q]||0)>=80)},
+ {id:'logic',ico:'🔌',name:'Logic Builder',test:()=>(ST.quizBest.q_plc||0)>=80},
+ {id:'sensor',ico:'📡',name:'Signal Reader',test:()=>(ST.quizBest.q_sens||0)>=80},
+ {id:'torque',ico:'🌀',name:'Torque Master',test:()=>(ST.quizBest.q_mot||0)>=80},
+ {id:'embedded',ico:'🔬',name:'Embedded Builder',test:()=>(ST.quizBest.q_micro||0)>=80},
+ {id:'tuner',ico:'🎚️',name:'Loop Tuner',test:()=>(ST.quizBest.q_ctrl||0)>=80},
  {id:'fixer',ico:'🔧',name:'Troubleshooter',test:()=>SCENARIOS.every(s=>ST.scenDone[s.id])},
  {id:'labrat',ico:'🥼',name:'Lab Rat',test:()=>LABS.every(l=>ST.labDone[l.id])},
  {id:'simulant',ico:'🕹️',name:'Simulant',test:()=>Object.keys(SIMS).every(k=>ST.simSeen[k])},
+ {id:'scholar',ico:'📖',name:'Scholar',test:()=>UNITS.every(u=>Object.keys(ST.courseDone[u.id]||{}).length===u.lessons.length)},
  {id:'streak3',ico:'🔥',name:'3-Day Streak',test:()=>ST.streak>=3},
  {id:'centurion',ico:'🏆',name:'Level 5',test:()=>level()>=5},
+ {id:'graduate',ico:'🎓',name:'Graduate',test:()=>Object.keys(STACKS).every(sid=>(ST.examBest['ex_'+sid]||0)>=EXAM_PASS)&&(ST.examBest.ex_final||0)>=EXAM_PASS},
 ];
 function checkBadges(){ BADGES.forEach(b=>{ if(!ST.badges.includes(b.id)&&b.test()){ ST.badges.push(b.id); save(); setTimeout(()=>toast(`${b.ico} Badge: ${b.name}`),900); renderHeader(); }}); }
 
