@@ -2075,6 +2075,462 @@ SIMS.sim_acdc = {
   }
 };
 
+/* ============ 5. PLC — ladder rewrite with explicit scan cycle ============ */
+SIMS.sim_plc = {
+  title:"Virtual PLC — Ladder Rewrite of the Timed Sequence", stack:"plc",
+  desc:"Wire the same dual-cylinder sequence as PLC-addressed rungs, then step or run the scan cycle by hand — read inputs, solve logic, write outputs — instead of the instant response of a wired relay.",
+  mount(root,api){
+    root.innerHTML=`
+    <div class="simwrap">
+      <div class="seg" id="pMode">
+        <button data-m="wire" class="on">🔧 Wire it</button>
+        <button data-m="step">Step scan</button>
+        <button data-m="auto">Auto-scan</button>
+      </div>
+      <div id="pWire"></div>
+      <div id="pRun" hidden>
+        <svg viewBox="0 0 360 258" class="schematic accent-plc">
+          <line x1="20" y1="14" x2="20" y2="174" class="rail"/><line x1="252" y1="14" x2="252" y2="174" class="rail"/>
+          <text x="14" y="11" class="svgtag">I/O</text><text x="296" y="11" class="svgtag">SCAN</text>
+          <path id="pr1" class="wire" d="M20 38 H252"/>
+          <g id="pcSTOP" class="contact nc" transform="translate(36,38)"><circle cx="0" cy="0" r="2.5"/><circle cx="18" cy="0" r="2.5"/><line class="blade" x1="0" y1="0" x2="20" y2="-8"/><line class="ncbar" x1="14" y1="-12" x2="18" y2="6"/><text y="17" x="9" text-anchor="middle" class="svgtag">I:1/0 STOP</text></g>
+          <g id="pcSTART" class="contact no" transform="translate(86,38)"><circle cx="0" cy="0" r="2.5"/><circle cx="18" cy="0" r="2.5"/><line class="blade" x1="0" y1="0" x2="16" y2="-9"/><text y="17" x="9" text-anchor="middle" class="svgtag">I:1/1 START</text></g>
+          <g id="pbSeal"><path id="psealwire" class="wire" d="M80 38 v28 h38 v-28"/><g id="pcSEAL" class="contact no" transform="translate(89,66)"><circle cx="0" cy="0" r="2.5"/><circle cx="18" cy="0" r="2.5"/><line class="blade" x1="0" y1="0" x2="16" y2="-9"/><text y="14" x="9" text-anchor="middle" class="svgtag">Run seal</text></g></g>
+          <g id="pcLS" class="contact nc" transform="translate(150,38)"><circle cx="0" cy="0" r="2.5"/><circle cx="18" cy="0" r="2.5"/><line class="blade" x1="0" y1="0" x2="20" y2="-8"/><line class="ncbar" x1="14" y1="-12" x2="18" y2="6"/><text y="17" x="9" text-anchor="middle" class="svgtag">I:1/2,3 LIMITS</text></g>
+          <g id="pcoilRun" class="coil" transform="translate(230,38)"><circle r="11"/><text text-anchor="middle" y="3.5" class="svgtag" style="font-size:6.5px">Run</text></g>
+          <path id="pr2" class="wire" d="M20 112 H252"/>
+          <g id="pcRunB" class="contact no" transform="translate(50,112)"><circle cx="0" cy="0" r="2.5"/><circle cx="18" cy="0" r="2.5"/><line class="blade" x1="0" y1="0" x2="16" y2="-9"/><text y="16" x="9" text-anchor="middle" class="svgtag">Run</text></g>
+          <g id="pcoilO0" class="coil" transform="translate(150,112)"><path class="comp" d="M-14 0 h4 l5 -8 l6 16 l6 -16 l5 8 h4"/><text text-anchor="middle" y="22" class="svgtag">O:2/0</text></g>
+          <g id="pbTon"><path id="ptonwire" class="wire" d="M110 112 v30 h118"/><g id="pcoilTON" class="coil" transform="translate(230,142)"><circle r="11"/><text text-anchor="middle" y="3.5" class="svgtag" style="font-size:6px">T4:0</text><path class="comp" d="M-5 16 h10 l-5 8 z"/></g></g>
+          <path id="pr3" class="wire" d="M20 174 H252"/>
+          <g id="pcDN" class="contact no" transform="translate(50,174)"><circle cx="0" cy="0" r="2.5"/><circle cx="18" cy="0" r="2.5"/><line class="blade" x1="0" y1="0" x2="16" y2="-9"/><path class="comp" d="M4 9 h10 l-5 7 z"/><text y="28" x="9" text-anchor="middle" class="svgtag">T4:0.DN</text></g>
+          <g id="pcoilO1" class="coil" transform="translate(150,174)"><path class="comp" d="M-14 0 h4 l5 -8 l6 16 l6 -16 l5 8 h4"/><text text-anchor="middle" y="22" class="svgtag">O:2/1</text></g>
+          <g transform="translate(30,200)">
+            <text x="0" y="10" class="svgtag" style="fill:var(--plc)">CYL 1</text>
+            <rect class="comp" x="36" y="0" width="86" height="20"/><rect id="pcy1p" x="40" y="2" width="7" height="16" fill="var(--plc)" opacity=".8"/><rect id="pcy1r" x="47" y="7" width="20" height="6" fill="var(--dim)"/>
+            <text x="0" y="42" class="svgtag" style="fill:var(--micro)">CYL 2</text>
+            <rect class="comp" x="36" y="30" width="86" height="20"/><rect id="pcy2p" x="40" y="32" width="7" height="16" fill="var(--micro)" opacity=".8"/><rect id="pcy2r" x="47" y="37" width="20" height="6" fill="var(--dim)"/>
+          </g>
+          <g id="pscanG" transform="translate(300,22)">
+            <circle id="pscanDot" r="7" fill="var(--line)"/>
+            <text id="pscanTxt" text-anchor="middle" y="22" class="svgtag">scan 0</text>
+          </g>
+          <g id="ptimerArcG" transform="translate(314,142)">
+            <circle r="14" fill="none" stroke="var(--line)" stroke-width="3.5"/>
+            <circle id="ptimerArc" r="14" fill="none" stroke="var(--plc)" stroke-width="3.5" stroke-dasharray="88" stroke-dashoffset="88" transform="rotate(-90)"/>
+            <text text-anchor="middle" y="4" class="svgtag" id="ptimerTxt">T4:0</text>
+          </g>
+        </svg>
+        <div class="readout"><span id="prstate" style="color:var(--dim)">Idle — toggle START, then step or run the scan.</span></div>
+        <div class="ctrls">
+          <button id="pbSTOP" class="ctl danger">⊘ I:1/0 STOP (hold)</button>
+          <button id="pbSTART" class="ctl go">▶ I:1/1 START (hold)</button>
+          <button id="pbStep" class="ctl" hidden>⏭ Step one scan</button>
+        </div>
+      </div>
+    </div>`;
+    const svg=root.querySelector('svg');
+    const SLOTS=[
+      {id:'s1',rung:'Rung 1',hint:'kills everything (NC)',correct:'stop'},
+      {id:'s2',rung:'Rung 1',hint:'starts the Run bit (NO)',correct:'start'},
+      {id:'s3',rung:'Rung 1',hint:'seal-in around START',correct:'seal'},
+      {id:'s4',rung:'Rung 1',hint:'series end-of-sequence inputs',correct:'ls'},
+      {id:'s5',rung:'Rung 1',hint:'the load of this rung',correct:'run'},
+      {id:'s6',rung:'Rung 2',hint:'contact that follows the Run bit',correct:'runb'},
+      {id:'s7',rung:'Rung 2',hint:'loads: output + start the timer',correct:'sol1ton'},
+      {id:'s8',rung:'Rung 3',hint:'contact that waits for the timer',correct:'tondn'},
+      {id:'s9',rung:'Rung 3',hint:'rung 3 load',correct:'sol2'},
+    ];
+    const PARTS={stop:'I:1/0 STOP (NC)',start:'I:1/1 START (NO)',seal:'Run seal-in (NO)',ls:'I:1/2,3 LIMITS (NC)',run:'Run (B3:0/0) coil',runb:'Run contact',sol1ton:'O:2/0 ∥ T4:0 TON 1.0s',tondn:'T4:0.DN (NO)',sol2:'O:2/1'};
+    const CONSEQ={
+      s1:'No NC STOP at the head of rung 1 — the program can run but can NEVER be stopped safely. Fails dangerous.',
+      s2:'Nothing momentary to start the Run bit — or it self-starts the moment the PLC powers up.',
+      s3:'No seal-in around START — Run drops the very next scan after you release the input (jog behavior, not memory).',
+      s4:'No NC limit inputs in series — the sequence never ends; both outputs stay on until STOP.',
+      s5:'Rung 1 has no Run coil — closing the contacts does nothing anywhere else in the program.',
+      s6:'Rung 2 isn’t driven by Run — Output 0 never follows the start logic.',
+      s7:'Without O:2/0 ∥ T4:0 here, Cylinder 1 won’t extend and the timer never starts counting.',
+      s8:'Without the TIMED contact T4:0.DN, Output 1 fires instantly with Output 0 — no 1.0s delay.',
+      s9:'Rung 3 has no O:2/1 — Cylinder 2 never extends no matter what the timer does.',
+    };
+    let placed={}, pickedPart=null, wired=false;
+    const wirePanel=root.querySelector('#pWire'), runPanel=root.querySelector('#pRun');
+    function renderWire(){
+      const used=new Set(Object.values(placed));
+      const pool=Object.entries(PARTS).filter(([k])=>!used.has(k))
+        .map(([k,v])=>`<button class="chip partchip ${pickedPart===k?'on':''}" data-part="${k}">${v}</button>`).join('');
+      let lastRung='';
+      const slots=SLOTS.map(s=>{
+        const head=s.rung!==lastRung?`<div class="eyebrow" style="margin:10px 0 4px">${s.rung}</div>`:''; lastRung=s.rung;
+        const p=placed[s.id];
+        return head+`<button class="slotbtn ${p?(p===s.correct?'ok':'bad'):''}" data-slot="${s.id}">
+          ${p?PARTS[p]:'<span class="sub">'+s.hint+'</span>'}</button>`;
+      }).join('');
+      const wrong=SLOTS.filter(s=>placed[s.id]&&placed[s.id]!==s.correct);
+      const empty=SLOTS.filter(s=>!placed[s.id]);
+      let verdict='';
+      if(!empty.length&&!wrong.length){ verdict='<div class="buildstatus"><b style="color:var(--plc)">✓ Addressed and wired like the lab ladder.</b> Switch to Step scan or Auto-scan to run it.</div>';
+        if(!wired){wired=true;api.award('plc_wire',20,'Addressed and wired the PLC ladder correctly');} }
+      else if(wrong.length) verdict='<div class="buildstatus">'+wrong.map(s=>'✗ <b>'+s.rung+'</b>: '+CONSEQ[s.id]).join('<br>')+'</div>';
+      wirePanel.innerHTML=`<p class="sub" style="margin:4px 0 8px">Tap a device, then tap its slot. Tap a filled slot to clear it. Wrong placement = wrong program behavior.</p>
+        <div class="chips" style="flex-wrap:wrap">${pool||'<span class="sub">All devices placed.</span>'}</div>${slots}${verdict}`;
+      wirePanel.querySelectorAll('.partchip').forEach(c=>c.onclick=()=>{pickedPart=pickedPart===c.dataset.part?null:c.dataset.part;renderWire();});
+      wirePanel.querySelectorAll('.slotbtn').forEach(b=>b.onclick=()=>{
+        const id=b.dataset.slot;
+        if(placed[id]){delete placed[id];}
+        else if(pickedPart){placed[id]=pickedPart;pickedPart=null;}
+        renderWire();
+      });
+    }
+    const ST={mode:'wire',stop:false,start:false,run:false,ton:false,tonT:0,dn:false,c1:0,c2:0,scan:0,didSeq:false,didStop:false,didStep:false};
+    const setMode=m=>{ST.mode=m;
+      wirePanel.hidden=m!=='wire'; runPanel.hidden=m==='wire';
+      root.querySelector('#pbStep').hidden=m!=='step';
+      if(m==='wire'){renderWire();return;}
+    };
+    root.querySelectorAll('#pMode button').forEach(b=>b.onclick=()=>{root.querySelectorAll('#pMode button').forEach(x=>x.classList.remove('on'));b.classList.add('on');setMode(b.dataset.m);});
+    setMode('wire');
+    holdable(root.querySelector('#pbSTOP'),()=>ST.stop=true,()=>ST.stop=false);
+    holdable(root.querySelector('#pbSTART'),()=>ST.start=true,()=>ST.start=false);
+    const stTxt=root.querySelector('#prstate');
+    function paint(){
+      const C=(id,on)=>{const e=svg.getElementById(id);if(e)e.classList.toggle('closed',on);};
+      C('pcSTOP',!ST.stop);C('pcSTART',ST.start);C('pcSEAL',ST.run);C('pcLS',!(ST.c1>=0.98&&ST.c2>=0.98));C('pcRunB',ST.run);C('pcDN',ST.dn);
+      const E=(id,on)=>{const e=svg.getElementById(id);if(e)e.classList.toggle('energized',on);};
+      E('pr1',ST.run);E('pcoilRun',ST.run);E('pr2',ST.run);E('pcoilO0',ST.run);E('pcoilTON',ST.ton);E('pr3',ST.dn);E('pcoilO1',ST.dn);E('psealwire',ST.run);E('ptonwire',ST.ton);
+      svg.getElementById('ptimerArc').setAttribute('stroke-dashoffset',88*(1-ST.tonT));
+      svg.getElementById('ptimerTxt').textContent=ST.ton?(ST.tonT>=1?'✓':(1-ST.tonT).toFixed(1)+'s'):'T4:0';
+      svg.getElementById('pcy1p').setAttribute('x',40+ST.c1*74);svg.getElementById('pcy1r').setAttribute('x',47+ST.c1*74);
+      svg.getElementById('pcy2p').setAttribute('x',40+ST.c2*74);svg.getElementById('pcy2r').setAttribute('x',47+ST.c2*74);
+      svg.getElementById('pscanTxt').textContent='scan '+ST.scan;
+      stTxt.textContent=ST.stop?'STOP input true — rung 1 opens, Run drops, both outputs de-energize next scan.'
+        :ST.run&&!ST.dn?`Run ✓ (B3:0/0) · O:2/0 on · T4:0 timing: ${ST.tonT.toFixed(1)}s of 1.0s…`
+        :ST.dn?'T4:0.DN true → O:2/1 on. Sequence complete.'
+        :'Idle — hold START, then advance the scan.';
+    }
+    function runScan(dt){
+      ST.scan++;
+      const ls2=ST.c1>=0.98, ls4=ST.c2>=0.98;
+      const lsOK=!(ls2&&ls4);
+      ST.run=!ST.stop&&(ST.start||ST.run)&&lsOK;
+      if(ST.run){ST.ton=true;ST.tonT=Math.min(1,ST.tonT+dt);}else{ST.ton=false;ST.tonT=0;}
+      ST.dn=ST.ton&&ST.tonT>=1;
+      ST.c1=Math.max(0,Math.min(1,ST.c1+(ST.run?.35:-.45)*dt*4));
+      ST.c2=Math.max(0,Math.min(1,ST.c2+(ST.dn?.35:-.45)*dt*4));
+      const dot=svg.getElementById('pscanDot'); if(dot){dot.setAttribute('fill','var(--plc)');setTimeout(()=>dot.setAttribute('fill','var(--line)'),120);}
+      paint();
+      if(ls2&&ls4&&!ST.didSeq){ST.didSeq=true;api.award('plc_seq',20,'Ran the full scan-by-scan sequence to completion');}
+      if(ST.stop&&(ST.c1>0.2||ST.c2>0.2)&&!ST.didStop){ST.didStop=true;api.award('plc_stop',10,'Verified STOP drops the Run bit mid-sequence');}
+      if(ST.mode==='step'&&!ST.didStep){ST.didStep=true;api.award('plc_step',15,'Stepped the scan cycle by hand: read → solve → write');}
+    }
+    root.querySelector('#pbStep').onclick=()=>runScan(0.2);
+    let raf,last=performance.now();
+    function tick(now){
+      const dt=Math.min(.05,(now-last)/1000); last=now;
+      if(ST.mode==='auto'){ST._acc=(ST._acc||0)+dt; if(ST._acc>=0.35){ST._acc=0;runScan(0.35);} }
+      raf=requestAnimationFrame(tick);
+    }
+    raf=requestAnimationFrame(tick);
+    paint();
+    return ()=>cancelAnimationFrame(raf);
+  }
+};
+
+/* ============ 6. Sensors — sourcing/sinking + 4-20mA loop ============ */
+SIMS.sim_sens = {
+  title:"Virtual Sensor Bench — Sourcing/Sinking + 4–20 mA Loop", stack:"sens",
+  desc:"Slide a target past a proximity sensor and see whether its wiring family matches the input card. Then drive a 4–20 mA loop and convert the live current to engineering units.",
+  mount(root,api){
+    root.innerHTML=`
+    <div class="simwrap">
+      <div class="seg" id="snMode"><button data-m="prox" class="on">Proximity sensor</button><button data-m="loop">4–20 mA loop</button></div>
+      <div id="snProx">
+        <svg viewBox="0 0 360 110" class="schematic accent-sens">
+          <rect x="20" y="40" width="34" height="34" class="comp"/><text x="37" y="86" text-anchor="middle" class="svgtag">SENSOR</text>
+          <circle id="snLed" cx="37" cy="34" r="5" fill="var(--line)"/>
+          <rect id="snTarget" x="120" y="44" width="20" height="26" fill="var(--sens)" opacity=".85"/><text x="130" y="86" text-anchor="middle" class="svgtag">TARGET</text>
+          <line x1="54" y1="57" x2="340" y2="57" stroke="var(--line)" stroke-dasharray="2 4"/>
+          <g transform="translate(280,20)">
+            <rect width="60" height="34" rx="6" class="comp"/>
+            <circle id="snBit" cx="30" cy="17" r="7" fill="var(--line)"/>
+            <text x="30" y="48" text-anchor="middle" class="svgtag">PLC INPUT</text>
+          </g>
+        </svg>
+        <div class="ctrls">
+          <div class="seg" id="snType"><button data-t="pnp" class="on">Sensor: PNP (sourcing)</button><button data-t="npn">Sensor: NPN (sinking)</button></div>
+          <div class="seg" id="snCard"><button data-c="pnp" class="on">Input wired for PNP</button><button data-c="npn">Input wired for NPN</button></div>
+          <label class="slider">Target distance <input id="snDist" type="range" min="0" max="100" value="60"><b id="snDistV">60 mm</b></label>
+        </div>
+        <div class="readout"><span id="snState" style="color:var(--dim)">Slide the target closer.</span></div>
+      </div>
+      <div id="snLoop" hidden>
+        <div class="ctrls">
+          <label class="slider">Pressure (0–150 psi span) <input id="snPress" type="range" min="0" max="100" value="0"><b id="snPressV">0%</b></label>
+          <button id="snBreak" class="ctl danger">⚡ Break the loop</button>
+        </div>
+        <div class="meterpanel" id="snLoopPanel"></div>
+      </div>
+    </div>`;
+    const svg=root.querySelector('svg');
+    const ST={mode:'prox',type:'pnp',card:'pnp',dist:60,press:0,broken:false,seenMatch:false,seenMismatch:false,seenBreak:false,seenAllSpan:false,seenSpan:new Set()};
+    root.querySelectorAll('#snMode button').forEach(b=>b.onclick=()=>{root.querySelectorAll('#snMode button').forEach(x=>x.classList.remove('on'));b.classList.add('on');
+      ST.mode=b.dataset.m;root.querySelector('#snProx').hidden=ST.mode!=='prox';root.querySelector('#snLoop').hidden=ST.mode!=='loop';});
+    root.querySelectorAll('#snType button').forEach(b=>b.onclick=()=>{root.querySelectorAll('#snType button').forEach(x=>x.classList.remove('on'));b.classList.add('on');ST.type=b.dataset.t;evalProx();});
+    root.querySelectorAll('#snCard button').forEach(b=>b.onclick=()=>{root.querySelectorAll('#snCard button').forEach(x=>x.classList.remove('on'));b.classList.add('on');ST.card=b.dataset.c;evalProx();});
+    root.querySelector('#snDist').oninput=e=>{ST.dist=+e.target.value;root.querySelector('#snDistV').textContent=ST.dist+' mm';evalProx();};
+    function evalProx(){
+      const sensed=ST.dist<=25;
+      const match=ST.type===ST.card;
+      svg.getElementById('snTarget').setAttribute('x',54+(ST.dist/100)*240);
+      svg.getElementById('snLed').setAttribute('fill',sensed?'var(--sens)':'var(--line)');
+      svg.getElementById('snBit').setAttribute('fill',(sensed&&match)?'var(--sens)':'var(--line)');
+      const stEl=root.querySelector('#snState');
+      if(!sensed) stEl.textContent='Sensor LED: clear — target out of rated range.';
+      else if(match){ stEl.innerHTML='Sensor LED: <b style="color:var(--sens)">DETECTED</b> · PLC input: <b style="color:var(--sens)">TRUE</b> — wiring families match.';
+        if(!ST.seenMatch){ST.seenMatch=true;api.award('sens_match',15,'Verified a matched sourcing/sinking pair');} }
+      else { stEl.innerHTML='Sensor LED: <b style="color:var(--sens)">DETECTED</b> · PLC input: <b style="color:var(--danger)">still FALSE</b> — sensor and input card are different families (mismatch).';
+        if(!ST.seenMismatch){ST.seenMismatch=true;api.award('sens_mismatch',15,'Diagnosed a sourcing/sinking mismatch');} }
+    }
+    evalProx();
+    root.querySelector('#snPress').oninput=e=>{ST.press=+e.target.value;root.querySelector('#snPressV').textContent=ST.press+'%';evalLoop();};
+    root.querySelector('#snBreak').onclick=e=>{ST.broken=!ST.broken;e.target.textContent=ST.broken?'🔌 Restore the loop':'⚡ Break the loop';
+      if(ST.broken&&!ST.seenBreak){ST.seenBreak=true;api.award('sens_break',15,'Diagnosed an open 4–20mA loop reading 0mA');}evalLoop();};
+    function evalLoop(){
+      const pct=ST.press||0;
+      const mA=ST.broken?0:4+(pct/100)*16;
+      const psi=ST.broken?0:(mA-4)/16*150;
+      ST.seenSpan.add(Math.round(pct/25)*25);
+      if(ST.seenSpan.size>=5&&!ST.seenAllSpan){ST.seenAllSpan=true;api.award('sens_span',15,'Walked the loop across its full 0–100% span');}
+      const p=root.querySelector('#snLoopPanel');
+      p.innerHTML=(ST.broken?`<div class="warnrow">⚠ Loop reads 0 mA — never a valid process value on a live 4–20mA loop. Check for an open circuit.</div>`:'')
+        +`<div class="mrow"><span>Loop current</span><b>${mA.toFixed(2)} mA</b></div>`
+        +`<div class="mrow"><span>0–150 psi span</span><b>${psi.toFixed(1)} psi</b></div>`
+        +`<div class="okrow">psi = (mA − 4) / 16 × 150</div>`;
+    }
+    evalLoop();
+    return ()=>{};
+  }
+};
+
+/* ============ 7. Motors & Drives — reversing starter + VFD ============ */
+SIMS.sim_mot = {
+  title:"Virtual Motor Bench — Reversing Starter + VFD", stack:"mot",
+  desc:"Try commanding Forward and Reverse together to see why they must be interlocked, then sweep a VFD's frequency to see synchronous speed, slip, and the torque fall-off above base frequency.",
+  mount(root,api){
+    root.innerHTML=`
+    <div class="simwrap">
+      <div class="seg" id="mtMode"><button data-m="start" class="on">Reversing starter</button><button data-m="vfd">VFD speed</button></div>
+      <div id="mtStart">
+        <svg viewBox="0 0 360 110" class="schematic accent-mot">
+          <g transform="translate(150,40)"><circle r="26" class="comp"/><line id="mtArrow" x1="0" y1="0" x2="22" y2="0" stroke="currentColor" stroke-width="3"/><text y="40" text-anchor="middle" class="svgtag">MOTOR</text></g>
+          <text id="mtDirTxt" x="150" y="86" text-anchor="middle" class="svgtag" style="font-size:10px">STOPPED</text>
+        </svg>
+        <div class="seg" id="mtInterlock"><button data-i="off">Interlock: OFF (unsafe demo)</button><button data-i="on" class="on">Interlock: ON (safe)</button></div>
+        <div class="ctrls">
+          <button id="mtFwd" class="ctl go">▶ FWD (hold)</button>
+          <button id="mtRev" class="ctl go">◀ REV (hold)</button>
+          <button id="mtStop" class="ctl danger">⊘ STOP</button>
+        </div>
+        <div class="readout"><span id="mtState" style="color:var(--dim)">Stopped.</span></div>
+      </div>
+      <div id="mtVfd" hidden>
+        <div class="ctrls">
+          <div class="seg" id="mtPoles"><button data-p="2">2-pole</button><button data-p="4" class="on">4-pole</button><button data-p="6">6-pole</button><button data-p="8">8-pole</button></div>
+          <label class="slider">Frequency <input id="mtFreq" type="range" min="0" max="90" value="60"><b id="mtFreqV">60 Hz</b></label>
+        </div>
+        <div class="meterpanel" id="mtPanel"></div>
+      </div>
+    </div>`;
+    const svg=root.querySelector('svg');
+    const ST={mode:'start',interlock:true,fwd:false,rev:false,fault:false,dir:0,poles:4,freq:60,seenAbove:false,seenBelow:false,seenFault:false};
+    root.querySelectorAll('#mtMode button').forEach(b=>b.onclick=()=>{root.querySelectorAll('#mtMode button').forEach(x=>x.classList.remove('on'));b.classList.add('on');
+      ST.mode=b.dataset.m;root.querySelector('#mtStart').hidden=ST.mode!=='start';root.querySelector('#mtVfd').hidden=ST.mode!=='vfd';});
+    root.querySelectorAll('#mtInterlock button').forEach(b=>b.onclick=()=>{root.querySelectorAll('#mtInterlock button').forEach(x=>x.classList.remove('on'));b.classList.add('on');ST.interlock=b.dataset.i==='on';});
+    holdable(root.querySelector('#mtFwd'),()=>ST.fwd=true,()=>ST.fwd=false);
+    holdable(root.querySelector('#mtRev'),()=>ST.rev=true,()=>ST.rev=false);
+    root.querySelector('#mtStop').onclick=()=>{ST.fault=false;ST.fwd=false;ST.rev=false;};
+    root.querySelectorAll('#mtPoles button').forEach(b=>b.onclick=()=>{root.querySelectorAll('#mtPoles button').forEach(x=>x.classList.remove('on'));b.classList.add('on');ST.poles=+b.dataset.p;evalVfd();});
+    root.querySelector('#mtFreq').oninput=e=>{ST.freq=+e.target.value;root.querySelector('#mtFreqV').textContent=ST.freq+' Hz';evalVfd();};
+    const dirTxt=root.querySelector('#mtDirTxt'), stEl=root.querySelector('#mtState');
+    let raf;
+    function tick(){
+      if(ST.fault){ ST.dir=0; }
+      else if(!ST.interlock&&ST.fwd&&ST.rev){ ST.fault=true; if(!ST.seenFault){ST.seenFault=true;api.award('mot_fault',15,'Triggered the FWD/REV short with the interlock off');} }
+      else if(ST.interlock&&ST.fwd&&ST.rev){ /* interlock blocks the second command */ }
+      else if(ST.fwd){ ST.dir=1; } else if(ST.rev){ ST.dir=-1; } else { ST.dir=0; }
+      svg.getElementById('mtArrow').setAttribute('transform',ST.dir?`scale(${ST.dir},1)`:'');
+      dirTxt.textContent=ST.fault?'⚠ FAULT — line-to-line short (FWD+REV both energized)':ST.dir>0?'FORWARD':ST.dir<0?'REVERSE':'STOPPED';
+      dirTxt.style.fill=ST.fault?'var(--danger)':'var(--mot)';
+      stEl.textContent=ST.fault?'Both contactors energized with no interlock — this is a direct short across the supply. Press STOP, then turn the interlock ON.'
+        :(ST.interlock&&ST.fwd&&ST.rev)?'Interlock blocked the second command — only the direction that sealed in first can run.'
+        :'Hold FWD or REV. With the interlock ON, the opposite direction can never energize at the same time.';
+      raf=requestAnimationFrame(tick);
+    }
+    raf=requestAnimationFrame(tick);
+    function evalVfd(){
+      const Ns=120*ST.freq/ST.poles;
+      const rpm=Ns*0.97;
+      const base=60;
+      const torquePct=ST.freq<=base?100:Math.max(20,Math.round(100*base/Math.max(1,ST.freq)));
+      if(ST.freq>base&&!ST.seenAbove){ST.seenAbove=true;api.award('mot_above',15,'Drove the VFD above base frequency and saw torque fall off');}
+      if(ST.freq>0&&ST.freq<base&&!ST.seenBelow){ST.seenBelow=true;api.award('mot_below',10,'Drove the VFD below base frequency');}
+      root.querySelector('#mtPanel').innerHTML=
+        `<div class="mrow"><span>Synchronous speed Ns = 120·f/P</span><b>${Ns.toFixed(0)} RPM</b></div>`
+        +`<div class="mrow"><span>Actual RPM (with slip)</span><b>${rpm.toFixed(0)} RPM</b></div>`
+        +`<div class="mrow"><span>Available torque</span><b>${torquePct}%</b></div>`
+        +(ST.freq>base?`<div class="warnrow">Above base frequency (${base}Hz): voltage can't keep rising with frequency, so torque capability drops.</div>`:`<div class="okrow">At or below base frequency: volts/hertz ratio held constant — full torque available.</div>`);
+    }
+    evalVfd();
+    return ()=>cancelAnimationFrame(raf);
+  }
+};
+
+/* ============ 8. Microcontrollers — debounce + PWM ============ */
+SIMS.sim_micro = {
+  title:"Virtual Breadboard — Debounced Button → PWM", stack:"micro",
+  desc:"Tap the button to step an output through PWM duty levels. Turn debounce OFF to see why a 'simple' button needs filtering before software can trust it.",
+  mount(root,api){
+    root.innerHTML=`
+    <div class="simwrap">
+      <div class="seg" id="mcDebounce"><button data-d="on" class="on">Debounce: ON</button><button data-d="off">Debounce: OFF</button></div>
+      <svg viewBox="0 0 360 70" class="schematic accent-micro">
+        <rect x="20" y="14" width="320" height="14" rx="4" fill="var(--panel2)"/>
+        <rect id="mcBar" x="20" y="14" width="0" height="14" rx="4" fill="var(--micro)"/>
+        <text x="20" y="46" class="svgtag">duty cycle</text>
+        <g id="mcPulses" transform="translate(20,52)"></g>
+      </svg>
+      <div class="ctrls">
+        <button id="mcTap" class="ctl go" style="font-size:16px;padding:16px 26px">👆 Press button</button>
+      </div>
+      <div class="readout"><span id="mcDuty">0% duty</span><span id="mcLog" style="color:var(--dim)">0 logical presses so far</span></div>
+      <p class="sub" id="mcMsg" style="margin-top:6px"></p>
+    </div>`;
+    const svg=root.querySelector('svg');
+    const LEVELS=[0,33,66,100];
+    const ST={debounce:true,idx:0,presses:0,sawClean:false,sawBounceJump:false,sawCleanAfter:false};
+    root.querySelectorAll('#mcDebounce button').forEach(b=>b.onclick=()=>{root.querySelectorAll('#mcDebounce button').forEach(x=>x.classList.remove('on'));b.classList.add('on');ST.debounce=b.dataset.d==='on';});
+    function draw(){
+      const duty=LEVELS[ST.idx];
+      svg.getElementById('mcBar').setAttribute('width',320*duty/100);
+      root.querySelector('#mcDuty').textContent=duty+'% duty';
+      root.querySelector('#mcLog').textContent=ST.presses+' logical press'+(ST.presses===1?'':'es')+' so far';
+      const g=svg.getElementById('mcPulses'); g.innerHTML='';
+      const cellW=40; let cells='';
+      for(let i=0;i<8;i++){
+        const on=duty>0&&(i%4)<Math.round(duty/100*4);
+        cells+=`<rect x="${i*cellW}" y="${on?0:6}" width="${cellW-4}" height="${on?12:6}" fill="${on?'var(--micro)':'var(--line)'}" opacity="${on?0.9:0.4}"/>`;
+      }
+      g.innerHTML=cells;
+    }
+    draw();
+    root.querySelector('#mcTap').onclick=()=>{
+      const msg=root.querySelector('#mcMsg');
+      if(ST.debounce){
+        ST.idx=(ST.idx+1)%LEVELS.length; ST.presses++;
+        msg.textContent='Clean tap → exactly one step.';
+        if(ST.idx===LEVELS.length-1&&!ST.sawClean){ST.sawClean=true;api.award('micro_step',15,'Stepped cleanly through every PWM level with debounce on');}
+        if(ST.sawBounceJump&&!ST.sawCleanAfter){ST.sawCleanAfter=true;api.award('micro_fix',15,'Re-enabled debounce and confirmed a single clean step again');}
+      } else {
+        const bounces=2+Math.floor(Math.random()*3);
+        for(let i=0;i<bounces;i++) ST.idx=(ST.idx+1)%LEVELS.length;
+        ST.presses+=bounces;
+        msg.textContent=`Bouncy tap → registered as ${bounces} presses from one physical tap (contact chatter).`;
+        if(!ST.sawBounceJump){ST.sawBounceJump=true;api.award('micro_bounce',15,'Saw one physical tap register as multiple presses with debounce off');}
+      }
+      draw();
+    };
+    return ()=>{};
+  }
+};
+
+/* ============ 9. Control Systems & PID — live step-response plotter ============ */
+SIMS.sim_ctrl = {
+  title:"Virtual Process — PID Step Response", stack:"ctrl",
+  desc:"Tune Kp, Ki, Kd against a simulated first-order process and watch the live response plot — including the windup trap when the output saturates for too long.",
+  mount(root,api){
+    root.innerHTML=`
+    <div class="simwrap">
+      <svg viewBox="0 0 360 160" class="schematic accent-ctrl">
+        <line x1="20" y1="140" x2="340" y2="140" stroke="var(--dim)" stroke-width="1.5"/>
+        <line x1="20" y1="10" x2="20" y2="140" stroke="var(--dim)" stroke-width="1.5"/>
+        <line id="ctrlSP" x1="20" y1="0" x2="340" y2="0" stroke="var(--ctrl)" stroke-dasharray="3 3" opacity=".6"/>
+        <text id="ctrlSPTxt" x="324" y="0" class="svgtag" style="fill:var(--ctrl)">SP</text>
+        <polyline id="ctrlLine" fill="none" stroke="var(--ctrl)" stroke-width="2"/>
+        <text x="20" y="152" class="svgtag">0s</text><text x="320" y="152" class="svgtag">15s</text>
+      </svg>
+      <div class="ctrls">
+        <label class="slider">Kp <input id="ctKp" type="range" min="0" max="10" step="0.1" value="1"><b id="ctKpV">1.0</b></label>
+        <label class="slider">Ki <input id="ctKi" type="range" min="0" max="5" step="0.05" value="0"><b id="ctKiV">0.00</b></label>
+        <label class="slider">Kd <input id="ctKd" type="range" min="0" max="3" step="0.05" value="0"><b id="ctKdV">0.00</b></label>
+      </div>
+      <div class="ctrls">
+        <button id="ctRun" class="ctl go">▶ Run step response</button>
+        <button id="ctReset" class="ctl">⏸ Reset</button>
+        <button id="ctWindup" class="ctl danger">Force saturation (windup demo): OFF</button>
+        <button id="ctAW" class="ctl">Anti-windup clamp: OFF</button>
+      </div>
+      <div class="readout"><span id="ctStat" style="color:var(--dim)">Set gains, then run the step response.</span></div>
+    </div>`;
+    const svg=root.querySelector('svg');
+    const SP=100, DUR=15, dt=0.05;
+    const spY=140-Math.max(0,Math.min(150,SP))/150*130;
+    svg.getElementById('ctrlSP').setAttribute('y1',spY);svg.getElementById('ctrlSP').setAttribute('y2',spY);
+    svg.getElementById('ctrlSPTxt').setAttribute('y',spY-4);
+    const G={kp:1,ki:0,kd:0};
+    const bind=(id,key,fmt)=>root.querySelector('#ct'+id).oninput=e=>{G[key]=+e.target.value;root.querySelector('#ct'+id+'V').textContent=fmt(G[key]);};
+    bind('Kp','kp',v=>v.toFixed(1)); bind('Ki','ki',v=>v.toFixed(2)); bind('Kd','kd',v=>v.toFixed(2));
+    const ST={running:false,t:0,pv:0,integral:0,prevErr:0,hist:[],windup:false,aw:false,seenDroop:false,seenZeroDroop:false,seenWindup:false,seenTuned:false};
+    root.querySelector('#ctWindup').onclick=e=>{ST.windup=!ST.windup;e.target.textContent='Force saturation (windup demo): '+(ST.windup?'ON':'OFF');};
+    root.querySelector('#ctAW').onclick=e=>{ST.aw=!ST.aw;e.target.textContent='Anti-windup clamp: '+(ST.aw?'ON':'OFF');};
+    function reset(){ST.running=false;ST.t=0;ST.pv=0;ST.integral=0;ST.prevErr=0;ST.hist=[];svg.getElementById('ctrlLine').setAttribute('points','');root.querySelector('#ctStat').textContent='Set gains, then run the step response.';}
+    root.querySelector('#ctReset').onclick=reset;
+    root.querySelector('#ctRun').onclick=()=>{reset();ST.running=true;};
+    function step(){
+      const outMaxBase=150;
+      const outMax=ST.windup?(ST.t<5?40:outMaxBase):outMaxBase;
+      const err=SP-ST.pv;
+      const raw=G.kp*err+G.ki*ST.integral+G.kd*(err-ST.prevErr)/dt;
+      const out=Math.max(0,Math.min(outMax,raw));
+      const saturated=out!==raw;
+      if(!(ST.aw&&saturated)) ST.integral+=err*dt;
+      ST.prevErr=err;
+      ST.pv+=dt*(out-ST.pv)/2;
+      ST.t+=dt;
+      ST.hist.push([ST.t,ST.pv]);
+    }
+    function draw(){
+      const x=t=>20+(t/DUR)*320, y=v=>140-Math.max(0,Math.min(150,v))/150*130;
+      const pts=ST.hist.map(([t,v])=>`${x(t).toFixed(1)},${y(v).toFixed(1)}`).join(' ');
+      svg.getElementById('ctrlLine').setAttribute('points',pts);
+    }
+    function finish(){
+      ST.running=false;
+      const peak=ST.hist.length?Math.max(...ST.hist.map(p=>p[1])):0;
+      const overshoot=Math.max(0,(peak-SP)/SP*100);
+      const final=ST.hist.length?ST.hist[ST.hist.length-1][1]:0;
+      const droop=Math.max(0,SP-final);
+      const stat=root.querySelector('#ctStat');
+      stat.innerHTML=`Peak ${peak.toFixed(0)} (${overshoot.toFixed(0)}% overshoot) · final ${final.toFixed(0)} (steady error ${droop.toFixed(0)})`;
+      if(G.ki===0&&G.kd===0&&droop>3&&!ST.seenDroop){ST.seenDroop=true;api.award('ctrl_droop',15,'Confirmed P-only control leaves steady-state error');}
+      if(G.ki>0&&droop<3&&!ST.seenZeroDroop){ST.seenZeroDroop=true;api.award('ctrl_izero',15,'Added Integral action and drove steady-state error to zero');}
+      if(ST.windup&&overshoot>30&&!ST.seenWindup){ST.seenWindup=true;api.award('ctrl_windup',20,'Observed integral windup overshoot after a forced saturation');}
+      if(overshoot<10&&droop<3&&!ST.seenTuned){ST.seenTuned=true;api.award('ctrl_tuned',20,'Tuned a response under 10% overshoot with no steady-state error');}
+    }
+    let raf,acc=0,last=performance.now();
+    function tick(now){
+      const frameDt=Math.min(.05,(now-last)/1000); last=now;
+      if(ST.running){
+        acc+=frameDt;
+        while(acc>=dt&&ST.running){ acc-=dt; step(); if(ST.t>=DUR) finish(); }
+        draw();
+      }
+      raf=requestAnimationFrame(tick);
+    }
+    raf=requestAnimationFrame(tick);
+    return ()=>cancelAnimationFrame(raf);
+  }
+};
+
 </script>
 <script>
 /* Mechatronics Stack Mastery v3 — app shell + 100% local AI tutor */
