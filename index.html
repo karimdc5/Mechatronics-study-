@@ -200,6 +200,28 @@ input[type=range]{flex:1;accent-color:var(--gold);min-height:34px}
 .lessonchk{flex:none;font:600 11px var(--mono);padding:7px 12px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--dim)}
 .lessonchk.on{border-color:var(--elec);color:var(--elec)}
 
+/* exams + certificate */
+.certwrap{max-width:520px;margin:0 auto}
+.certwrap input{background:var(--panel);border:1px solid var(--line);border-radius:10px;
+  color:var(--ink);padding:10px 12px;font:inherit;min-height:42px}
+.certificate{background:var(--panel);border:2px solid var(--gold);border-radius:16px;
+  padding:32px 24px;text-align:center;margin-top:10px}
+.cert-eyebrow{font:700 11px var(--mono);letter-spacing:.16em;color:var(--gold);text-transform:uppercase}
+.cert-title{font-size:26px;margin:10px 0 4px}
+.cert-sub{color:var(--dim);font-size:13.5px;margin:6px 0}
+.cert-name{font-size:22px;font-weight:700;color:var(--gold);margin:14px 0;
+  border-bottom:1px solid var(--line);display:inline-block;padding:0 8px 6px}
+.cert-table{width:100%;margin:18px 0;border-collapse:collapse;font-size:13.5px}
+.cert-table td{padding:6px 4px;border-bottom:1px solid var(--line);text-align:left}
+.cert-table td:last-child{text-align:right;font:600 13px var(--mono);color:var(--gold)}
+.cert-date{color:var(--dim);font:600 12px var(--mono);margin-top:14px}
+@media print{
+  body{padding-bottom:0}
+  header,nav,.no-print{display:none!important}
+  main{max-width:100%;padding:0}
+  .certificate{border-width:1px;box-shadow:none}
+}
+
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 
 /* ===== AI CHAT MODAL ===== */
@@ -970,6 +992,247 @@ const QUIZZES = [
  { q:"When tuning an unfamiliar real process, why start with low gains and increase gradually rather than guessing aggressive values immediately?",
    a:["Low gains void the equipment warranty","An aggressive, untested gain change can overshoot into an unsafe condition (overheating, overspeed) before you understand the process's behavior","Low gains are mandated by ISO standards","It saves electricity during tuning"], c:1,
    x:"Same shutdown-energy logic as the pneumatic/hydraulic labs: start low, observe, then increase deliberately — don't find the unsafe limit by accident." },
+]},
+];
+
+/* ---------- UNIT EXAMS + FINAL EXAM ---------- */
+const EXAM_PASS=70;
+const EXAMS=[
+{ id:"ex_pneu", stack:"pneu", title:"Unit 01 Exam — Pneumatics", questions:[
+ { q:"To convert a pressure reading from psi to kPa, you:",
+   a:["Multiply by 6.895","Divide by 6.895","Multiply by 14.7","Add 273"], c:0,
+   x:"1 psi ≈ 6.895 kPa, so psi → kPa is a multiplication by 6.895 (30 psi ≈ 207 kPa)." },
+ { q:"What is the functional difference between a regulator and a flow-control valve?",
+   a:["They do the same thing","A regulator sets/holds pressure; a flow-control valve sets flow (speed) — different knobs for different jobs","A regulator only works on hydraulics","A flow-control valve sets pressure, a regulator sets flow"], c:1,
+   x:"Pressure (psi) and flow (cfm) are different quantities controlled by different components — confusing the two is a common beginner mistake." },
+ { q:"A 5/3 directional control valve has:",
+   a:["5 positions and 3 ports","5 ports and 3 switching positions","5 solenoids and 3 springs","3 ports and 5 positions"], c:1,
+   x:"'Ways' counts ports; 'positions' counts switching states. A 5/3 valve has 5 ports (P, A, B, EA, EB) and 3 positions (extend/center/retract)." },
+ { q:"For a single-acting or spring-loaded load, meter-out is generally preferred over meter-in because:",
+   a:["Meter-in is illegal in industrial settings","Air's compressibility lets a meter-in (supply-side) restriction allow the load to 'jump' before the throttled air catches up; meter-out controls the exhaust directly","Meter-out uses less air overall","Meter-in only works with hydraulics"], c:1,
+   x:"Restricting the exhaust (meter-out) directly controls the actuator's motion regardless of load; restricting the supply (meter-in) can let a pushed/sprung load surge ahead of the throttled air." },
+ { q:"Why must a DCV's exhaust port never be plugged?",
+   a:["It would void the warranty","Trapped exhaust air has nowhere to go, which stalls the cylinder and can build dangerous trapped pressure","It increases regulator pressure automatically","It has no real effect on the circuit"], c:1,
+   x:"Air not doing work has to vent to atmosphere through the exhaust; blocking that port traps pressure and prevents the cylinder from completing its stroke." },
+ { q:"ΔP across a pneumatic flow-control valve is found by:",
+   a:["Adding the two gauge readings on either side of it","Taking the absolute difference between the gauge readings on either side of it","Reading the regulator dial only","Multiplying flow rate by time"], c:1,
+   x:"ΔP = |Gauge A − Gauge B| — the pressure drop is just the difference measured across the restriction." },
+]},
+{ id:"ex_hyd", stack:"hyd", title:"Unit 02 Exam — Hydraulics", questions:[
+ { q:"The force produced by a hydraulic cylinder is calculated as:",
+   a:["F = P / A","F = P × A (pressure × piston area)","F = A / P","F = P + A"], c:1,
+   x:"F = P × A: pressure (psi) times the piston's working area (in²) gives force (lb)." },
+ { q:"A relief valve's job in a hydraulic circuit is to:",
+   a:["Increase pump output continuously","Open and dump flow back to the reservoir once system pressure reaches its setpoint, capping maximum pressure","Filter contaminants from the oil","Control cylinder speed during normal operation"], c:1,
+   x:"The relief valve is a safety device — normally closed, it opens only once pressure reaches its set limit, protecting the circuit from over-pressurization." },
+ { q:"Correct relief-valve startup procedure for a hydraulic power unit is to:",
+   a:["Set the relief to maximum before starting the pump","Start the pump with the relief at MINIMUM pressure, then raise it gradually to the working setpoint","Start the pump and set the relief afterward at any pace","Bypass the relief valve entirely during startup"], c:1,
+   x:"Starting at minimum and raising gradually prevents a damaging pressure spike at startup." },
+ { q:"Hydraulic speed control is more precise than pneumatic speed control mainly because:",
+   a:["Hydraulic valves are always more expensive","Oil is essentially incompressible, so it reacts immediately and doesn't 'spring' under load the way compressible air does","Hydraulic pumps spin faster","Pneumatic systems have no flow-control valves"], c:1,
+   x:"Because oil doesn't compress, pressure and motion respond immediately and predictably — this is the core advantage over compressible air." },
+ { q:"If a relief valve is passing flow continuously during normal operation (not just at startup), that most likely indicates:",
+   a:["Perfectly normal, efficient operation","A problem — the circuit is overheating/wasting energy rather than working correctly, since the relief is a safety device, not a flow controller","The flow-control valve is fully closed","The reservoir is empty"], c:1,
+   x:"A relief valve continuously dumping flow means the system is being run against its pressure limit constantly — that's a fault condition, generating heat, not normal behavior." },
+ { q:"Because hydraulic oil is a closed-loop fluid (not vented to atmosphere), every hydraulic circuit needs:",
+   a:["An exhaust muffler like pneumatics uses","A return path back to the reservoir","A second pump for backup","No flow-control valve at all"], c:1,
+   x:"Unlike air, which exhausts to atmosphere, oil must always be routed back to the reservoir to complete the loop." },
+]},
+{ id:"ex_elec", stack:"elec", title:"Unit 03 Exam — Relay Control", questions:[
+ { q:"In a ladder diagram, a rung must always end in:",
+   a:["Another contact","Exactly one load — never a contact to the right of the load","Two loads in series","A direct connection back to L1"], c:1,
+   x:"A rung is one complete logic statement that drives a single load; contacts never appear after the load." },
+ { q:"Relay ladder symbols (NO/NC contacts) are always drawn showing:",
+   a:["Whatever state the machine happens to be in when drawn","The de-energized, unactuated state of the device","Only the energized state","A random reference state with no convention"], c:1,
+   x:"Symbols always represent the resting, unactuated state — not a snapshot of current machine status — so the diagram reads the same regardless of when it's viewed." },
+ { q:"Which logic does a set of contacts wired in PARALLEL implement?",
+   a:["AND — every contact must close","OR — any one path closing is enough to pass power","NOT — it blocks power when its input is active","NAND"], c:1,
+   x:"Parallel paths give multiple ways to complete the circuit — closing any one of them is sufficient, which is OR logic." },
+ { q:"The Boolean expression 1CR = STOP AND (START OR 1CRA) describes:",
+   a:["A simple on/off switch with no memory","A seal-in (memory) circuit — a momentary START keeps the relay energized via its own sealed-in contact, until STOP breaks the circuit","A timer circuit only","An AC-only safety interlock"], c:1,
+   x:"This is the standard seal-in circuit: START or the relay's own contact (1CRA) energizes 1CR, and STOP can break the whole rung." },
+ { q:"STOP is wired as an NC (normally-closed) contact, in series with the rest of the rung, because:",
+   a:["NC contacts are cheaper","It's a fail-safe design — a broken STOP wire makes the circuit behave as if STOP were pressed (drops out), not as if STOP were never wired","NC contacts allow higher current","It has no safety implication, it's just convention"], c:1,
+   x:"Wiring STOP NC means a wiring fault defaults to the SAFE (stopped) state rather than silently disabling the stop function." },
+ { q:"An on-delay timer's timed contact (1TRA), once the timer coil (1TR) de-energizes, will:",
+   a:["Stay closed for the same delay period before opening","Reset and open instantly, with no delay on the way back down","Stay closed forever","Immediately re-energize 1TR"], c:1,
+   x:"On-delay timer contacts only delay on the way IN (energizing); they reset instantly the moment the coil drops out." },
+]},
+{ id:"ex_acdc", stack:"acdc", title:"Unit 04 Exam — AC/DC & Transformers", questions:[
+ { q:"The key difference between AC and DC is that:",
+   a:["DC is always higher voltage than AC","AC periodically reverses direction (60 Hz in North America); DC maintains one constant polarity","AC has no frequency","DC cannot power lamps"], c:1,
+   x:"AC alternates direction at a set frequency (60 Hz in North America); DC flows in one direction only." },
+ { q:"An AC voltage reading such as 24 VAC is understood as:",
+   a:["The peak voltage only","An RMS value — the equivalent steady DC voltage that would deliver the same average power","Always exactly half the peak voltage by coincidence","A frequency measurement"], c:1,
+   x:"RMS (root-mean-square) is the standard way AC voltage is reported, representing the equivalent DC value for power purposes." },
+ { q:"Electrical power in a simple lamp circuit is calculated as:",
+   a:["P = V / I","P = V × I, using V and I measured at the SAME selector position","P = V + I","P = I² only, voltage is irrelevant"], c:1,
+   x:"P = V × I — and both readings must come from the same circuit condition/position, or the multiplication is meaningless." },
+ { q:"A transformer's secondary-to-primary voltage ratio equals:",
+   a:["Vs/Vp = Np/Ns","Vs/Vp = Ns/Np (the turns ratio)","Always exactly 1, regardless of windings","The square of the turns ratio"], c:1,
+   x:"Voltage ratio matches turns ratio directly: Vs/Vp = Ns/Np." },
+ { q:"The main purpose of a roughly 1:1 isolation transformer is to:",
+   a:["Significantly step up the voltage","Provide galvanic isolation — no direct electrical path between the secondary side and the source — primarily for safety","Convert AC to DC","Increase line frequency"], c:1,
+   x:"A 1:1 transformer doesn't change voltage much; its value is the magnetic-only coupling that isolates the secondary from the primary supply." },
+ { q:"As frequency increases, capacitive reactance Xc and inductive reactance XL behave how?",
+   a:["Both increase","Both decrease","Xc decreases, XL increases","Xc increases, XL decreases"], c:2,
+   x:"Xc = 1/(2πfC) falls as frequency rises; XL = 2πfL rises as frequency rises — opposite frequency dependence." },
+]},
+{ id:"ex_plc", stack:"plc", title:"Unit 05 Exam — PLC & Ladder Programming", questions:[
+ { q:"The three phases of a PLC scan cycle, in order, are:",
+   a:["Write outputs, solve logic, read inputs","Read inputs, solve the ladder program, write outputs","Solve logic, read inputs, write outputs","Read inputs and write outputs simultaneously, then solve logic"], c:1,
+   x:"Each scan reads all inputs into a snapshot, solves the entire program against that snapshot, then writes results to the outputs — always in that order." },
+ { q:"A rung referencing an input that changes in the middle of an active scan will:",
+   a:["See the change immediately, mid-scan","Not see the change until the NEXT scan, since logic is solved against the snapshot taken at scan start","Crash the PLC","Always evaluate to false regardless of the change"], c:1,
+   x:"The PLC works from a frozen input image table for the whole scan — changes are only picked up starting the following scan." },
+ { q:"A TON (timer-on-delay) instruction's .DN bit becomes true when:",
+   a:["The timer is first enabled","The preset time has elapsed since the timer was enabled","The PLC powers on","Any input changes state"], c:1,
+   x:".DN ('done') sets once the accumulated time reaches the preset — the software equivalent of a hardwired on-delay relay's timed contact." },
+ { q:"PLC I/O addressing (e.g., I:1/0, O:2/0) exists to:",
+   a:["Name outputs for cosmetic purposes only","Map a specific physical wiring terminal to a specific bit the program can read or write","Replace the need for any wiring at all","Set the PLC's scan time"], c:1,
+   x:"Addressing is the link between the physical terminal and the corresponding bit inside the program's logic." },
+ { q:"Compared to a hardwired relay panel, a PLC's biggest advantage for changing logic is that:",
+   a:["PLCs cannot be reprogrammed once installed","Logic changes are made by editing software, with no physical rewiring required","PLCs react faster than any wired relay, with zero scan delay","PLCs eliminate the need for any I/O wiring"], c:1,
+   x:"The major tradeoff: a relay panel needs rewiring for any logic change; a PLC just needs a program edit — at the cost of a (usually negligible) scan delay." },
+ { q:"A PLC seal-in rung built from a Run coil sealed in by its own Run contact, gated by STOP/START inputs, is functionally equivalent to which hardwired circuit?",
+   a:["An on-delay timer circuit","1CR = STOP AND (START OR 1CRA)","A simple series-only AND circuit with no memory","A reversing starter interlock"], c:1,
+   x:"Software seal-in logic mirrors the classic hardwired seal-in Boolean expression exactly — same logic, different implementation." },
+]},
+{ id:"ex_sens", stack:"sens", title:"Unit 06 Exam — Sensors & Transducers", questions:[
+ { q:"A PNP (sourcing) sensor output, when active, does what?",
+   a:["Switches the common/negative side to the load","Switches the positive supply to the load","Outputs a fixed analog voltage only","Toggles a relay coil internally"], c:1,
+   x:"PNP = sourcing: it connects the positive supply through to the load when active. NPN (sinking) does the opposite, switching the negative/common side." },
+ { q:"A sensor that works fine (LED lights correctly) but the PLC input never changes most likely indicates:",
+   a:["A bad sensor that needs replacement","A PNP/NPN mismatch between the sensor and the input card's sourcing/sinking type","A loop wired with too few wires","Normal operation requiring no troubleshooting"], c:1,
+   x:"If the sensor's own status LED behaves correctly but the controller never sees it, the wiring type mismatch (PNP sensor on a sinking card, or vice versa) is the classic suspect." },
+ { q:"The purpose of a 4-20 mA loop's 'live zero' (using 4 mA, not 0 mA, as the minimum) is to:",
+   a:["Save electrical power","Let the system distinguish 'measuring zero' (4 mA, loop healthy) from 'broken wire/dead sensor' (0 mA)","Increase the maximum measurable range","Make the loop compatible with AC signals"], c:1,
+   x:"A live zero means 0 mA is never a valid reading — so 0 mA unambiguously signals a fault, which a 0 V minimum on a voltage signal couldn't distinguish from a true zero reading." },
+ { q:"A 4-20 mA loop reads 16 mA on a 0-150 psi range. The represented pressure is:",
+   a:["75 psi","100 psi","112.5 psi","16 psi"], c:1,
+   x:"percent = (16−4)/16 = 75%, so value = 0.75 × 150 psi = 112.5 psi." },
+ { q:"When selecting a sensor, matching it to the target material primarily means choosing between:",
+   a:["PNP and NPN only","Inductive (metal), capacitive (nonmetal), photoelectric (line-of-sight), or ultrasonic (distance) types","4-20 mA or 0-10 V only","NO and NC output logic only"], c:1,
+   x:"Sensing technology should match what's being detected — inductive for metal targets, capacitive for nonmetal, photoelectric for line-of-sight, ultrasonic for distance — independent of the PNP/NPN wiring decision." },
+ { q:"At the receiving end of a 4-20 mA loop, a broken wire reads as:",
+   a:["20 mA","4 mA","0 mA — a detectable, deliberate fault signature below the live zero","A random fluctuating value"], c:2,
+   x:"Since the loop can never legitimately read below 4 mA, a 0 mA reading is unambiguous evidence of a broken wire or failed sensor." },
+]},
+{ id:"ex_mot", stack:"mot", title:"Unit 07 Exam — Motors & Drives", questions:[
+ { q:"A 6-pole motor running on a 60 Hz line has a synchronous speed of:",
+   a:["1800 RPM","1200 RPM","3600 RPM","900 RPM"], c:1,
+   x:"Ns = 120 × f / P = 120 × 60 / 6 = 1200 RPM." },
+ { q:"Motor 'slip' refers to:",
+   a:["A manufacturing defect","The difference between synchronous speed and actual rotor speed — which is what actually induces current and torque in the rotor","The motor's power factor","The voltage drop across motor windings"], c:1,
+   x:"An induction motor's rotor never quite reaches synchronous speed; that speed difference (slip) is what induces the current that produces torque." },
+ { q:"Increasing a motor's pole count at the same line frequency will:",
+   a:["Increase synchronous speed","Decrease synchronous speed","Have no effect on synchronous speed","Double the line frequency automatically"], c:1,
+   x:"Ns = 120f/P — more poles (larger P) means a lower synchronous speed at the same frequency." },
+ { q:"Interlocking in a reversing motor starter exists to prevent:",
+   a:["The motor from overheating during normal forward operation","Both the forward and reverse contactors from closing at the same time, which would short line-to-line voltage across two phases","The motor from running at all","Excess current during startup only"], c:1,
+   x:"If forward and reverse contactors energized simultaneously, the result is a severe line-to-line short — interlocking makes that physically/electrically impossible." },
+ { q:"A VFD's V/Hz control strategy keeps motor torque roughly constant below base frequency by:",
+   a:["Holding voltage constant while frequency varies freely","Raising voltage and frequency together, proportionally, up to the motor's rated (base) frequency","Lowering voltage as frequency rises","Disconnecting the motor periodically"], c:1,
+   x:"Keeping the voltage-to-frequency ratio constant maintains the magnetic flux level the motor needs to produce rated torque." },
+ { q:"Pushing a motor's operating frequency well above its base frequency via a VFD typically:",
+   a:["Increases available torque further","Trades torque for speed, since voltage can no longer keep rising proportionally once it's at maximum","Has no effect on torque or speed","Is required to reach rated torque"], c:1,
+   x:"Above base frequency the VFD is already at max voltage, so V/Hz ratio falls and available torque drops as speed increases further." },
+]},
+{ id:"ex_micro", stack:"micro", title:"Unit 08 Exam — Microcontrollers & Embedded I/O", questions:[
+ { q:"Compared to a PLC, a microcontroller is generally:",
+   a:["Programmed in ladder logic, like a PLC","Smaller, cheaper, and programmed in code rather than ladder logic, with less industrial ruggedness","Always more expensive and slower","Incapable of digital input/output"], c:1,
+   x:"MCUs trade industrial ruggedness and built-in safety features for cost, size, and code-based flexibility — common in embedded products rather than control panels." },
+ { q:"Contact bounce is caused by:",
+   a:["Software bugs in the reading loop","The mechanical contacts inside a switch physically vibrating against each other for a few milliseconds when actuated","Electromagnetic interference from nearby motors only","A PWM signal being misread as a switch"], c:1,
+   x:"It's a physical/mechanical phenomenon — the metal contacts chatter briefly before settling — not a software issue by itself." },
+ { q:"Software debounce typically works by:",
+   a:["Increasing the input voltage","Ignoring additional transitions for a short window (commonly 10-50 ms) after the first detected change","Disabling the input pin permanently","Running the PWM output faster"], c:1,
+   x:"By waiting out a short window after the first edge, the code lets the physical bounce settle before trusting the signal again." },
+ { q:"In PWM (pulse-width modulation), the duty cycle refers to:",
+   a:["The output frequency only","The percentage of each cycle spent in the HIGH (on) state","The total number of pins available","The voltage level of the HIGH state"], c:1,
+   x:"Duty cycle is the fraction of time per cycle the signal is high; an averaging load 'sees' that fraction as an effective analog level." },
+ { q:"Hardware debounce commonly uses:",
+   a:["A second microcontroller","An RC filter or dedicated debounce IC to smooth the electrical signal before it reaches the pin","A software-only timer with no extra components","Increasing the switch's voltage rating"], c:1,
+   x:"Hardware debounce trades a few extra components for not having to spend code/CPU time filtering bounce." },
+ { q:"A PWM frequency set too low for a given load typically causes:",
+   a:["No effect at all","Visible flicker or audible whining as the switching becomes perceptible","An immediate hardware failure","Duty cycle to automatically reach 100%"], c:1,
+   x:"If switching is too slow relative to what the load/eye/ear can perceive, the on/off pattern becomes noticeable instead of averaging smoothly." },
+]},
+{ id:"ex_ctrl", stack:"ctrl", title:"Unit 09 Exam — Control Systems & PID", questions:[
+ { q:"The defining feature of a closed-loop (feedback) control system, versus open-loop, is that it:",
+   a:["Never measures anything, just applies a fixed action","Continuously measures the actual process variable and compares it to setpoint to compute an error that drives the controller","Always uses more energy than open-loop","Has no concept of a setpoint"], c:1,
+   x:"Closed-loop control measures the real output (PV), compares it to the target (SP), and uses that error to keep correcting — open-loop just commands and hopes." },
+ { q:"In control theory, error is calculated as:",
+   a:["error = PV − SP","error = SP − PV","error = SP × PV","error = SP + PV"], c:1,
+   x:"Error is setpoint minus process variable — positive error means the process is below setpoint." },
+ { q:"A P-only controller settling with a steady-state offset (droop) under load is eliminated by adding:",
+   a:["Derivative (D) action","Integral (I) action, which keeps accumulating output as long as any error persists, until error reaches zero","A faster sensor","A higher setpoint"], c:1,
+   x:"Integral action is specifically what drives steady-state error to zero, since it keeps growing its contribution until the error disappears." },
+ { q:"Derivative (D) action is sensitive to noise because it:",
+   a:["Ignores the signal entirely","Reacts to the rate of change of error, and small fast noise wiggles look like a large rate of change","Only activates once per minute","Filters all high-frequency signals automatically"], c:1,
+   x:"Tiny, rapid fluctuations in a noisy signal produce large apparent rates of change, which a derivative term reacts strongly to." },
+ { q:"Integral windup happens when:",
+   a:["The integral term keeps accumulating while the controller's output is saturated (at its max/min limit) and error still exists","The setpoint equals the process variable","Derivative gain is set to zero","The controller is turned off"], c:0,
+   x:"While output is pinned at a limit, the real process can't respond further, but the integral term keeps growing anyway — producing a big overshoot once the limit releases." },
+ { q:"Anti-windup prevents this overshoot by:",
+   a:["Disabling integral action permanently","Pausing integral accumulation while the controller's output is saturated","Increasing proportional gain instead","Removing the setpoint"], c:1,
+   x:"By freezing the integral term during saturation, anti-windup keeps it from building up more demand than the system can ever actually use." },
+]},
+{ id:"ex_final", stack:null, final:true, title:"Final Exam — All 9 Units", questions:[
+ { q:"[Unit 01] Pneumatics: converting 30 psi to kPa gives approximately:",
+   a:["30 kPa","207 kPa","414 kPa","6.9 kPa"], c:1,
+   x:"30 psi × 6.895 ≈ 207 kPa." },
+ { q:"[Unit 01] Pneumatics: meter-out flow control restricts air on the:",
+   a:["Supply side, before the actuator","Exhaust side, as air leaves the actuator","Regulator only","Compressor intake"], c:1,
+   x:"Meter-out throttles the exhaust, giving smooth, load-resistant speed control on the controlled stroke." },
+ { q:"[Unit 02] Hydraulics: cylinder force is calculated from pressure and area using:",
+   a:["F = P × A","F = P / A","F = A − P","F = P² × A"], c:0,
+   x:"F = P × A is the fundamental hydraulic force relationship." },
+ { q:"[Unit 02] Hydraulics: correct relief-valve startup is to begin at:",
+   a:["Maximum pressure, then lower it","Minimum pressure, then raise it gradually to setpoint","Whatever pressure the gauge already shows","Zero pressure permanently"], c:1,
+   x:"Starting at minimum and raising gradually avoids a damaging startup pressure spike." },
+ { q:"[Unit 03] Relay Control: the Boolean expression for a seal-in circuit is:",
+   a:["1CR = STOP OR (START AND 1CRA)","1CR = STOP AND (START OR 1CRA)","1CR = START AND STOP","1CR = NOT START"], c:1,
+   x:"START or the relay's own sealed-in contact energizes the coil, gated by STOP — the classic seal-in pattern." },
+ { q:"[Unit 03] Relay Control: STOP is wired NC mainly because:",
+   a:["It's cheaper than NO hardware","A broken STOP wire then fails safely into the stopped state","NC contacts switch faster","It has no particular reason, just convention"], c:1,
+   x:"Fail-safe design: a wiring fault on an NC STOP defaults to the safe, de-energized condition." },
+ { q:"[Unit 04] AC/DC: an AC voltage reading like 24 VAC is expressed as:",
+   a:["A peak value","An RMS value — the equivalent steady DC voltage delivering the same average power","A frequency value","A reactance value"], c:1,
+   x:"RMS is the standard way AC magnitudes are reported for power-equivalence purposes." },
+ { q:"[Unit 04] AC/DC: a transformer's voltage ratio Vs/Vp equals:",
+   a:["Ns/Np (the turns ratio)","Np/Ns","Always 1","The square of the turns ratio"], c:0,
+   x:"Voltage ratio directly matches the winding turns ratio." },
+ { q:"[Unit 05] PLC: the three scan-cycle phases occur in this order:",
+   a:["Solve logic, write outputs, read inputs","Read inputs, solve logic, write outputs","Write outputs, read inputs, solve logic","All three happen simultaneously"], c:1,
+   x:"Read → solve → write, every scan, in that fixed order." },
+ { q:"[Unit 05] PLC: a TON timer's .DN bit sets true when:",
+   a:["The timer is enabled","The preset time has elapsed since the timer was enabled","Power is first applied to the PLC","Any unrelated input changes"], c:1,
+   x:".DN means the accumulated time reached the timer's preset value." },
+ { q:"[Unit 06] Sensors: the 'live zero' in a 4-20 mA loop means:",
+   a:["0 mA is the normal minimum reading","4 mA (not 0 mA) is the minimum reading, so 0 mA can only mean a fault","20 mA is the minimum reading","The loop uses voltage, not current"], c:1,
+   x:"Using 4 mA as the floor makes 0 mA an unambiguous fault signature." },
+ { q:"[Unit 06] Sensors: a PNP sensor must be wired to a(n):",
+   a:["Sinking input card","Sourcing input card","AC-only input card","Analog-only input card"], c:1,
+   x:"PNP (sourcing) sensors require a sourcing input card to be read correctly; pairing it with a sinking card means the input never sees a valid signal." },
+ { q:"[Unit 07] Motors: synchronous speed is calculated as:",
+   a:["Ns = 120 × f / P","Ns = f / (120 × P)","Ns = P / (120 × f)","Ns = 120 × P / f"], c:0,
+   x:"Ns = 120 × f / P, where f is line frequency in Hz and P is pole count." },
+ { q:"[Unit 07] Motors: above a VFD's base frequency, available motor torque typically:",
+   a:["Increases further","Falls off, since voltage can no longer rise proportionally with frequency","Stays exactly constant","Becomes negative"], c:1,
+   x:"Once voltage hits its maximum, V/Hz ratio drops as frequency keeps rising, reducing available torque." },
+ { q:"[Unit 08] Microcontrollers: contact bounce is filtered out in software by:",
+   a:["Raising the supply voltage","Ignoring extra transitions for a short window after the first detected change","Increasing PWM frequency","Disconnecting the input pin"], c:1,
+   x:"A short debounce window lets the physical bounce settle before the code trusts the next reading." },
+ { q:"[Unit 08] Microcontrollers: PWM duty cycle represents:",
+   a:["The output frequency","The percentage of each cycle spent HIGH (on)","The number of GPIO pins used","The supply voltage"], c:1,
+   x:"Duty cycle is the on-time fraction of each PWM cycle, which an averaging load reads as an effective analog level." },
+ { q:"[Unit 09] Control Systems: which PID term eliminates steady-state droop?",
+   a:["Proportional (P)","Integral (I)","Derivative (D)","None — droop is unavoidable"], c:1,
+   x:"Integral action accumulates as long as error persists, driving steady-state error to zero." },
+ { q:"[Unit 09] Control Systems: integral windup occurs when the integral term keeps accumulating while:",
+   a:["The setpoint is zero","The controller's output is saturated at its max/min limit while error still exists","Derivative gain is high","The process variable equals the setpoint exactly"], c:1,
+   x:"Saturation prevents the real output from responding further, but the integral term keeps adding demand anyway — causing overshoot once the limit releases." },
 ]},
 ];
 
@@ -2858,7 +3121,8 @@ SIMS.sim_ctrl = {
 
 /* ---------- state ---------- */
 const DEFAULT = { xp:0, badges:[], streak:0, lastDay:null,
-  quizBest:{}, quizDone:{}, labSteps:{}, labDone:{}, simAwards:{}, simSeen:{}, scenDone:{}, courseDone:{} };
+  quizBest:{}, quizDone:{}, labSteps:{}, labDone:{}, simAwards:{}, simSeen:{}, scenDone:{}, courseDone:{},
+  examBest:{}, examDone:{}, studentName:'' };
 let ST = (()=>{ try{ return Object.assign({},DEFAULT,JSON.parse(localStorage.getItem('msm_state')||'{}')); }catch(e){ return {...DEFAULT}; } })();
 function save(){ localStorage.setItem('msm_state',JSON.stringify(ST)); }
 function today(){ return new Date().toISOString().slice(0,10); }
@@ -2925,6 +3189,8 @@ function nav(r){
   else if(base==='sim') arg?renderSim(m,arg):renderSimList(m);
   else if(base==='labs') arg?renderLab(m,arg):renderLabList(m);
   else if(base==='quiz') arg?(arg.startsWith('ts_')?renderScenario(m,arg):renderQuiz(m,arg)):renderTrain(m);
+  else if(base==='exam') renderExam(m,arg);
+  else if(base==='cert') renderCertificate(m);
 }
 
 /* ---------- COURSE ---------- */
@@ -3121,9 +3387,27 @@ function renderTrain(m){
     <span class="stackdot" style="background:${STACKS[s.stack].color}"></span>
     <div class="grow"><b>${s.title}</b><div class="sub">${STACKS[s.stack].name} scenario</div></div>
     <span>${ST.scenDone[s.id]?'✓':'›'}</span></div></div>`).join('');
+  const unitExams=EXAMS.filter(e=>!e.final);
+  const finalExam=EXAMS.find(e=>e.final);
+  const exams=unitExams.map(e=>{
+    const best=ST.examBest[e.id], passed=(best||0)>=EXAM_PASS;
+    return `<div class="card tap" onclick="nav('exam/${e.id}')"><div class="cardrow">
+      <span class="stackdot" style="background:${STACKS[e.stack].color}"></span>
+      <div class="grow"><b>${e.title}</b><div class="sub">${e.questions.length} questions · ${EXAM_PASS}% to pass</div></div>
+      <span class="pill ${passed?'gold':''}">${best!=null?best+'%'+(passed?' ✓':''):'—'}</span></div></div>`;
+  }).join('');
+  const finalBest=ST.examBest[finalExam.id], finalPassed=(finalBest||0)>=EXAM_PASS;
   m.innerHTML=`<h2 style="margin-top:4px">Train</h2>${groups}
     <h3 style="margin-top:18px">🔧 Troubleshooting Scenarios</h3>
-    <p class="sub" style="margin-top:-4px">Something's wrong on the bench — diagnose it. +15 XP each.</p>${scen}`;
+    <p class="sub" style="margin-top:-4px">Something's wrong on the bench — diagnose it. +15 XP each.</p>${scen}
+    <h3 style="margin-top:18px">📜 Unit Exams</h3>
+    <p class="sub" style="margin-top:-4px">Formal, scored exams covering each unit's full theory reading. ${EXAM_PASS}%+ completes the unit.</p>${exams}
+    <h3 style="margin-top:18px">🎓 Final Exam</h3>
+    <p class="sub" style="margin-top:-4px">Samples all 9 units. Pass all 9 unit exams + the final to unlock your certificate.</p>
+    <div class="card tap" onclick="nav('exam/${finalExam.id}')"><div class="cardrow">
+      <div class="grow"><b>${finalExam.title}</b><div class="sub">${finalExam.questions.length} questions · ${EXAM_PASS}% to pass</div></div>
+      <span class="pill ${finalPassed?'gold':''}">${finalBest!=null?finalBest+'%'+(finalPassed?' ✓':''):'—'}</span></div></div>
+    <button class="btn block" style="margin-top:4px" onclick="nav('cert')">🏆 Certificate of Completion</button>`;
 }
 function renderScenario(m,id){
   const s=SCENARIOS.find(x=>x.id===id); if(!s){nav('quiz');return;}
@@ -3183,6 +3467,85 @@ function renderQuiz(m,id){
         <button class="btn block" onclick="nav('quiz')" style="margin-top:8px">All training</button></div>`;
   }
   q();
+}
+
+/* ---------- EXAMS + CERTIFICATE ---------- */
+function renderExam(m,id){
+  const ex=EXAMS.find(x=>x.id===id); if(!ex){nav('quiz');return;}
+  let i=0, score=0;
+  function q(){
+    if(i>=ex.questions.length)return done();
+    const Q=ex.questions[i];
+    m.innerHTML=`<button class="backbtn" onclick="nav('quiz')">‹ Train</button>
+      <div class="qprog">${ex.title} · ${i+1}/${ex.questions.length}</div>
+      <h3>${Q.q}</h3>
+      ${Q.a.map((a,j)=>`<button class="qopt" data-j="${j}">${a}</button>`).join('')}
+      <div id="exp"></div>`;
+    let answered=false;
+    m.querySelectorAll('.qopt').forEach(b=>b.onclick=()=>{
+      if(answered)return; answered=true;
+      const j=+b.dataset.j, ok=j===Q.c;
+      if(ok){score++;b.classList.add('correct');}
+      else{b.classList.add('wrong');m.querySelectorAll('.qopt')[Q.c].classList.add('correct');}
+      m.querySelector('#exp').innerHTML=`<div class="qexp">${Q.x}</div>
+        <button class="btn primary block" style="margin-top:12px" id="nx">${i+1<ex.questions.length?'Next ›':'Finish'}</button>`;
+      m.querySelector('#nx').onclick=()=>{i++;q();window.scrollTo(0,0);};
+    });
+  }
+  function done(){
+    const pct=Math.round(score/ex.questions.length*100), best=ST.examBest[id]||0, passed=pct>=EXAM_PASS;
+    if(pct>best){ST.examBest[id]=pct;save();}
+    if(passed&&!ST.examDone[id]){
+      ST.examDone[id]=true;save();
+      addXP(ex.final?100:40,ex.final?'Final exam passed':'Unit exam passed');
+      checkBadges();
+    }
+    m.innerHTML=`<button class="backbtn" onclick="nav('quiz')">‹ Train</button>
+      <div class="card" style="text-align:center;padding:28px 16px">
+        <div style="font-size:42px">${passed?'🎓':'📚'}</div>
+        <h2>${pct}%</h2>
+        <p class="sub">${score}/${ex.questions.length} correct · best ${Math.max(pct,best)}% · ${EXAM_PASS}% required to pass</p>
+        <p class="sub">${passed?(ex.final?'✓ Final Exam passed.':'✓ Unit complete.'):'Review the explanations and retry — retakes are unlimited.'}</p>
+        ${ex.final&&passed?'<button class="btn primary block" style="margin-top:8px" onclick="nav(\'cert\')">🏆 View Certificate</button>':''}
+        <button class="btn block" style="margin-top:8px" onclick="nav('exam/${id}')">Retry</button>
+        <button class="btn block" style="margin-top:8px" onclick="nav('quiz')">All training</button></div>`;
+  }
+  q();
+}
+function renderCertificate(m){
+  const sids=Object.keys(STACKS);
+  const unitScores=sids.map(sid=>({name:STACKS[sid].name,score:ST.examBest['ex_'+sid]||0,passed:(ST.examBest['ex_'+sid]||0)>=EXAM_PASS}));
+  const finalScore=ST.examBest.ex_final||0, finalPassed=finalScore>=EXAM_PASS;
+  const eligible=unitScores.every(u=>u.passed)&&finalPassed;
+  if(!eligible){
+    m.innerHTML=`<button class="backbtn" onclick="nav('quiz')">‹ Train</button>
+      <h2>Certificate of Completion</h2>
+      <p class="sub">Pass all 9 unit exams and the final exam (≥${EXAM_PASS}% each) to unlock your certificate.</p>
+      ${unitScores.map(u=>`<div class="card cardrow"><div class="grow">${u.name}</div><span class="pill ${u.passed?'gold':''}">${u.score}%${u.passed?' ✓':''}</span></div>`).join('')}
+      <div class="card cardrow"><div class="grow"><b>Final Exam</b></div><span class="pill ${finalPassed?'gold':''}">${finalScore}%${finalPassed?' ✓':''}</span></div>`;
+    return;
+  }
+  const overall=Math.round((unitScores.reduce((a,u)=>a+u.score,0)+finalScore)/(unitScores.length+1));
+  const dateStr=new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+  m.innerHTML=`<button class="backbtn no-print" onclick="nav('quiz')">‹ Train</button>
+    <div class="certwrap">
+    <label class="sub no-print">Student name<br><input id="certname" value="${(ST.studentName||'').replace(/"/g,'&quot;')}" placeholder="Type your full name" style="width:100%;margin-top:4px"></label>
+    <div class="certificate" id="certificate">
+      <div class="cert-eyebrow">Mechatronics Stack Mastery</div>
+      <h1 class="cert-title">Certificate of Completion</h1>
+      <p class="cert-sub">This certifies that</p>
+      <div class="cert-name">${ST.studentName||'_____________________'}</div>
+      <p class="cert-sub">has successfully completed all 9 units and the final examination of the<br>Mechatronics Technology certificate program.</p>
+      <table class="cert-table">
+        ${unitScores.map(u=>`<tr><td>${u.name}</td><td>${u.score}%</td></tr>`).join('')}
+        <tr><td><b>Final Exam</b></td><td><b>${finalScore}%</b></td></tr>
+      </table>
+      <p class="cert-sub">Overall score: <b>${overall}%</b></p>
+      <p class="cert-date">Issued ${dateStr}</p>
+    </div>
+    <button class="btn primary block no-print" style="margin-top:14px" onclick="window.print()">🖨️ Print / Save as PDF</button>
+    </div>`;
+  m.querySelector('#certname').oninput=e=>{ST.studentName=e.target.value;save();m.querySelector('.cert-name').textContent=ST.studentName||'_____________________';};
 }
 
 /* ================================================================
